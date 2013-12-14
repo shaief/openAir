@@ -1,3 +1,14 @@
+'''
+Scraper for http://www.svivaaqm.net/
+
+Run standalone as:
+python scraper.py <url_id>
+
+Functions
+---------
+scrap(url_id) -> records
+'''
+
 import sys
 import urllib2
 from bs4 import BeautifulSoup
@@ -32,8 +43,8 @@ def scrap(url_id):
                        cellpadding='0',
                        cellspacing='0')
 
-    # the first two rows in the table are for heading
     records = {}
+    # the first two rows in the table are for heading
     for element in table.find_all('tr')[2:]:
         abbr = element.a.string.split('[')[0]
         try:
