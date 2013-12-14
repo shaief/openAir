@@ -2,3 +2,5 @@
 .pydevproject
 *.pyc
 *~
+db.sqlite3
+.settings/
