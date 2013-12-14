@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+<title>
+WikiWords article -
+{{ page.word }}
+</title>
+{% endblock %}
+
+
+{% block content %}
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#">Home</a></li>
+  <li><a href="#">Edit</a></li>
+</ul>
+<h1>{{ page.word }}</h1>
+
+<div>{{ page.definition |linebreaks|urlize }}</div>
+<br>
+<div>Published at: {{ page.pub_date }}</div>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+{% endblock %}
