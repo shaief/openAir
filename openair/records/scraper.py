@@ -2,12 +2,21 @@
 Scraper for http://www.svivaaqm.net/
 
 Run standalone as:
-python scraper.py <url_id>
+python scraper.py [zone|station] <url_id>
 
 Functions
 ---------
-scrap_station(url_id) -> records
-scrap_zone(url_id) -> records
+scrape_station(url_id) -> records
+scrape_zone(url_id) -> records
+
+Notes
+-----
+- The parameters as obtained from scrape_station have different
+abbreviations then those obtained by scrape_zone. Be sure to select
+one set of abbreviations to work with in advance!
+- In the records returned from the function scrape_zone there is also
+timestamp information, named 'timestamp', as one of the parameters of
+each station. Timestamp values are strings.
 '''
 
 import sys
@@ -15,7 +24,7 @@ import urllib2
 from bs4 import BeautifulSoup
 
 
-def scrap_station(url_id):
+def scrape_station(url_id):
     '''
     Scrap air parameters from
     http://www.svivaaqm.net/Online.aspx?ST_ID=<STATION_ID>;0
@@ -48,8 +57,8 @@ def scrap_station(url_id):
     records = {}
     # the first two rows in the table are for heading
     for element in table.find_all('tr')[2:]:
-        abbr = element.a.string.split('[')[0]
-        try:
+        abbr = str(element.a.string.split('[')[0])
+        try:  # to cast to float
             value = float(element.b.string)
         except (ValueError):
             value = None
@@ -59,7 +68,7 @@ def scrap_station(url_id):
     return records
 
 
-def scrap_zone(url_id):
+def scrape_zone(url_id):
     '''
     Scrap air parameters from
     http://www.svivaaqm.net/DynamicTable.aspx?G_ID=<ZONE_ID>
@@ -74,7 +83,7 @@ def scrap_zone(url_id):
     records : dict
         Dictionary of station:dict pairs. Stations are the url_id
         of the station and the dict are the records as received by
-        scrap_station() function.
+        scrape_station() function (see module notes).
     '''
 
     url ='http://www.svivaaqm.net/DynamicTable.aspx?G_ID={}' \
@@ -88,41 +97,74 @@ def scrap_zone(url_id):
                        id='C1WebGrid1')
 
     # the first row in the table is for abbreviations
-    abbreviations = []
-    for element in table.find('tr'):
-        for cell in element:
-            try:
-                abbreviations.append(cell.get_text().strip('\r\n\t'))
-            except Exception, e:
-                pass
+    abbreviations = ['timestamp']
+    # the relevant cells are located in positions 3 to -1
+    for cell in list(table.find('tr'))[3:-1]:
+        abbr = str(cell.div.get_text().strip('\r\n\t'))
+        abbreviations.append(abbr)
 
-    # TODO COMPLETE THE PARSER
-    # records = {}
-    # for element in table.find_all('tr')[2:]:
-    #     station_records = {}
-    #     abbr = element.a.string.split('[')[0]
-    #     try:
-    #         value = float(element.b.string)
-    #     except (ValueError):
-    #         value = None
+    # start scrape parameter values
+    records = {}
+    for element in table.find_all('tr')[2:]:
 
-    #     records[abbr] = value
+        # station url_id can be found in a the link
+        # in the beginning of each row
+        station_url_id = int(element.a.get('href').split('=')[1])
+        station_records = {}
 
-    # return records
+        for i, cell in enumerate(list(element.find_all('td'))[1:]):
+
+            value = cell.div.get_text().strip('\r\n\t')
+
+            try:  # to cast to float
+                value = float(value)
+            except ValueError:
+                try:  # to cast to string
+                    value = str(value)
+                except UnicodeEncodeError:
+                    value = None
+
+            station_records[abbreviations[i]] = value
+
+        records[station_url_id] = station_records
+
+    return records
+
+
+def print_station_records(records):
+    for k in records.keys():
+        print('{0:18}\t{1}'.format(k, records[k]))
+
+
+def print_zone_records(records):
+    for station_url_id in records.keys():
+        text = 'Scraping station {}'.format(station_url_id)
+        print(text)
+        print('-' * len(text))
+        print_station_records(records[station_url_id])
+        print('')  # new line
 
 
 def main():
-    if len(sys.argv) > 1:
-        url_id = sys.argv[1]
-        print('Showing records for station with url_id = {}' \
-            .format(url_id))
-        results = scrap(url_id)
-        for abbr in results.keys():
-            print('{}: {}'.format(abbr, results[abbr]))
-    else:
-        print('Type "station" or "zone" and url_id')
+
+    if len(sys.argv) == 3:
+
+        method = sys.argv[1]
+        url_id = int(sys.argv[2])
+
+        if method == 'station':
+            print('Scraping station {}\n'.format(url_id))
+            print_station_records(scrape_station(url_id))
+            return
+
+        if method == 'zone':
+            print('Scraping zone {}\n'.format(url_id))
+            print_zone_records(scrape_zone(url_id))
+            return
+
+    print('Type "station" or "zone" and url_id. For example:\n'
+              'python scrape.py zone 8')
 
 
 if __name__ == '__main__':
-    # main()
-    scrap_zone(8)
+    main()
