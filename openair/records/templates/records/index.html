@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+<title>
+{% block title %}
+open Air
+{% endblock %}
+</title>
+
+
+{% block content %}
+	<h1>Welcome to open Air</h1>
+	<h2>Making air quality monitoring accessible</h2>
+	<h3>since 12/2013</h3>
+	
+	<p>we're still closed</p>
+
+	<h1>ha!</h1>
+<!-- <ul class="nav nav-tabs">
+  <li class="active"><a href="#">List</a></li>
+  <li><a href="about.html">About</a></li>
+</ul> -->
+<!-- {% if latest_page_list %}
+    <ul>
+    {% for page in latest_page_list %}
+        <!-- <li><a href="{% url 'pages:detail' page.id %}">{{ page.word }}</a></li> -->
+        <!-- <li><a href="{% url 'pages:words' page.word %}">{{ page.word }}</a></li>
+    {% endfor %}
+    </ul> -->
+      <!-- <ul class="list-group">
+          {% for p in page %}
+            <li class="list-group-item">
+                <a href="{{p.get_absolute_url}}">
+                  {{p}}
+                </a>
+            </li>
+          {% endfor %}
+      </ul> -->
+<!-- {% else %} -->
+    <!-- <p>No pages are available.</p> -->
+<!-- {% endif %} --> 
+{% endblock %}
