@@ -1,5 +1,6 @@
 Django==1.6.1
 South==0.8.4
+Unipath==1.0
 anyjson==0.3.3
 beautifulsoup4==4.3.2
 ipython==1.1.0
