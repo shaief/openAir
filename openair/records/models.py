@@ -9,7 +9,7 @@ class Zone(models.Model):
 
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return '{}'.format(self.url_id)
+        return self.name
 
 
 class Station(models.Model):
@@ -19,7 +19,7 @@ class Station(models.Model):
 
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return '{}'.format(self.url_id)
+        return self.name
 
 
 class Parameter(models.Model):
@@ -36,8 +36,8 @@ class Parameter(models.Model):
 class Record(models.Model):
     parameter = models.ForeignKey(Parameter)
     station = models.ForeignKey(Station)
-    value = models.FloatField(blank=True, null=True)
     timestamp = models.DateTimeField()
+    value = models.FloatField(blank=True, null=True)
 
 
     def __unicode__(self):  # Python 3: def __str__(self):
@@ -52,3 +52,7 @@ class Record(models.Model):
                     self.station.url_id,
                     local_timestamp.strftime(fmt),
                     self.value)
+
+
+    def station_url_id(self):
+        return self.station.url_id
