@@ -1,4 +1,6 @@
 from django.db import models
+import pytz
+from openair.settings.base import TIME_ZONE
 
 
 class Zone(models.Model):
@@ -39,7 +41,14 @@ class Record(models.Model):
 
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return '{0}  {1}  {2}  {3}'.format(self.parameter.abbr,
-                                           self.station.url_id,
-                                           self.timestamp,
-                                           self.value)
+        fmt = '%Y-%m-%d %H:%M'
+        local = pytz.timezone(TIME_ZONE)
+        local_timestamp = self.timestamp.astimezone(local)
+        return 'Parameter: {0}.\n' \
+               'Station url_id: {1}.\n' \
+               'Timestamp: {2}.\n' \
+               'Value: {3}.' \
+            .format(self.parameter.abbr,
+                    self.station.url_id,
+                    local_timestamp.strftime(fmt),
+                    self.value)

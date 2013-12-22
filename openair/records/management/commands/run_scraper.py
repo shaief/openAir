@@ -1,5 +1,7 @@
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
+import pytz
+from openair.settings.base import TIME_ZONE
 from openair.records.models import Zone, Station, Parameter, Record
 from openair.records.scraper import scrape_zone
 
@@ -9,7 +11,9 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        
+
+        local = pytz.timezone(TIME_ZONE)
+
         # run over all of the zones
         for zone in Zone.objects.all():
 
@@ -23,10 +27,12 @@ class Command(BaseCommand):
                     zone=zone
                 )
 
-                timestamp = datetime.strptime(
+                naive_datetime = datetime.strptime(
                     results[station_url_id].pop('timestamp'),
                     '%d/%m/%Y %H:%M'
                 )
+
+                timestamp = local.localize(naive_datetime)
 
                 for abbr in results[station_url_id].keys():
 
