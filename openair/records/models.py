@@ -9,7 +9,7 @@ class Zone(models.Model):
 
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return self.name
+        return u'{}: {}'.format(self.url_id, self.name)
 
 
 class Station(models.Model):
@@ -19,7 +19,7 @@ class Station(models.Model):
 
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return self.name
+        return u'{}: {}'.format(self.url_id, self.name)
 
 
 class Parameter(models.Model):
