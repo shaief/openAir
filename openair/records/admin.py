@@ -4,7 +4,7 @@ from .models import Zone, Station, Parameter, Record
 
 # Zone and Station share the same ModelAdmin
 class ZoneStationAdmin(admin.ModelAdmin):
-	list_display = ['name', 'url_id']
+	list_display = ['url_id', 'name']
 
 
 class ParameterAdmin(admin.ModelAdmin):
