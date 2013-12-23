@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+<title>
+{% block title %}
+open Air
+{% endblock %}
+</title>
+
+{% block content %}
+
+{% if latest_zone_list %}
+    <ul>
+    {% for z in latest_zone_list %}
+        <li>{{ z.name }} {{ z.url_id }}</li>
+    {% endfor %}
+    </ul>
+
+{% else %}
+    <p>No records are available.</p>
+{% endif %}
+
+{% endblock %}

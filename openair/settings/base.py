@@ -79,6 +79,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     'south',
+    'tastypie',
 
     'openair.records',
 )

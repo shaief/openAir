@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+open Air - parameters
+{% endblock %}
+
+{% block content %}
+
+	<div class="row">
+		<div class="col-md-4 col-lg-2">
+			<div class="panel-group" id="accordion">
+			  <div class="panel panel-default">
+			{% if latest_record_list %}
+			    <!-- <ul> -->
+			    {% for r in latest_record_list %}
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#param-{{r.id}}">
+				          {{ r.station.url_id }}
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="param-{{r.id}}" class="panel-collapse collapsing">
+				      <div class="panel-body">
+				        {{ r.value }}
+				      </div>
+				    </div>
+			        <!-- <li>{{ r.parameter }}        {{ r.value }}</li> -->
+			    {% endfor %}
+			    <!-- </ul> -->
+			{% endif %}				
+			  </div>
+			</div>
+		</div>
+	    <div class="col-md-8 col-lg-10">
+<script type="text/javascript">
+ var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+                11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+
+d3.select("body").selectAll("div")
+    .data(dataset)
+    .enter()
+    .append("div")
+    .attr("class", "bar")
+    .style("height", function(d) {
+        var barHeight = d * 5;
+        return barHeight + "px";
+    });
+    </script>
+        </div>
+        
+	</div>
+{% endblock %}
+
+
+    
