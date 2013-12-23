@@ -5,3 +5,7 @@ The data in use in this project is the data collected by the ministry of environ
 
 ## Requirements:
 Check requirements.txt
+
+## Develping 
+Please read HACKING
+
