@@ -7,7 +7,6 @@ class Zone(models.Model):
     url_id = models.IntegerField()
     name = models.CharField(max_length=25)
 
-
     def __unicode__(self):  # Python 3: def __str__(self):
         return u'{}: {}'.format(self.url_id, self.name)
 
@@ -16,7 +15,6 @@ class Station(models.Model):
     zone = models.ForeignKey(Zone)
     name = models.CharField(max_length=25)
     url_id = models.PositiveIntegerField()
-
 
     def __unicode__(self):  # Python 3: def __str__(self):
         return u'{}: {}'.format(self.url_id, self.name)
@@ -28,7 +26,6 @@ class Parameter(models.Model):
     description = models.TextField()
     units = models.CharField(max_length=25)
 
-
     def __unicode__(self):  # Python 3: def __str__(self):
         return self.abbr
 
@@ -38,7 +35,6 @@ class Record(models.Model):
     station = models.ForeignKey(Station)
     timestamp = models.DateTimeField()
     value = models.FloatField(blank=True, null=True)
-
 
     def __unicode__(self):  # Python 3: def __str__(self):
         fmt = '%Y-%m-%d %H:%M'
@@ -52,7 +48,6 @@ class Record(models.Model):
                     self.station.url_id,
                     local_timestamp.strftime(fmt),
                     self.value)
-
 
     def station_url_id(self):
         return self.station.url_id
