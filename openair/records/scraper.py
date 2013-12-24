@@ -35,7 +35,7 @@ def minus_move(value):
         if value[-1] == '-':
             value = float('-{}'.format(value[:-1]))
     except Exception, e:
-        pass    
+        pass
 
     return value
 
@@ -57,7 +57,7 @@ def scrape_station(url_id):
         and values are floats.
     '''
 
-    url ='http://www.svivaaqm.net/Online.aspx?ST_ID={};0' \
+    url = 'http://www.svivaaqm.net/Online.aspx?ST_ID={};0' \
         .format(url_id)
 
     opener = urllib2.build_opener()
@@ -65,10 +65,10 @@ def scrape_station(url_id):
     response = opener.open(url)
     soup = BeautifulSoup(response.read())
     table = soup.find('table',
-                       border='1',
-                       bordercolor='navy',
-                       cellpadding='0',
-                       cellspacing='0')
+                      border='1',
+                      bordercolor='navy',
+                      cellpadding='0',
+                      cellspacing='0')
 
     records = {}
     # the first two rows in the table are for heading
@@ -102,7 +102,7 @@ def scrape_zone(url_id):
         scrape_station() function (see module notes).
     '''
 
-    url ='http://www.svivaaqm.net/DynamicTable.aspx?G_ID={}' \
+    url = 'http://www.svivaaqm.net/DynamicTable.aspx?G_ID={}' \
         .format(url_id)
 
     opener = urllib2.build_opener()
@@ -110,7 +110,7 @@ def scrape_zone(url_id):
     response = opener.open(url)
     soup = BeautifulSoup(response.read())
     table = soup.find('table',
-                       id='C1WebGrid1')
+                      id='C1WebGrid1')
 
     # the first row in the table is for abbreviations
     abbreviations = ['timestamp']
@@ -181,7 +181,7 @@ def main():
             return
 
     print('Type "station" or "zone" and url_id. For example:\n'
-              'python scrape.py zone 8')
+          'python scrape.py zone 8')
 
 
 if __name__ == '__main__':

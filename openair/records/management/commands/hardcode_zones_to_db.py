@@ -7,9 +7,8 @@ from openair.records.models import Zone
 class Command(BaseCommand):
     help = 'Run it to fill the DB with hardcoded zones'
 
-
     def handle(self, *args, **options):
-        
+
         # hardcoded zones
         zones = [
             dict(name='צפון', url_id=7),

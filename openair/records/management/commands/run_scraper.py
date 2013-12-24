@@ -9,7 +9,6 @@ from openair.records.scraper import scrape_zone
 class Command(BaseCommand):
     help = 'Run the scraper on the zones to fill the DB'
 
-
     def handle(self, *args, **options):
 
         local = pytz.timezone(TIME_ZONE)
