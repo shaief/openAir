@@ -1,0 +1,20 @@
+HACKING 
+=======
+
+This file describes how to setup a development environment.
+
+First run
+
+   python manage syncdb
+
+Then create the rest of the tables with:
+
+   python manage migrate migrate records
+ 
+Finally, run the command to populate the database with data from 
+http://www.svivaaqm.net/:
+
+   python manage hardcode_zones_to_db 
+   python manage run_scraper 
+
+Now you have a database you can start working on ...
