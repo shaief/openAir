@@ -3,4 +3,5 @@
 *.pyc
 *~
 db.sqlite3
-.settings/
+.settings/env/bin env/include env/lib env/local env/share
+env/*
