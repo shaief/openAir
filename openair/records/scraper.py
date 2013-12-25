@@ -28,7 +28,6 @@ def minus_move(value):
     '''
     Check if there is a minus at the end of the string. If so move
     it to the beginning and cast to float (right-to-left problem).
-
     '''
 
     try:
@@ -149,6 +148,43 @@ def scrape_zone(url_id):
     return records
 
 
+def scrape_station_info(url_id):
+    url = 'http://www.svivaaqm.net/StationInfo5.aspx?ST_ID={}' \
+        .format(url_id)
+
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    response = opener.open(url)
+    soup = BeautifulSoup(response.read())
+
+    table = soup.find('div', id='stationInfoDiv').find('table')
+    records = {}
+
+    english_keys = [  # translation of the keys from the original table
+        'name',
+        'location',
+        'zone',
+        'owners',
+        'purpose',
+        'lon',
+        'lat',
+        'hight',
+        'date_of_founding',
+    ]
+
+    for i, cell in enumerate(list(table.findAll('tr'))[1:-1]):
+
+        # check if casting to float is needed
+        if english_keys[i] in ['lat', 'lon', 'hight']:
+            value = float(cell.findAll('td')[1].get_text())
+        else:
+            value = cell.findAll('td')[1].get_text()
+
+        records[english_keys[i]] = value
+
+    return records
+
+
 def print_station_records(records):
     for k in records.keys():
         print('{0:18}\t{1}'.format(k, records[k]))
@@ -161,6 +197,11 @@ def print_zone_records(records):
         print('-' * len(text))
         print_station_records(records[station_url_id])
         print('')  # new line
+
+
+def print_station_info_records(records):
+    for k in records.keys():
+        print(u'{0:18}\t{1}'.format(k, records[k]))
 
 
 def main():
@@ -180,7 +221,13 @@ def main():
             print_zone_records(scrape_zone(url_id))
             return
 
-    print('Type "station" or "zone" and url_id. For example:\n'
+        if method == 'station_info':
+            print('Scraping station info of station {}'.format(url_id))
+            print_station_info_records(scrape_station_info(url_id))
+            return
+
+    print('Type "station", "zone" or "station_info" and url_id.\n'
+          'For example:\n'
           'python scrape.py zone 8')
 
 
