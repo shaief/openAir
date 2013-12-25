@@ -44,6 +44,13 @@ def minus_move(value):
     return value
 
 
+def get_soup(url):
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    response = opener.open(url)
+    return BeautifulSoup(response.read())
+
+
 def scrape_station(url_id):
     '''
     Scrap air parameters from
@@ -64,10 +71,7 @@ def scrape_station(url_id):
     url = 'http://www.svivaaqm.net/Online.aspx?ST_ID={};0' \
         .format(url_id)
 
-    opener = urllib2.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    response = opener.open(url)
-    soup = BeautifulSoup(response.read())
+    soup = get_soup(url)
     table = soup.find('table',
                       border='1',
                       bordercolor='navy',
@@ -75,6 +79,7 @@ def scrape_station(url_id):
                       cellspacing='0')
 
     records = {}
+
     # the first two rows in the table are for heading
     for element in table.find_all('tr')[2:]:
         abbr = str(element.a.string.split('[')[0])
@@ -109,15 +114,13 @@ def scrape_zone(url_id):
     url = 'http://www.svivaaqm.net/DynamicTable.aspx?G_ID={}' \
         .format(url_id)
 
-    opener = urllib2.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    response = opener.open(url)
-    soup = BeautifulSoup(response.read())
+    soup = get_soup(url)
     table = soup.find('table',
                       id='C1WebGrid1')
 
     # the first row in the table is for abbreviations
     abbreviations = ['timestamp']
+
     # the relevant cells are located in positions 3 to -1
     for cell in list(table.find('tr'))[3:-1]:
         abbr = str(cell.div.get_text().strip('\r\n\t'))
@@ -125,6 +128,7 @@ def scrape_zone(url_id):
 
     # start scrape parameter values
     records = {}
+
     for element in table.find_all('tr')[2:]:
 
         # station url_id can be found in a the link
@@ -172,11 +176,7 @@ def scrape_station_info(url_id):
     url = 'http://www.svivaaqm.net/StationInfo5.aspx?ST_ID={}' \
         .format(url_id)
 
-    opener = urllib2.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    response = opener.open(url)
-    soup = BeautifulSoup(response.read())
-
+    soup = get_soup(url)
     table = soup.find('div', id='stationInfoDiv').find('table')
     records = {}
 
@@ -242,7 +242,8 @@ def main():
             return
 
         if method == 'station_info':
-            print('Scraping station info of station {}'.format(url_id))
+            print('Scraping station info of station {}\n'
+                  .format(url_id))
             print_station_info_records(scrape_station_info(url_id))
             return
 
