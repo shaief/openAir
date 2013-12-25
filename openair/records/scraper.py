@@ -2,12 +2,13 @@
 Scraper for http://www.svivaaqm.net/
 
 Run standalone as:
-python scraper.py [zone|station] <url_id>
+python scraper.py [zone|station|station_info] <url_id>
 
 Functions
 ---------
 scrape_station(url_id) -> records
 scrape_zone(url_id) -> records
+scrape_station_info(url_id) -> records
 
 Notes
 -----
@@ -17,6 +18,10 @@ one set of abbreviations to work with in advance!
 - In the records returned from the function scrape_zone there is also
 timestamp information, named 'timestamp', as one of the parameters of
 each station. Timestamp values are strings.
+- The keys of the records obtained from scrape_station_info are:
+name, location, zone, owners, purpose, lon, lat, hight, 
+and date_of_founding. lon, lat and hight are floats and the rest are
+unicode strings.
 '''
 
 import sys
@@ -149,6 +154,21 @@ def scrape_zone(url_id):
 
 
 def scrape_station_info(url_id):
+    '''
+    Scrap station information from
+    http://www.svivaaqm.net/StationInfo5.aspx?ST_ID=<STATION_ID>
+
+    Parameters
+    ----------
+    url_id : int
+        Replaces <STATION_ID> in the url.
+
+    Returns
+    -------
+    records : dict
+        Dictionary of key:value pairs (see module notes).
+    '''
+
     url = 'http://www.svivaaqm.net/StationInfo5.aspx?ST_ID={}' \
         .format(url_id)
 
