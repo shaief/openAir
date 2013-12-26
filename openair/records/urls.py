@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^$', TemplateView.as_view(template_name="records/index.html"),
         name='home'),
     url(r'^parameters$', views.parameters, name='parameters'),
+    url(r'^station-(?P<station_id>\d+)-(?P<start>\d+)-to-(?P<end>\d+)$', views.station),
     url(r'^zones$', views.zones, name='zones'),
     url(r'^api/', include(v0_api.urls)),
 )
