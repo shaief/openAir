@@ -2,12 +2,13 @@
 Scraper for http://www.svivaaqm.net/
 
 Run standalone as:
-python scraper.py [zone|station] <url_id>
+python scraper.py [zone|station|station_info] <url_id>
 
 Functions
 ---------
 scrape_station(url_id) -> records
 scrape_zone(url_id) -> records
+scrape_station_info(url_id) -> records
 
 Notes
 -----
@@ -17,6 +18,10 @@ one set of abbreviations to work with in advance!
 - In the records returned from the function scrape_zone there is also
 timestamp information, named 'timestamp', as one of the parameters of
 each station. Timestamp values are strings.
+- The keys of the records obtained from scrape_station_info are:
+name, location, zone, owners, purpose, lon, lat, hight, 
+and date_of_founding. lon, lat and hight are floats and the rest are
+unicode strings.
 '''
 
 import sys
@@ -28,7 +33,6 @@ def minus_move(value):
     '''
     Check if there is a minus at the end of the string. If so move
     it to the beginning and cast to float (right-to-left problem).
-
     '''
 
     try:
@@ -38,6 +42,13 @@ def minus_move(value):
         pass
 
     return value
+
+
+def get_soup(url):
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    response = opener.open(url)
+    return BeautifulSoup(response.read())
 
 
 def scrape_station(url_id):
@@ -60,10 +71,7 @@ def scrape_station(url_id):
     url = 'http://www.svivaaqm.net/Online.aspx?ST_ID={};0' \
         .format(url_id)
 
-    opener = urllib2.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    response = opener.open(url)
-    soup = BeautifulSoup(response.read())
+    soup = get_soup(url)
     table = soup.find('table',
                       border='1',
                       bordercolor='navy',
@@ -71,6 +79,7 @@ def scrape_station(url_id):
                       cellspacing='0')
 
     records = {}
+
     # the first two rows in the table are for heading
     for element in table.find_all('tr')[2:]:
         abbr = str(element.a.string.split('[')[0])
@@ -105,15 +114,13 @@ def scrape_zone(url_id):
     url = 'http://www.svivaaqm.net/DynamicTable.aspx?G_ID={}' \
         .format(url_id)
 
-    opener = urllib2.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    response = opener.open(url)
-    soup = BeautifulSoup(response.read())
+    soup = get_soup(url)
     table = soup.find('table',
                       id='C1WebGrid1')
 
     # the first row in the table is for abbreviations
     abbreviations = ['timestamp']
+
     # the relevant cells are located in positions 3 to -1
     for cell in list(table.find('tr'))[3:-1]:
         abbr = str(cell.div.get_text().strip('\r\n\t'))
@@ -121,6 +128,7 @@ def scrape_zone(url_id):
 
     # start scrape parameter values
     records = {}
+
     for element in table.find_all('tr')[2:]:
 
         # station url_id can be found in a the link
@@ -149,6 +157,54 @@ def scrape_zone(url_id):
     return records
 
 
+def scrape_station_info(url_id):
+    '''
+    Scrap station information from
+    http://www.svivaaqm.net/StationInfo5.aspx?ST_ID=<STATION_ID>
+
+    Parameters
+    ----------
+    url_id : int
+        Replaces <STATION_ID> in the url.
+
+    Returns
+    -------
+    records : dict
+        Dictionary of key:value pairs (see module notes).
+    '''
+
+    url = 'http://www.svivaaqm.net/StationInfo5.aspx?ST_ID={}' \
+        .format(url_id)
+
+    soup = get_soup(url)
+    table = soup.find('div', id='stationInfoDiv').find('table')
+    records = {}
+
+    english_keys = [  # translation of the keys from the original table
+        'name',
+        'location',
+        'zone',
+        'owners',
+        'purpose',
+        'lon',
+        'lat',
+        'hight',
+        'date_of_founding',
+    ]
+
+    for i, cell in enumerate(list(table.findAll('tr'))[1:-1]):
+
+        # check if casting to float is needed
+        if english_keys[i] in ['lat', 'lon', 'hight']:
+            value = float(cell.findAll('td')[1].get_text())
+        else:
+            value = cell.findAll('td')[1].get_text()
+
+        records[english_keys[i]] = value
+
+    return records
+
+
 def print_station_records(records):
     for k in records.keys():
         print('{0:18}\t{1}'.format(k, records[k]))
@@ -161,6 +217,11 @@ def print_zone_records(records):
         print('-' * len(text))
         print_station_records(records[station_url_id])
         print('')  # new line
+
+
+def print_station_info_records(records):
+    for k in records.keys():
+        print(u'{0:18}\t{1}'.format(k, records[k]))
 
 
 def main():
@@ -180,7 +241,14 @@ def main():
             print_zone_records(scrape_zone(url_id))
             return
 
-    print('Type "station" or "zone" and url_id. For example:\n'
+        if method == 'station_info':
+            print('Scraping station info of station {}\n'
+                  .format(url_id))
+            print_station_info_records(scrape_station_info(url_id))
+            return
+
+    print('Type "station", "zone" or "station_info" and url_id.\n'
+          'For example:\n'
           'python scrape.py zone 8')
 
 
