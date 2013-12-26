@@ -8,6 +8,12 @@ openAir - Parameter: {{ parameter.abbr }}
 {% block content %}
 <h1>Parameter: {{ parameter.abbr }}</h1>
 
+<div style="color: red">
+Debugging:<br >
+low standard level {{ parameter.low_level }}<br >
+high standard level {{ parameter.high_level }}<br >
+</div>
+
 <table class="table">
 	<thead><tr>
 	<th>Zone</th>
@@ -25,7 +31,7 @@ openAir - Parameter: {{ parameter.abbr }}
 	var table = d3.select("#records");
 
 	var w = 180
-	var h = 30
+	var h = 20
 	var pad = 10
 
 	x = d3.scale.linear()
@@ -60,18 +66,39 @@ openAir - Parameter: {{ parameter.abbr }}
 		var graph = records.append("td")
 				           .append("svg")
 				           .attr({
+				           		class: 'graph',
 				           		w: w,
 				           		h: h,
-				           })
-				           .append("line")
-				           .attr({
-				        	   	x1: function(d) { return x(d['value']); },
-				        	   	y1: 0,
-				        	   	x2: function(d) { return x(d['value']); },
-				        	   	y2: h,
-				        	   	'stroke-width': 1,
-				        	   	stroke: "black"
 				           });
+
+		var marker = graph.append("circle")
+				          .attr({
+				        	   	cx: function(d) { return x(d['value']); },
+				        	   	cy: h / 2,
+				        	   	r: 3,
+				          });
+
+		{% if parameter.low_level %}
+		var low = graph.append("line")
+					   .attr({
+					   		x1: x({{ parameter.low_level }}),
+					   		y1: 0,
+					   		x2: x({{ parameter.low_level }}),
+					   		y2: h,
+			        	   	stroke: "red"
+					   });
+		{% endif %}
+
+		{% if parameter.high_level %}
+		var low = graph.append("line")
+					   .attr({
+					   		x1: x({{ parameter.high_level }}),
+					   		y1: 0,
+					   		x2: x({{ parameter.high_level }}),
+					   		y2: h,
+			        	   	stroke: "red"
+					   });
+		{% endif %}
 	});
 
 </script>

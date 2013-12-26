@@ -1,4 +1,5 @@
 import json
+from random import random
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.utils import simplejson
@@ -15,16 +16,21 @@ def parameters(request):
 
 def parameter(request, abbr):
 
-    # TODO surround by try except
-    p = Parameter.objects.get(abbr=abbr)
+    p = get_object_or_404(Parameter, abbr=abbr)
+
+    # TODO
+    # temporarily the standard levels are randomized.
+    # add it to the model!
+    p.low_level = random()
+    p.high_level = p.low_level + random() * 8
     context = dict(parameter=p)
     return render(request, 'records/parameter.html', context)
 
 
 def parameter_json(request, abbr):
 
-    # TODO surround by try except
-    p = Parameter.objects.get(abbr=abbr)
+    p = get_object_or_404(Parameter, abbr=abbr)
+
     records = []
 
     for r in p.record_set.all().order_by('timestamp'):
