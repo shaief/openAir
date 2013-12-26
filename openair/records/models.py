@@ -16,11 +16,11 @@ def get_param_time_range(rec, begin, end):
     >>> start = datetime.date(2013, 1, 1)
     >>> end = datetime.date(2014, 1, 1)
     >>> rec = Parameter.objects.first()
-    >>> 2013_measures = get_param_time_range(start, end)
+    >>> measures_2013 = get_param_time_range(rec, start, end)
     """
     
-    Q(timestamp__range=[begin, end])
-    return rec.record_set.filter(Q)
+    q=Q(timestamp__range=[begin, end])
+    return rec.record_set.filter(q)
     
 
 class Zone(models.Model):
