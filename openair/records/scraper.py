@@ -19,8 +19,8 @@ one set of abbreviations to work with in advance!
 timestamp information, named 'timestamp', as one of the parameters of
 each station. Timestamp values are strings.
 - The keys of the records obtained from scrape_station_info are:
-name, location, zone, owners, purpose, lon, lat, hight, 
-and date_of_founding. lon, lat and hight are floats and the rest are
+name, location, zone, owners, purpose, lon, lat, height, 
+and date_of_founding. lon, lat and height are floats and the rest are
 unicode strings.
 '''
 
@@ -188,14 +188,14 @@ def scrape_station_info(url_id):
         'purpose',
         'lon',
         'lat',
-        'hight',
+        'height',
         'date_of_founding',
     ]
 
     for i, cell in enumerate(list(table.findAll('tr'))[1:-1]):
 
         # check if casting to float is needed
-        if english_keys[i] in ['lat', 'lon', 'hight']:
+        if english_keys[i] in ['lat', 'lon', 'height']:
             value = float(cell.findAll('td')[1].get_text())
         else:
             value = cell.findAll('td')[1].get_text()
