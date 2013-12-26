@@ -34,6 +34,12 @@ a beautiful D3 visualization.
 def my_ajax_view(request):
     if not request.is_ajax():
         raise Http404
-    data_dict = getmydata() #lets supose is a dict
+    data_dict = getmydata() #let's suppose is a dict
     return HttpResponse(simplejson.dumps(data_dict))
 '''
+
+
+def station(request, station_id, start, end):
+    # accessible over: station-1-2013-to-2014
+    context = {}
+    return render(request, 'records/station_view.html', context)
