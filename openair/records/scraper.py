@@ -29,6 +29,10 @@ import urllib2
 from bs4 import BeautifulSoup
 
 
+class ScrapingError(Exception):
+    pass
+
+
 def minus_move(value):
     '''
     Check if there is a minus at the end of the string. If so move
@@ -177,7 +181,14 @@ def scrape_station_info(url_id):
         .format(url_id)
 
     soup = get_soup(url)
-    table = soup.find('div', id='stationInfoDiv').find('table')
+
+    # try to find specific element. some stations don't have it
+    # at all (station 181 for example)
+    try:
+        table = soup.find('div', id='stationInfoDiv').find('table')
+    except AttributeError, e:
+        raise ScrapingError('Can\'t scrape station {}'.format(url_id))
+
     records = {}
 
     english_keys = [  # translation of the keys from the original table
@@ -194,11 +205,16 @@ def scrape_station_info(url_id):
 
     for i, cell in enumerate(list(table.findAll('tr'))[1:-1]):
 
+        value = cell.findAll('td')[1].get_text()
+
         # check if casting to float is needed
         if english_keys[i] in ['lat', 'lon', 'height']:
-            value = float(cell.findAll('td')[1].get_text())
-        else:
-            value = cell.findAll('td')[1].get_text()
+
+            # cast only if there is a value there
+            if value != '':
+                value = float(value)
+            else:
+                value = None
 
         records[english_keys[i]] = value
 
@@ -244,7 +260,10 @@ def main():
         if method == 'station_info':
             print('Scraping station info of station {}\n'
                   .format(url_id))
-            print_station_info_records(scrape_station_info(url_id))
+            try:
+                print_station_info_records(scrape_station_info(url_id))
+            except ScrapingError, e:
+                print(e)
             return
 
     print('Type "station", "zone" or "station_info" and url_id.\n'
