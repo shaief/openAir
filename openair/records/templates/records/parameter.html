@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<title>
+TODO title
+</title>
+{% endblock %}
+
+{% block content %}
+<h1>Parameter: {{ parameter.abbr }}</h1>
+
+<!-- <ul>
+{% for station in stations %}
+	<li>{{ station.name }}</li>		
+{% endfor %}
+</ul> -->
+
+<table class="table">
+	<thead><tr>
+	<th>Zone</th>
+	<th>Station</th>
+	<th>Value</th>
+	<th width="200px"></th>
+	</tr></thead>
+	<tbody id="records"></tbody>
+</table>
+
+<div class='d3'></div>
+
+<script type="text/javascript">
+
+	var table = d3.select("#records");
+
+	var w = 180
+	var h = 30
+	var pad = 10
+
+	x = d3.scale.linear()
+
+	d3.json("{% url 'parameter_json' parameter.abbr %}", function(data) {
+		console.log(data);
+
+		// dataset = data
+
+		var records = table.selectAll("tr")
+						   .data(data)
+						   .enter()
+						   .append("tr");
+
+		var zones = records.append("td")
+						   .text(function(d) {
+						   		return d["zone"];
+						   });
+
+		var names = records.append("td")
+						   .text(function(d) {
+						   		return d["name"]; 
+						   });
+
+		var values = records.append("td")
+							.text(function(d) {
+								return d["value"]
+							})
+
+		x.domain([d3.min(data, function(d) { return d['value']; }),
+				 d3.max(data, function(d) { return d['value']; })]);
+
+		x.rangeRound([pad, w - pad]);
+
+		var graph = records.append("td")
+				           .append("svg")
+				           .attr({
+				           		w: w,
+				           		h: h,
+				           })
+				           .append("line")
+				           .attr({
+				        	   	x1: function(d) { return x(d['value']); },
+				        	   	y1: 0,
+				        	   	x2: function(d) { return x(d['value']); },
+				        	   	y2: h,
+				        	   	'stroke-width': 1,
+				        	   	stroke: "black"
+				           });
+	});
+
+/*  var margins = {top: 10,
+				   right: 10,
+				   bottom: 10,
+				   left: 10}
+
+	var w = 400 - margins.left - margins.right
+	var h = 600 - margins.top - margins.bottom
+
+	var svg = d3.select(".d3")
+			    .append("svg")
+			    .attr("width", w + margins.left + margins.right)
+			    .attr("height", h + margins.top + margins.bottom)
+			    .append("g")
+			    .attr("transform", "translate(" + margins.left + ", " + margins.right + ")")
+
+	d3.json("{% url 'parameter_json' parameter.abbr %}", function(data) {
+		console.log(data);
+
+		// data = [1, 2, 3]
+
+		var names = svg.selectAll("text.name")
+			           .data(data)
+			           .enter()
+			           .append("text")
+			           .attr("x", 0)
+			           .attr("y", function(d, i) {
+			           	return 20 * i + 20;
+			           })
+			           .text(function(d) {
+			           	return "Station is " + d["name"];
+			           });
+
+		var values = svg.selectAll("text.value")
+					    .data(data)
+					    .enter()
+					    .append("text")
+			            .attr("x", 150)
+			            .attr("y", function(d, i) {
+			            	return 20 * i + 20;
+			            })
+			            .text(function(d) {
+			            	return "Value is " + d["value"];
+			            });
+	}); */
+</script>
+{% endblock %}

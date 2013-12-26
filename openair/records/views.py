@@ -1,7 +1,8 @@
+import json
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.utils import simplejson
-from openair.records.models import Record, Station
+from openair.records.models import Record, Station, Parameter
 
 
 # def parameters(request):
@@ -14,6 +15,32 @@ def parameters(request):
     latest_record_list = Record.objects.all().order_by('station')[:10]
     context = {'latest_record_list': latest_record_list}
     return render(request, 'records/parameters.html', context)
+
+
+def parameter(request, abbr):
+
+    # TODO surround by try except
+    p = Parameter.objects.get(abbr=abbr)
+    context = dict(parameter=p)
+    return render(request, 'records/parameter.html', context)
+
+
+def parameter_json(request, abbr):
+
+    # TODO surround by try except
+    p = Parameter.objects.get(abbr=abbr)
+    records = []
+
+    for r in p.record_set.all().order_by('timestamp'):
+
+        if not r.station.name in \
+            [record['name'] for record in records]:
+            records.append(dict(name=r.station.name,
+                                zone=r.station.zone.name,
+                                value=r.value))
+
+    return HttpResponse(json.dumps(records))
+
 
 def record_csv(request, param_name):
     model = get_object_or_404(Foo, param_name)
