@@ -35,6 +35,12 @@ class Station(models.Model):
     zone = models.ForeignKey(Zone)
     name = models.CharField(max_length=25)
     url_id = models.PositiveIntegerField()
+    location = models.CharField(max_length=100, blank=True)
+    owners = models.CharField(max_length=100, blank=True)
+    date_of_founding = models.DateTimeField(blank=True, null=True)
+    lon = models.FloatField(blank=True, null=True)
+    lat = models.FloatField(blank=True, null=True)
+    height = models.FloatField(blank=True, null=True)
 
     def __unicode__(self):  # Python 3: def __str__(self):
         return u'{}: {}'.format(self.url_id, self.name)
