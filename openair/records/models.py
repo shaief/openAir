@@ -29,7 +29,7 @@ class Zone(models.Model):
     name = models.CharField(max_length=25)
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return u'{}: {}'.format(self.url_id, self.name)
+        return self.name
 
 
 class Station(models.Model):
@@ -44,7 +44,7 @@ class Station(models.Model):
     height = models.FloatField(blank=True, null=True)
 
     def __unicode__(self):  # Python 3: def __str__(self):
-        return u'{}: {}'.format(self.url_id, self.name)
+        return self.name
 
 
 class Parameter(models.Model):
@@ -75,6 +75,3 @@ class Record(models.Model):
                     self.station.url_id,
                     local_timestamp.strftime(fmt),
                     self.value)
-
-    def station_url_id(self):
-        return self.station.url_id
