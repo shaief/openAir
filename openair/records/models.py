@@ -6,6 +6,7 @@ from django.db.models import Q
 # The following code probably should not stay here ...
 # But for now it's a scratch pad here.
 
+
 def get_param_time_range(rec, begin, end):
     """
     # get all the measurments from a parameter
@@ -18,10 +19,10 @@ def get_param_time_range(rec, begin, end):
     >>> rec = Parameter.objects.first()
     >>> measures_2013 = get_param_time_range(rec, start, end)
     """
-    
-    q=Q(timestamp__range=[begin, end])
+
+    q = Q(timestamp__range=[begin, end])
     return rec.record_set.filter(q)
-    
+
 
 class Zone(models.Model):
     url_id = models.IntegerField()
@@ -54,7 +55,7 @@ class Parameter(models.Model):
 
     def __unicode__(self):  # Python 3: def __str__(self):
         return self.abbr
-    
+
 
 class Record(models.Model):
     parameter = models.ForeignKey(Parameter)
