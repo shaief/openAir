@@ -21,9 +21,30 @@ Next, you can import some data using:
 ```bash
 python manage.py hardcode_zones_to_db
 python manage.py run_scraper
+python manage.py scrape_stations_info
 ```
 
 You now have a basic environment to work on :)
+
+In order to populate the database again with new records run the command:
+
+```bash
+python manage.py run_scraper
+```
+
+## Currently available views
+
+Except from the admin panel the following views are available.
+
+home:
+``'/'``.
+
+parameter:
+``'/parameter/<abbr>/'``.
+
+parameter_json:
+``/parameter/<abbr>/json``. Returns a json that contains the latest records of the
+selected parameter. Used to generate D3 visualizations.
 
 
 ## Visualizations
