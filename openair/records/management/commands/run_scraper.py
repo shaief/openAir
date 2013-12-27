@@ -26,12 +26,19 @@ class Command(BaseCommand):
                     zone=zone
                 )
 
-                naive_datetime = datetime.strptime(
-                    results[station_url_id].pop('timestamp'),
-                    '%d/%m/%Y %H:%M'
+                timestamp_str = results[station_url_id] \
+                    .pop('timestamp')
+
+                # the hour 24:00 is not allowed but yet exist
+                timestamp_str = timestamp_str.replace(
+                    ' 24:', ' 00:'
                 )
 
-                timestamp = local.localize(naive_datetime)
+                naive_timestamp = datetime.strptime(
+                    timestamp_str, '%d/%m/%Y %H:%M'
+                )
+
+                timestamp = local.localize(naive_timestamp)
 
                 for abbr in results[station_url_id].keys():
 
