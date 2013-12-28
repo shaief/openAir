@@ -35,11 +35,26 @@ def parameter_json(request, abbr):
                                 zone=r.station.zone.name,
                                 value=r.value))
 
-    # TODO
-    # temporarily the standard levels are randomized.
-    # add it to the model!
-    p.low_level = random()
-    p.high_level = p.low_level + random() * 8
+    # -------------------------------------------------------------
+    # temporarily the standard levels are generated based on
+    # the records. TODO: add this functionality to the model!
+    min_record = min([r['value'] for r in records])
+    max_record = max([r['value'] for r in records])
+    records_range = max_record - min_record
+    boundery = 0.25
+
+    # add a chance to don't have low level
+    if (random() > 0.2):
+        p.low_level = min_record + boundery * records_range
+    else:
+        p.low_level = None
+
+    # add a chance to don't have low level
+    if (random() > 0.2):
+        p.high_level = max_record - boundery * records_range
+    else:
+        p.high_level = None
+    # -------------------------------------------------------------
 
     info = dict(abbr=p.abbr)
 
