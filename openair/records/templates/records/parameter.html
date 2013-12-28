@@ -8,6 +8,8 @@ openAir - Parameter: {{ parameter.abbr }}
 {% block content %}
 <h1>Parameter: {{ parameter.abbr }}</h1>
 
+<div class="buttons"></div>
+
 <table class="table">
 	<thead><tr>
 	<th>Zone</th>
@@ -17,8 +19,6 @@ openAir - Parameter: {{ parameter.abbr }}
 	</tr></thead>
 	<tbody id="records"></tbody>
 </table>
-
-<div class='d3'></div>
 
 <script type="text/javascript">
 
@@ -34,11 +34,49 @@ openAir - Parameter: {{ parameter.abbr }}
 
 		console.log(data)
 
+		// sort zones
+
+		data.zones = data.zones.sort(function(a, b) {
+			if (a.zone_id > b.zone_id) {
+				return 1
+			} else {
+				return -1
+			}
+		})
+
+		// create collapse buttons
+		d3.select(".buttons")
+			.selectAll("a")
+			.data(data.zones)
+			.enter()
+			.append("a")
+			.text(function(d) {
+				return d.zone;
+			})
+			.attr({
+				class: "btn btn-default",
+				"data-toggle": "collapse",
+				"data-parent": "#accordion",
+				href: function(d) { return ".zone" + d.zone_id },
+			});
+
+		// sort records
+		data.records = data.records.sort(function(a, b) {
+			if (a.zone_id > b.zone_id) {
+				return 1
+			} else {
+				return -1
+			}
+		})
+
 		// place holders for the data
 		var records = table.selectAll("tr")
 			.data(data.records)
 			.enter()
-			.append("tr");
+			.append("tr")
+			.attr({
+				class: function(d) { return "collapse zone" + d.zone_id; },
+			});
 
 		// zone column
 		records.append("td")

@@ -27,13 +27,21 @@ def parameter_json(request, abbr):
 
     records = []
 
+    zones = []
+
     for r in p.record_set.all().order_by('timestamp'):
 
         if not r.station.name in \
             [record['name'] for record in records]:
             records.append(dict(name=r.station.name,
                                 zone=r.station.zone.name,
+                                zone_id=r.station.zone.url_id,
                                 value=r.value))
+
+            if not r.station.zone.url_id in \
+                [z['zone_id'] for z in zones]:
+                zones.append(dict(zone=r.station.zone.name,
+                                  zone_id=r.station.zone.url_id))
 
     # -------------------------------------------------------------
     # temporarily the standard levels are generated based on
@@ -64,7 +72,7 @@ def parameter_json(request, abbr):
     if not p.high_level is None:
         info['high_level'] = p.high_level
 
-    data = dict(info=info, records=records)
+    data = dict(info=info, records=records, zones=zones)
 
     return HttpResponse(json.dumps(data))
 
