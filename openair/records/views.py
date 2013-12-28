@@ -17,12 +17,6 @@ def parameters(request):
 def parameter(request, abbr):
 
     p = get_object_or_404(Parameter, abbr=abbr)
-
-    # TODO
-    # temporarily the standard levels are randomized.
-    # add it to the model!
-    p.low_level = random()
-    p.high_level = p.low_level + random() * 8
     context = dict(parameter=p)
     return render(request, 'records/parameter.html', context)
 
@@ -41,7 +35,23 @@ def parameter_json(request, abbr):
                                 zone=r.station.zone.name,
                                 value=r.value))
 
-    return HttpResponse(json.dumps(records))
+    # TODO
+    # temporarily the standard levels are randomized.
+    # add it to the model!
+    p.low_level = random()
+    p.high_level = p.low_level + random() * 8
+
+    info = dict(abbr=p.abbr)
+
+    if not p.low_level is None:
+        info['low_level'] = p.low_level
+
+    if not p.high_level is None:
+        info['high_level'] = p.high_level
+
+    data = dict(info=info, records=records)
+
+    return HttpResponse(json.dumps(data))
 
 
 def record_csv(request, param_name):

@@ -8,12 +8,6 @@ openAir - Parameter: {{ parameter.abbr }}
 {% block content %}
 <h1>Parameter: {{ parameter.abbr }}</h1>
 
-<div style="color: red">
-Debugging:<br >
-low standard level {{ parameter.low_level }}<br >
-high standard level {{ parameter.high_level }}<br >
-</div>
-
 <table class="table">
 	<thead><tr>
 	<th>Zone</th>
@@ -38,67 +32,130 @@ high standard level {{ parameter.high_level }}<br >
 
 	d3.json("{% url 'parameter_json' parameter.abbr %}", function(data) {
 
+		console.log(data)
+
+		// place holders for the data
 		var records = table.selectAll("tr")
-						   .data(data)
-						   .enter()
-						   .append("tr");
+			.data(data.records)
+			.enter()
+			.append("tr");
 
-		var zones = records.append("td")
-						   .text(function(d) {
-						   		return d["zone"];
-						   });
+		// zone column
+		records.append("td")
+			.text(function(d) {
+				return d["zone"];
+			});
 
-		var names = records.append("td")
-						   .text(function(d) {
-						   		return d["name"]; 
-						   });
+		// name column
+		records.append("td")
+			.text(function(d) {
+				return d["name"]; 
+			});
 
-		var values = records.append("td")
-							.text(function(d) {
-								return d["value"]
-							})
+		// value column
+		records.append("td")
+			.text(function(d) {
+				return d["value"]
+			});
 
-		x.domain([d3.min(data, function(d) { return d['value']; }),
-				 d3.max(data, function(d) { return d['value']; })]);
-
+		// x scale for visualization
+		x.domain([d3.min(data.records, function(d) { return d['value']; }),
+				 d3.max(data.records, function(d) { return d['value']; })]);
 		x.rangeRound([pad, w - pad]);
 
+		// place holder for the svg visualization
 		var graph = records.append("td")
-				           .append("svg")
-				           .attr({
-				           		class: 'graph',
-				           		w: w,
-				           		h: h,
-				           });
+			.append("svg")
+			.attr({
+				w: w,
+				h: h,
+			});
 
-		var marker = graph.append("circle")
-				          .attr({
-				        	   	cx: function(d) { return x(d['value']); },
-				        	   	cy: h / 2,
-				        	   	r: 3,
-				          });
+		// if there is a low_level show it
+		if (data.info.low_level) {
+			graph.append("rect")
+				.attr({
+					x: 0,
+					y: 0,
+					width: x(data.info.low_level),
+					height: h,
+					opacity: 0.3,
+				});
 
-		{% if parameter.low_level %}
-		var low = graph.append("line")
-					   .attr({
-					   		x1: x({{ parameter.low_level }}),
-					   		y1: 0,
-					   		x2: x({{ parameter.low_level }}),
-					   		y2: h,
-			        	   	stroke: "red"
-					   });
-		{% endif %}
+			graph.append("line")
+				.attr({
+					x1: x(data.info.low_level),
+					y1: 0,
+					x2: x(data.info.low_level),
+					y2: h,
+					stroke: "black",
+				});
+		}
 
-		{% if parameter.high_level %}
-		var low = graph.append("line")
-					   .attr({
-					   		x1: x({{ parameter.high_level }}),
-					   		y1: 0,
-					   		x2: x({{ parameter.high_level }}),
-					   		y2: h,
-			        	   	stroke: "red"
-					   });
-		{% endif %}
+		// if there is a high_level show it
+		if (data.info.high_level) {
+			graph.append("rect")
+				.attr({
+					x: x(data.info.high_level),
+					y: 0,
+					width: w - x(data.info.high_level),
+					height: h,
+					opacity: 0.3,
+				});
+
+			graph.append("line")
+				.attr({
+					x1: x(data.info.high_level),
+					y1: 0,
+					x2: x(data.info.high_level),
+					y2: h,
+					stroke: "black",
+				});
+		}
+
+		// svg dashed line
+		graph.append("line")
+			.style("stroke-dasharray", ("3, 3"))  // <== This line here!!
+			.attr({
+				x1: 0,
+				y1: h / 2,
+				x2: w,
+				y2: h / 2,
+				stroke: "black",
+			});
+
+		// svg value markers
+		graph.append("circle")
+			.attr({
+				cx: function(d) { return x(d['value']); },
+				cy: h / 2,
+				r: 4,
+				stroke: "rgba(0, 0, 0, 0.5)",
+				fill: function(d) {
+
+					// if the marker is out of standard mark it as red,
+					// otherwise mark it with blue
+
+					// start by check if the bounderies exist
+					if (data.info.low_level) {
+						if (d.value < data.info.low_level) {
+							return "red";
+						}
+					}
+
+					// and also to the high_level
+					if (data.info.high_level) {
+						if (d.value > data.info.high_level) {
+							return "red";
+						}
+					}
+
+					// if no "if" passed return "black"
+					return "green";
+				},
+			});
+
+	// end of d3.json function
 	});
 
 </script>
