@@ -1,6 +1,12 @@
 from unipath import FSPath as Path
+import os
 
 PROJECT_DIR = Path(__file__).absolute().ancestor(2)
+
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), ".."),
+)
+
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -30,7 +36,8 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+#   'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'djangobower.finders.BowerFinder',
 )
 
 SECRET_KEY = 'supersecretkeythatisoverridedlateron'
@@ -80,10 +87,23 @@ INSTALLED_APPS = (
 
     'south',
     'tastypie',
-
+    'django_nvd3',
+    'djangobower',
     'openair.records',
 )
 
+
+BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
+
+BOWER_INSTALLED_APPS = (
+    'jquery#1.9',
+    'underscore',
+)
+
+# on debian based systems 
+# sudo  ln -s /usr/bin/nodejs /usr/bin/node
+
+BOWER_PATH = "/usr/local/bin/bower"
 SITE_ID = 1
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
