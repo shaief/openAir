@@ -14,8 +14,7 @@ urlpatterns = patterns('',
 
     url(r'^parameter/(?P<abbr>[-_()a-zA-Z0-9 ]+)/$', views.parameter, name='parameter'),
     url(r'^parameter/(?P<abbr>[-_()a-zA-Z0-9 ]+)/json/$', views.parameter_json, name='parameter_json'),
-
-    url(r'^station-(?P<station_id>\d+)-(?P<start>\d+)-to-(?P<end>\d+)$', views.station),
+    url(r'^station-(?P<station_id>\d+)-(?P<start>\d+)-to-(?P<end>\d+)$', views.demo_linechart),
     url(r'^zones$', views.zones, name='zones'),
     url(r'^api/', include(v0_api.urls)),
 )

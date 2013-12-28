@@ -1,12 +1,13 @@
 import json
-from random import random
-from django.http import HttpResponse, Http404
-from django.shortcuts import render, get_object_or_404, render_to_response
-from django.utils import simplejson
-from openair.records.models import Record, Station, Parameter
+import random
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
 import datetime
-from openair.records.models import Record, Parameter, Station, \
-                                   get_param_time_range
+from openair.records.models import (Record, Parameter, Station,
+                                    get_param_time_range)
+
+import time
+
 
 def parameters(request):
     latest_record_list = Record.objects.all().order_by('station')[:10]
@@ -32,14 +33,14 @@ def parameter_json(request, abbr):
     for r in p.record_set.all().order_by('timestamp'):
 
         if not r.station.name in \
-            [record['name'] for record in records]:
+                [record['name'] for record in records]:
             records.append(dict(name=r.station.name,
                                 zone=r.station.zone.name,
                                 zone_id=r.station.zone.url_id,
                                 value=r.value))
 
             if not r.station.zone.url_id in \
-                [z['zone_id'] for z in zones]:
+                    [z['zone_id'] for z in zones]:
                 zones.append(dict(zone=r.station.zone.name,
                                   zone_id=r.station.zone.url_id))
 
@@ -79,7 +80,7 @@ def parameter_json(request, abbr):
 
 def record_csv(request, param_name):
     model = get_object_or_404(Foo, param_name)
-    data = Record.get_data() # should return csv formatted string
+    data = Record.get_data()  # should return csv formatted string
     return HttpResponse(data, content_type='text/csv')
 
 
@@ -89,9 +90,9 @@ def zones(request):
     return render(request, 'records/zones.html', context)
 
 '''
-TODO: create a view that passes data from DB to json 
+TODO: create a view that passes data from DB to json
 according to query/view. This JSON will be parsed later to
-a beautiful D3 visualization. 
+a beautiful D3 visualization.
 
 def my_ajax_view(request):
     if not request.is_ajax():
@@ -112,11 +113,13 @@ def station(request, station_id, start, end):
     context = {"measurements": measurements}
     return render(request, 'records/station_view.html', context)
 
-def demo_linechart(request):
+
+def demo_linechart(request, station_id, start, end):
     """
     lineChart page
     """
-    start_time = int(time.mktime(datetime.datetime(2012, 6, 1).timetuple()) * 1000)
+    start_time = int(time.mktime(datetime.datetime(2012, 6, 1).timetuple())
+                     * 1000)
     nb_element = 150
     xdata = range(nb_element)
     xdata = map(lambda x: start_time + x * 1000000000, xdata)
@@ -139,7 +142,7 @@ def demo_linechart(request):
                  'name2': 'series 2', 'y2': ydata2, 'extra2': extra_serie2}
 
     charttype = "lineChart"
-    chartcontainer = 'linechart_container' # container name
+    chartcontainer = 'linechart_container'  # container name
     data = {
         'charttype': charttype,
         'chartdata': chartdata,
@@ -151,4 +154,5 @@ def demo_linechart(request):
             'jquery_on_ready': False,
         }
     }
-    return render_to_response('linechart.html', data)
+    return render(request, 'records/station_view.html', data)
+    #return render_to_response('linechart.html', data)
