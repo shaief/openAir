@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 timestamp_str = results[station_url_id] \
                     .pop('timestamp')
 
-                # the hour 24:00 is not allowed but yet exist
+                # the hour 24:00 is not allowed but yet exists
                 timestamp_str = timestamp_str.replace(
                     ' 24:', ' 00:'
                 )
