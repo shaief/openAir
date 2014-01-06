@@ -18,12 +18,16 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    args = '<url_id> <station_csv>'
+    args = '<station_csv> <url_id>'
     help = 'Add data from file station_csv to database, the record given'\
         + ' in the file are created with url_id as station identifier'
 
     def handle(self, *args, **options):
-        pass
+        csv_file = args[0]
+        url_id = args[1]
+        print url_id, '  ', csv_file
+        data = pd.read_csv(csv_file, index_col=[20])
+
 #record, success = Record.objects.get_or_create(
 #                        station=station,
 #                        parameter=parameter,
