@@ -53,13 +53,13 @@ def parameter_json(request, abbr):
     boundery = 0.25
 
     # add a chance to don't have low level
-    if (random() > 0.2):
+    if (random.random() > 0.2):
         p.low_level = min_record + boundery * records_range
     else:
         p.low_level = None
 
     # add a chance to don't have low level
-    if (random() > 0.2):
+    if (random.random() > 0.2):
         p.high_level = max_record - boundery * records_range
     else:
         p.high_level = None
