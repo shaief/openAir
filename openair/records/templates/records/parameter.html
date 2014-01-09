@@ -24,8 +24,8 @@ openAir - Parameter: {{ parameter.abbr }}
 
 	var table = d3.select("#records");
 
-	var w = 180
-	var h = 20
+	var width = 180
+	var height = 20
 	var pad = 10
 
 	x = d3.scale.linear()
@@ -99,14 +99,14 @@ openAir - Parameter: {{ parameter.abbr }}
 		// x scale for visualization
 		x.domain([d3.min(data.records, function(d) { return d['value']; }),
 				 d3.max(data.records, function(d) { return d['value']; })]);
-		x.rangeRound([pad, w - pad]);
+		x.rangeRound([pad, width - pad]);
 
 		// place holder for the svg visualization
 		var graph = records.append("td")
 			.append("svg")
 			.attr({
-				w: w,
-				h: h,
+				width: width,
+				height: height,
 			});
 
 		// if there is a low_level show it
@@ -116,7 +116,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					x: 0,
 					y: 0,
 					width: x(data.info.low_level),
-					height: h,
+					height: height,
 					opacity: 0.3,
 				});
 
@@ -125,7 +125,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					x1: x(data.info.low_level),
 					y1: 0,
 					x2: x(data.info.low_level),
-					y2: h,
+					y2: height,
 					stroke: "black",
 				});
 		}
@@ -136,8 +136,8 @@ openAir - Parameter: {{ parameter.abbr }}
 				.attr({
 					x: x(data.info.high_level),
 					y: 0,
-					width: w - x(data.info.high_level),
-					height: h,
+					width: width - x(data.info.high_level),
+					height: height,
 					opacity: 0.3,
 				});
 
@@ -146,7 +146,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					x1: x(data.info.high_level),
 					y1: 0,
 					x2: x(data.info.high_level),
-					y2: h,
+					y2: height,
 					stroke: "black",
 				});
 		}
@@ -156,9 +156,9 @@ openAir - Parameter: {{ parameter.abbr }}
 			.style("stroke-dasharray", ("3, 3"))  // <== This line here!!
 			.attr({
 				x1: 0,
-				y1: h / 2,
-				x2: w,
-				y2: h / 2,
+				y1: height / 2,
+				x2: width,
+				y2: height / 2,
 				stroke: "black",
 			});
 
@@ -166,7 +166,7 @@ openAir - Parameter: {{ parameter.abbr }}
 		graph.append("circle")
 			.attr({
 				cx: function(d) { return x(d['value']); },
-				cy: h / 2,
+				cy: height / 2,
 				r: 4,
 				stroke: "rgba(0, 0, 0, 0.5)",
 				fill: function(d) {
@@ -177,7 +177,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					// start by check if the bounderies exist
 					if (data.info.low_level) {
 						if (d.value < data.info.low_level) {
-							return "red";
+							return "green";
 						}
 					}
 
@@ -189,7 +189,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					}
 
 					// if no "if" passed return "black"
-					return "green";
+					return "orange";
 				},
 			});
 
