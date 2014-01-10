@@ -88,20 +88,24 @@ def stationmap_json(request, url_id):
 
     s = get_object_or_404(Station, url_id=url_id)
     records = []
+    values = []
+    params = []
     for r in s.record_set.all().order_by('timestamp'):
         if not r.parameter.abbr in \
                 [record['name'] for record in records]:
             records.append(dict(name=r.parameter.abbr,
                                 value=r.value,
                                 ))
+            values.append(r.value)
+            params.append(r.parameter.abbr)
 #     for r in s.record_set.all().order_by('timestamp'):
 #         parameters.append(r.parameter.abbr)
 #         measurements.append(r.value)
 #     
     geom = [s.lon, s.lat]
-    info = dict(records=records)
+    #info = dict(records=records)
 
-    data = dict(info=info, geom=geom, timestamp=str(r.timestamp))
+    data = dict(params=params, values=values, geom=geom, timestamp=str(r.timestamp))
     return HttpResponse(json.dumps(data))
 
 def record_csv(request, param_name):

@@ -22,39 +22,35 @@ openAir - {{ station.name }}
 	<svg>
 </div>
 <script type="text/javascript">
-		var data; // a global
+		var dataset; // a global
 		var w = 500;
 		var h = 50;
 		var svg;
 
 		d3.json("{% url 'stationmap_json' station.url_id %}", function(error, json) {
 			if (error) return console.warn(error);
-			data = json;
-			console.log(data);		
-			d3.select("#g")
-				.selectAll("a")
-				.data(data.info.records)
-				.enter()
-				.append("a")
-				.text(function(d) {
-					return d.name;
-				});
-			d3.select("#foo")
-				.selectAll("h1")
-				.data(data.info.records[1].name)
-				.text(function(d){
-					return d
-				});
+			var datasetValues = json.values;
+			var datasetParams = json.params;
+			console.log(datasetParams);		
+			console.log(datasetValues);	
+			// d3.select("#g")
+				// .selectAll("button")
+				// .data(datasetParams)
+				// .enter()
+				// .append("button")
+				// .text(function(d) {
+					// return d;
+				// });
+	        //console.log(dataset.info.records[1].value);
+
 			//Create SVG element
 	       //Width and height
 	        var w = 500;
 	        var h = 100;
 	        var barPadding = 1;
 	        
-	        var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-	                                        11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
-	        
-	        console.log(data.info.records[1].value);
+	        //var dataset1 = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+	        //                               11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
 	        
 	        //Create SVG element
 	        var svg = d3.select("svg")
@@ -62,23 +58,41 @@ openAir - {{ station.name }}
 	                                .attr("width", w)
 	                                .attr("height", h);
 	
+			
+	
 	        svg.selectAll("rect")
-	         .data(dataset)
+	         .data(datasetValues)
 	         .enter()
 	         .append("rect")
 	         .attr("x", function(d, i) {
-	                         return i * (w / dataset.length);
+	                         return i * (w / datasetValues.length);
 	         })
 	         .attr("y", function(d) {
 	                         return h - (d * 4);
 	         })
-	         .attr("width", w / dataset.length - barPadding)
+	         .attr("width", w / datasetValues.length - barPadding)
 	         .attr("height", function(d) {
 	                         return d * 4;
 	         })
 	         .attr("fill", function(d) {
 	                        return "rgb(0, 0, " + (d * 10) + ")";
 	         });
+	         
+	         svg.selectAll("text")
+			   .data(datasetParams)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+        				return d;})
+        	   .attr("y", function(d) {
+        				return h - (1 * 4);  //15 is now 14
+    				})
+    		   .attr("x", function(d, i) {
+        		return i * (w / datasetParams.length) + (w / datasetParams.length - barPadding) / 2;
+    				})
+        	   .attr("font-family", "sans-serif")
+   			   .attr("font-size", "11px")
+   			   .attr("fill", "white");	
 		});
 
 

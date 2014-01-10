@@ -24,8 +24,8 @@ openAir - Parameter: {{ parameter.abbr }}
 
 	var table = d3.select("#records");
 
-	var width = 180
-	var height = 20
+	var w = 180
+	var h = 20
 	var pad = 10
 
 	x = d3.scale.linear()
@@ -91,14 +91,14 @@ openAir - Parameter: {{ parameter.abbr }}
 		// x scale for visualization
 		x.domain([d3.min(data.records, function(d) { return d['value']; }),
 				 d3.max(data.records, function(d) { return d['value']; })]);
-		x.rangeRound([pad, width - pad]);
+		x.rangeRound([pad, w - pad]);
 
 		// place holder for the svg visualization
 		var graph = records.append("td")
 			.append("svg")
 			.attr({
-				width: width,
-				height: height,
+				width: w,
+				height: h,
 			});
 
 		// if there is a low_level show it
@@ -108,7 +108,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					x: 0,
 					y: 0,
 					width: x(data.info.low_level),
-					height: height,
+					height: h,
 					opacity: 0.3,
 				});
 
@@ -117,7 +117,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					x1: x(data.info.low_level),
 					y1: 0,
 					x2: x(data.info.low_level),
-					y2: height,
+					y2: h,
 					stroke: "black",
 				});
 		}
@@ -128,8 +128,8 @@ openAir - Parameter: {{ parameter.abbr }}
 				.attr({
 					x: x(data.info.high_level),
 					y: 0,
-					width: width - x(data.info.high_level),
-					height: height,
+					width: w - x(data.info.high_level),
+					height: h,
 					opacity: 0.3,
 				});
 
@@ -138,7 +138,7 @@ openAir - Parameter: {{ parameter.abbr }}
 					x1: x(data.info.high_level),
 					y1: 0,
 					x2: x(data.info.high_level),
-					y2: height,
+					y2: h,
 					stroke: "black",
 				});
 		}
@@ -148,9 +148,9 @@ openAir - Parameter: {{ parameter.abbr }}
 			.style("stroke-dasharray", ("3, 3"))  // <== This line here!!
 			.attr({
 				x1: 0,
-				y1: height / 2,
-				x2: width,
-				y2: height / 2,
+				y1: h / 2,
+				x2: w,
+				y2: h / 2,
 				stroke: "black",
 			});
 
@@ -158,9 +158,9 @@ openAir - Parameter: {{ parameter.abbr }}
 		graph.append("circle")
 			.attr({
 				cx: function(d) { return x(d['value']); },
-				cy: height / 2,
+				cy: h / 2,
 				r: 4,
-				stroke: "rgba(0, 0, 0, 0.5)",
+				stroke: "none",/*"rgba(0, 0, 0, 0.5)",*/
 				fill: function(d) {
 
 					// if the marker is out of standard mark it as red,
