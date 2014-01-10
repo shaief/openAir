@@ -37,12 +37,8 @@ openAir - Parameter: {{ parameter.abbr }}
 		// sort zones
 
 		data.zones = data.zones.sort(function(a, b) {
-			if (a.zone_id > b.zone_id) {
-				return 1
-			} else {
-				return -1
-			}
-		})
+			return (a.zone_id - b.zone_id);
+		});
 
 		// create collapse buttons
 		d3.select(".buttons")
@@ -62,12 +58,8 @@ openAir - Parameter: {{ parameter.abbr }}
 
 		// sort records
 		data.records = data.records.sort(function(a, b) {
-			if (a.zone_id > b.zone_id) {
-				return 1
-			} else {
-				return -1
-			}
-		})
+			return (a.zone_id - b.zone_id);
+		});
 
 		// place holders for the data
 		var records = table.selectAll("tr")

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+openAir - {{ station.name }}
+
+{% endblock %}
+
+{% block content %}
+<h1 align=center>תחנה: {{ station.name }}</h1>
+
+<div id="g" align=center></div>
+<!-- <svg width="200" height="200">
+  <circle cx="20" cy="20" r="{{ station.records_set.get }}" fill="green" />
+  <rect x="110" y="110" height="30" width="30" fill="blue" />
+  <circle cx="70" cy="70" r="20" fill="purple" />
+  <rect x="160" y="160" height="30" width="30" fill="red" />
+</svg> -->
+
+<div id="foo"><h1></h1></div>
+<div align=center>
+	<svg>
+</div>
+<script type="text/javascript">
+		var data; // a global
+		var w = 500;
+		var h = 50;
+		var svg;
+
+		d3.json("{% url 'stationmap_json' station.url_id %}", function(error, json) {
+			if (error) return console.warn(error);
+			data = json;
+			console.log(data);		
+			d3.select("#g")
+				.selectAll("a")
+				.data(data.info.records)
+				.enter()
+				.append("a")
+				.text(function(d) {
+					return d.name;
+				});
+			d3.select("#foo")
+				.selectAll("h1")
+				.data(data.info.records[1].name)
+				.text(function(d){
+					return d
+				});
+			//Create SVG element
+	       //Width and height
+	        var w = 500;
+	        var h = 100;
+	        var barPadding = 1;
+	        
+	        var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+	                                        11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+	        
+	        console.log(data.info.records[1].value);
+	        
+	        //Create SVG element
+	        var svg = d3.select("svg")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+	
+	        svg.selectAll("rect")
+	         .data(dataset)
+	         .enter()
+	         .append("rect")
+	         .attr("x", function(d, i) {
+	                         return i * (w / dataset.length);
+	         })
+	         .attr("y", function(d) {
+	                         return h - (d * 4);
+	         })
+	         .attr("width", w / dataset.length - barPadding)
+	         .attr("height", function(d) {
+	                         return d * 4;
+	         })
+	         .attr("fill", function(d) {
+	                        return "rgb(0, 0, " + (d * 10) + ")";
+	         });
+		});
+
+
+</script>
+
+
+{% endblock %}
