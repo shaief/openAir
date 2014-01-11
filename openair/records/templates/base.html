@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html xmlns:xlink="http://www.w3.org/1999/xlink">
   <head>
 	<title>
 		{% block title %}
@@ -8,7 +8,7 @@
 	</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
     <script type="text/javascript" src="{% static 'lib/d3.js' %}"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -38,21 +38,10 @@
           <div class="collapse navbar-collapse">
 
             <ul class="nav navbar-nav">
-              <li class="active"><a href="{% url 'home' %}">Home</a></li>
-              <li><a href="{% url 'parameters' %}">Parameters</a></li>
-              <li><a href="#contact">Contact</a></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li class="divider"></li>
-                  <li class="dropdown-header">Nav header</li>
-                  <li><a href="#">Separated link</a></li>
-                  <li><a href="#">One more separated link</a></li>
-                </ul>
-              </li>
+              <li class="active"><a href="{% url 'home' %}">בית</a></li>
+              <li><a href="{% url 'parameters' %}">פרמטרים</a></li>
+              <li><a href="{% url 'parameter' 'CO' %}">פרמטר</a></li>
+              <li><a href="{% url 'stationmap' 11 %}">תחנה</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
