@@ -108,6 +108,20 @@ def stationmap_json(request, url_id):
     data = dict(params=params, values=values, geom=geom, timestamp=str(r.timestamp))
     return HttpResponse(json.dumps(data))
 
+def stationmap_param_json(request, url_id, abbr):
+    s = get_object_or_404(Station, url_id=url_id)
+    params = []
+    timing = []
+    values = []
+    stations = []
+    for r in s.record_set.all().order_by('timestamp'):
+        if (r.parameter.abbr == abbr):
+            values.append(r.value)
+            timing.append(str(r.timestamp))
+
+    data = dict(values=values, timing=timing)
+    return HttpResponse(json.dumps(data))
+
 def record_csv(request, param_name):
     model = get_object_or_404(Foo, param_name)
     data = Record.get_data()  # should return csv formatted string

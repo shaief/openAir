@@ -8,94 +8,196 @@ openAir - {{ station.name }}
 
 {% block content %}
 <h1 align=center>תחנה: {{ station.name }}</h1>
-
-<div id="g" align=center></div>
-<!-- <svg width="200" height="200">
-  <circle cx="20" cy="20" r="{{ station.records_set.get }}" fill="green" />
-  <rect x="110" y="110" height="30" width="30" fill="blue" />
-  <circle cx="70" cy="70" r="20" fill="purple" />
-  <rect x="160" y="160" height="30" width="30" fill="red" />
-</svg> -->
-
 <div id="foo"><h1></h1></div>
 <div align=center>
-	<svg>
+	<svg id="bars">
+	<svg id="labels">
 </div>
+<div>
+	<h1>O3</h1>
+	<span id="timeseriesO3"></span>
+	<h1>CO</h1>
+	<span id="timeseriesCO"></span>
+	<h1>No</h1>
+	<span id="timeseriesNo"></span>
+		
+</div>
+
 <script type="text/javascript">
-		var dataset; // a global
-		var w = 500;
-		var h = 50;
-		var svg;
+		//Create SVG element
+       	//Width and height
+		// a global
+	    var w = 1000;
+	    var h = 100;
+	    var hlabels = h + 20;
+	    var htimestamp = hlabels + 20;
+	    var barPadding = 10;
+	    var barWidth = 25;
+	    var svg;
 
 		d3.json("{% url 'stationmap_json' station.url_id %}", function(error, json) {
 			if (error) return console.warn(error);
 			var datasetValues = json.values;
 			var datasetParams = json.params;
+			var timestamp = json.timestamp;
 			console.log(datasetParams);		
 			console.log(datasetValues);	
-			// d3.select("#g")
-				// .selectAll("button")
-				// .data(datasetParams)
-				// .enter()
-				// .append("button")
-				// .text(function(d) {
-					// return d;
-				// });
-	        //console.log(dataset.info.records[1].value);
+			console.log(timestamp);	
 
-			//Create SVG element
-	       //Width and height
-	        var w = 500;
-	        var h = 100;
-	        var barPadding = 1;
-	        
-	        //var dataset1 = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-	        //                               11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
-	        
 	        //Create SVG element
-	        var svg = d3.select("svg")
+	        var svg = d3.select("#bars")
 	                                .append("svg")
 	                                .attr("width", w)
 	                                .attr("height", h);
-	
-			
 	
 	        svg.selectAll("rect")
 	         .data(datasetValues)
 	         .enter()
 	         .append("rect")
-	         .attr("x", function(d, i) {
-	                         return i * (w / datasetValues.length);
-	         })
+	         //.attr("x", function(d, i) {
+	         //                return i * (w / datasetValues.length);
+	         //})
+	         .attr("x", function(d, i){return i*(barWidth+barPadding)})
 	         .attr("y", function(d) {
 	                         return h - (d * 4);
 	         })
-	         .attr("width", w / datasetValues.length - barPadding)
+	         //.attr("width", w / datasetValues.length - barPadding)
+	         .attr("width", barWidth)
 	         .attr("height", function(d) {
 	                         return d * 4;
 	         })
 	         .attr("fill", function(d) {
 	                        return "rgb(0, 0, " + (d * 10) + ")";
+	         
 	         });
 	         
-	         svg.selectAll("text")
+	         
+	         var svglabels = d3.select("#labels")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", hlabels);
+	         svglabels.selectAll("text")
 			   .data(datasetParams)
 			   .enter()
 			   .append("text")
 			   .text(function(d) {
         				return d;})
         	   .attr("y", function(d) {
-        				return h - (1 * 4);  //15 is now 14
+        				return hlabels;
     				})
-    		   .attr("x", function(d, i) {
+    		   /* .attr("x", function(d, i) {
         		return i * (w / datasetParams.length) + (w / datasetParams.length - barPadding) / 2;
-    				})
+    				}) */
+    		   .attr("x", function(d, i){return i*(barWidth+barPadding) + barWidth/2})
         	   .attr("font-family", "sans-serif")
    			   .attr("font-size", "11px")
-   			   .attr("fill", "white");	
+   			   .attr("text-anchor", "middle")
+   			   .attr("fill", "black");	
 		});
 
+/* Visualizing parameters in a station */
+		
+		d3.json("{% url 'stationmap_param_json' url_id=station.url_id abbr='O3' %}", function(error, json) {
+			if (error) return console.warn(error);
+			var datasetValues = json.values;
+			var datasetTime = json.timing;
+			console.log(datasetValues);	
+			console.log(datasetTime);	
 
+	        //Create SVG element
+	        var svg = d3.select("#timeseriesO3")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+	
+	        svg.selectAll("rect")
+	         .data(datasetValues)
+	         .enter()
+	         .append("rect")
+	         //.attr("x", function(d, i) {
+	         //                return i * (w / datasetValues.length);
+	         //})
+	         .attr("x", function(d, i){return i*(barWidth+barPadding)})
+	         .attr("y", function(d) {
+	                         return h - (d);
+	         })
+	         //.attr("width", w / datasetValues.length - barPadding)
+	         .attr("width", barWidth)
+	         .attr("height", function(d) {
+	                         return d;
+	         })
+	         .attr("fill", function(d) {
+	                        return "rgb(0, 0, " + (d * 10) + ")";	         
+	         });
+	    });
+		
+		d3.json("{% url 'stationmap_param_json' url_id=station.url_id abbr='CO' %}", function(error, json) {
+			if (error) return console.warn(error);
+			var datasetValues = json.values;
+			var datasetTime = json.timing;
+			console.log(datasetValues);	
+			console.log(datasetTime);	
+
+	        //Create SVG element
+	        var svg = d3.select("#timeseriesCO")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+	
+	        svg.selectAll("rect")
+	         .data(datasetValues)
+	         .enter()
+	         .append("rect")
+	         //.attr("x", function(d, i) {
+	         //                return i * (w / datasetValues.length);
+	         //})
+	         .attr("x", function(d, i){return i*(barWidth+barPadding)})
+	         .attr("y", function(d) {
+	                         return h - (d);
+	         })
+	         //.attr("width", w / datasetValues.length - barPadding)
+	         .attr("width", barWidth)
+	         .attr("height", function(d) {
+	                         return d;
+	         })
+	         .attr("fill", function(d) {
+	                        return "rgb(0, 0, " + (d * 10) + ")";	         
+	         });
+	    });
+
+		d3.json("{% url 'stationmap_param_json' url_id=station.url_id abbr='No' %}", function(error, json) {
+			if (error) return console.warn(error);
+			var datasetValues = json.values;
+			var datasetTime = json.timing;
+			console.log(datasetValues);	
+			console.log(datasetTime);	
+
+	        //Create SVG element
+	        var svg = d3.select("#timeseriesNo")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+	
+	        svg.selectAll("rect")
+	         .data(datasetValues)
+	         .enter()
+	         .append("rect")
+	         //.attr("x", function(d, i) {
+	         //                return i * (w / datasetValues.length);
+	         //})
+	         .attr("x", function(d, i){return i*(barWidth+barPadding)})
+	         .attr("y", function(d) {
+	                         return h - (d);
+	         })
+	         //.attr("width", w / datasetValues.length - barPadding)
+	         .attr("width", barWidth)
+	         .attr("height", function(d) {
+	                         return d;
+	         })
+	         .attr("fill", function(d) {
+	                        return "rgb(0, 0, " + (d * 10) + ")";	         
+	         });
+	    });
 </script>
 
 

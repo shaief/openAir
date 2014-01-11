@@ -15,8 +15,12 @@ urlpatterns = patterns('',
     url(r'^parameter/(?P<abbr>[-_()a-zA-Z0-9 ]+)/$', views.parameter, name='parameter'),
     url(r'^parameter/(?P<abbr>[-_()a-zA-Z0-9 ]+)/json/$', views.parameter_json, name='parameter_json'),
     url(r'^station-(?P<station_id>\d+)-(?P<start>\d+)-to-(?P<end>\d+)$', views.demo_linechart),
+    # =====================================================================
+    # urls for stationmap view, including jsons:
+    url(r'^stationmap/json/(?P<url_id>[-_()a-zA-Z0-9 ]+)/(?P<abbr>[-_()a-zA-Z0-9 ]+)/$', views.stationmap_param_json, name='stationmap_param_json'),
+    url(r'^stationmap/json/(?P<url_id>[-_()a-zA-Z0-9 ]+)/$', views.stationmap_json, name='stationmap_json'),
     url(r'^stationmap/(?P<url_id>[-_()a-zA-Z0-9 ]+)/$', views.stationmap, name='stationmap'),
-    url(r'^stationmap/(?P<url_id>[-_()a-zA-Z0-9 ]+)/json/$', views.stationmap_json, name='stationmap_json'),
+    # =====================================================================
     url(r'^zones$', views.zones, name='zones'),
     url(r'^api/', include(v0_api.urls)),
 )
