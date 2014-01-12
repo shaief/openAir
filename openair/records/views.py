@@ -101,30 +101,22 @@ def stationmap_json(request, url_id):
             records.append(dict(name=r.parameter.abbr,
                                 value=r.value,
                                 ))
-            values.append(r.value)
-            params.append(r.parameter.abbr)
-#     for r in s.record_set.all().order_by('timestamp'):
-#         parameters.append(r.parameter.abbr)
-#         measurements.append(r.value)
-#     
     geom = [s.lon, s.lat]
-    #info = dict(records=records)
+    info = dict(records=records, geom=geom, timestamp=str(r.timestamp))
 
-    data = dict(params=params, values=values, geom=geom, timestamp=str(r.timestamp))
-    return HttpResponse(json.dumps(data))
+    data = dict(params=params, values=values, 
+                geom=geom, timestamp=str(r.timestamp))
+    return HttpResponse(json.dumps(info))
 
 def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
-    params = []
-    timing = []
-    values = []
-    stations = []
+    records = []
     for r in s.record_set.all().order_by('timestamp'):
         if (r.parameter.abbr == abbr):
-            values.append(r.value)
-            timing.append(str(r.timestamp))
-
-    data = dict(values=values, timing=timing)
+            records.append(dict(value=r.value, 
+                                timestamp=str(r.timestamp
+                                )))                  
+    data = dict(records=records)                       
     return HttpResponse(json.dumps(data))
 
 def record_csv(request, param_name):
