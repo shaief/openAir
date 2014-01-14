@@ -58,8 +58,34 @@ openAir - {{ station.name }}
 	        svg.selectAll("rect")
 	         .data(json.records)
 	         .enter()
-	         // .append("a")
-    		 // .attr("xlink:href", "{% url 'stationmap_param' station.url_id 'WD' %}")
+	         .append("a")
+    		 .attr("xlink:href", function(d){
+    		 	if (d.name==='CO'){
+    		 		return "{% url 'stationmap_param' station.url_id 'CO' %}"}
+    		 	if (d.name==='SO2'){
+    		 		return "{% url 'stationmap_param' station.url_id 'SO2' %}"}
+    		 	if (d.name==='PM10'){
+    		 		return "{% url 'stationmap_param' station.url_id 'PM10' %}"}
+    		 	if (d.name==='PM2.5'){
+    		 		return "{% url 'stationmap_param' station.url_id 'PM2.5' %}"}
+    		 	if (d.name==='No'){
+    		 		return "{% url 'stationmap_param' station.url_id 'No' %}"}
+    		 	if (d.name==='Nox'){
+    		 		return "{% url 'stationmap_param' station.url_id 'Nox' %}"}
+    		 	if (d.name==='No2'){
+    		 		return "{% url 'stationmap_param' station.url_id 'No2' %}"}
+    		 	if (d.name==='O3'){
+    		 		return "{% url 'stationmap_param' station.url_id 'O3' %}"}
+    		 	if (d.name==='RH'){
+    		 		return "{% url 'stationmap_param' station.url_id 'RH' %}"}
+    		 	if (d.name==='Temp'){
+    		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}"}
+    		 	if (d.name==='WD'){
+    		 		return "{% url 'stationmapwind' station.url_id %}"}    		 		
+    		 	if (d.name==='WS'){
+    		 		return "{% url 'stationmap_param' station.url_id 'WS' %}"}
+    		 	})
+    		 		
 	         .append("rect")
 	         //.attr("x", function(d, i) {
 	         //                return i * (w / datasetValues.length);
@@ -81,8 +107,9 @@ openAir - {{ station.name }}
 			 	.data(json)
 			    .enter()
 			    .append("text")
-			    .text(function(d) {
-        				 return d.name;})
+			    .text("hi")
+			    //.text(function(d) {
+        		//		 return d.name;})
         	    .attr("y", function(d) {
         				 return (15+h-(d.value*4));
     				 })
@@ -91,6 +118,11 @@ openAir - {{ station.name }}
    			    .attr("font-size", "8px")
    			    .attr("text-anchor", "middle")
    			    .attr("fill", "black")
+   			 //Create Y axis
+			svg.append("g")
+    			.attr("class", "axis")
+    			.attr("transform", "translate(" + padding + ",0)")
+    			.call(yAxis);
    			 
 
 	         

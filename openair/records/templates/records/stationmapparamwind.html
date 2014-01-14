@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+openAir - {{ station.name }}
+
+{% endblock %}
+
+{% block content %}
+<h1 align=center>תחנה: {{ station.name }}</h1>
+
+<h1 align=center>פרמטר: {{  abbr }}</h1>
+
+<div align=center>
+	<svg id="timeseries">
+</div>
+<script type="text/javascript">
+	//Create SVG element
+	//Width and height
+	// a global
+
+	var w = 1000;
+	var h = 100;
+	var hlabels = h + 20;
+	var htimestamp = hlabels + 20;
+	var barPadding = 3;
+	var barWidth = 25;
+	var svg;
+
+	String.prototype.toNumber = function() {
+		return parseInt(this, 10);
+	};
+	/* Visualizing parameters in a station */
+
+	d3.json("{% url 'stationmap_wind_json' url_id=station.url_id %}", function(error, json) {
+		if (error)
+			return console.warn(error);
+		var datasetValues = json.values;
+		var datasetTime = json.timing;
+		console.log(json.records);
+
+		// "2014-01-10 12:40:00+00:00",
+		var dArr = json.records.timestemp.split(" ");
+		var dtArr = dArr[0].split("-");
+		var d = new Date(dtArr[0].toNumber() ,dtArr[1].toNumber() , dtArr[2].toNumber());
+		// new Date(year, month, day, hours, minutes, seconds, milliseconds);
+		//Create SVG element
+		var svg = d3.select("#timeseries").append("svg").attr("width", w).attr("height", h);
+
+		svg.selectAll("rect").data(json.records).enter().append("rect")
+		//.attr("x", function(d, i) {
+		//                return i * (w / datasetValues.length);
+		//})
+		.attr("x", function(d, i) {
+			return i * (barWidth + barPadding)
+		}).attr("y", function(d) {
+			return h - (d.value);
+		})
+		//.attr("width", w / datasetValues.length - barPadding)
+		.attr("width", barWidth).attr("height", function(d) {
+			return d.value;
+		}).attr("fill", function(d) {
+			return "rgb(0, 0, " + (d.value * 10) + ")";
+		}).append("svg:title").text(function(d) {
+			return d.timestamp;
+		});
+	});
+
+</script>
+
+{% endblock %}

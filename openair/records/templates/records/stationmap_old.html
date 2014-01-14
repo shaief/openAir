@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+openAir - {{ station.name }}
+
+{% endblock %}
+
+{% block content %}
+<h1 align=center>תחנה: {{ station.name }}</h1>
+
+<div align=center>
+	<svg id="bars">
+	<svg id="labels">
+</div>
+<div id="foo" align=center>
+	
+    <div class="btn-group">
+	{% if station_list %}
+	    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
+	    <ul class="dropdown-menu">    
+	    {% for sta in station_list %}
+	        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
+	    {% endfor %}
+	    </ul>
+	</div>
+	{% else %}
+    	<p>No pages are available.</p>
+	{% endif %}
+</div>
+<script type="text/javascript">
+		//Create SVG element
+       	//Width and height
+		// a global
+	    var w = 1000;
+	    var h = 100;
+	    var hlabels = h + 20;
+	    var htimestamp = hlabels + 20;
+	    var barPadding = 3;
+	    var barWidth = 25;
+	    var svg;
+
+		d3.json("{% url 'stationmap_json' station.url_id %}", function(error, json) {
+			if (error) return console.warn(error);
+			var datasetValues = json.values;
+			var datasetParams = json.params;
+			var timestamp = json.timestamp;
+			console.log(datasetParams);		
+			console.log(datasetValues);	
+			console.log(timestamp);	
+
+	        //Create SVG element
+	        var svg = d3.select("#bars")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+
+	        svg.selectAll("rect")
+	         .data(datasetValues)
+	         .enter()
+	         .append("a")
+    		 .attr("xlink:href", "{% url 'stationmap_param' station.url_id 'WD' %}")
+	         .append("rect")
+	         //.attr("x", function(d, i) {
+	         //                return i * (w / datasetValues.length);
+	         //})
+	         .attr("x", function(d, i){return i*(barWidth+barPadding)})
+	         .attr("y", function(d) {
+	                         return h - (d * 4);
+	         })
+	         //.attr("width", w / datasetValues.length - barPadding)
+	         .attr("width", barWidth)
+	         .attr("height", function(d) {
+	                         return d * 4;
+	         })
+	         .attr("fill", function(d) {
+	                        return "rgb(0, 0, " + (d * 10) + ")";
+	         });
+	         
+	         var svglabels = d3.select("#labels")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", hlabels);
+	         svglabels.selectAll("text")
+			   .data(datasetParams)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+        				return d;})
+        	   .attr("y", function(d) {
+        				return hlabels-2;
+    				})
+    		   /* .attr("x", function(d, i) {
+        		return i * (w / datasetParams.length) + (w / datasetParams.length - barPadding) / 2;
+    				}) */
+    		   .attr("x", function(d, i){return i*(barWidth+barPadding) + barWidth/2})
+        	   .attr("font-family", "sans-serif")
+   			   .attr("font-size", "8px")
+   			   .attr("text-anchor", "middle")
+   			   .attr("fill", "black");	
+		});
+
+/* Visualizing parameters in a station */
+	
+</script>
+
+
+{% endblock %}

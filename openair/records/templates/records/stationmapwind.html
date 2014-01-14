@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+openAir - {{ station.name }}
+
+{% endblock %}
+
+{% block content %}
+<h1 align=center>מהירות וכיוון הרוח בתחנת {{ station.name }}</h1>
+
+<div align=center>
+	<svg id="windrose" width="600" height="400"></svg>
+	<!-- <svg id="timeseries"> -->
+</div>
+<script type="text/javascript">
+		//Create SVG element
+       	//Width and height
+		// a global
+	    var w = "1000px";
+	    var h = 1000;
+	    var hlabels = h + 20;
+	    var htimestamp = hlabels + 20;
+	    var barPadding = 3;
+	    var barWidth = 25;
+	    var svg;
+
+/* Visualizing parameters in a station */
+		
+		var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
+			if (error) return console.warn(error);
+			console.log(json.records);		
+			
+	        //Create SVG element
+	        var svg = d3.select("#timeseries")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+// 			
+ 				var cScale = d3.scale.linear().domain([0, 100]).range([0, 2 * Math.PI]);
+
+			//	data = [[0,50,"#AA8888"], [50,75,"#88BB88"], [75,100,"#8888CC"]]
+				
+				var vis = d3.select("#windrose")
+							        .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+				
+				// var arc = d3.svg.arc()
+					// .innerRadius(100)
+					// .outerRadius(200)
+					// .startAngle(10)
+					// .endAngle(20);
+// 			
+					// // .outerRadius(function(d){return (d.speed*10+100);})
+					// // .startAngle(function(d){return cScale(d.direction+10);})
+					// // .endAngle(function(d){return cScale(d.direction-10);});
+// 					
+				// vis.selectAll("path")
+					// .data(data)
+					// .enter()
+					// .append("path")
+					// .attr("d", arc)
+					// .style("fill", "blue")
+					// .attr("transform", "translate(300,200)");
+		
+		
+			var arc=d3.svg.arc()
+				.innerRadius(100)
+			    .outerRadius(140)
+			    .startAngle(0)
+			    .endAngle(Math.PI/6);
+// 
+	        svg.selectAll("path")
+		        .data(json.records)
+		        .enter()
+		        .append("path")
+		       	.attr("d",arc)
+		        .attr("innerRadius",50) ///function(d){return 100;})
+		        .attr("outerRadius",function(d){console.log(d); return d.speed*10+100;})
+				.attr("startAngle", function(d){return d.direction+10;})
+		        .attr("endAngle", function(d){return d.direction-10;})
+		        .attr("transform","translate(200,200)")
+		        //.attr("stroke","black")
+		        .attr("fill",function(d) {
+	                         return "rgb(0, 0, " + (d.id*30) + ")";	         
+	         			 })
+		        //.attr("stroke-width","1")
+		        .attr("id","dimen");
+// 
+	         // //.attr("x", function(d, i) {
+	         // //                return i * (w / datasetValues.length);
+	         // //})
+	         // // .attr("x", function(d, i){return i*(barWidth+barPadding)})
+	         // // .attr("y", function(d) {
+	                         // // return h - (d.speed*10);
+	         // // })
+	         // //.attr("width", w / datasetValues.length - barPadding)
+	         // // .attr("width", barWidth)
+	         // // .attr("height", function(d) {
+	                         // // return d.speed*10;
+	         // // })
+	         // // .attr("fill", function(d) {
+	                        // // return "rgb(0, 0, " + (d.id*30) + ")";	         
+	         // // })
+	         // // .append("svg:title")
+   			 // .text(function(d) { return d.timestamp; });
+	    });
+		
+
+</script>
+
+
+{% endblock %}

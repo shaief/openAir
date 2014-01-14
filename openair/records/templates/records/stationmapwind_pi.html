@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+openAir - {{ station.name }}
+
+{% endblock %}
+
+{% block content %}
+<h1 align=center>מהירות וכיוון הרוח בתחנת {{ station.name }}</h1>
+
+<div align=center>
+	<svg id="windrose" width="600" height="400"></svg>
+	<!-- <svg id="timeseries"> -->
+</div>
+<script type="text/javascript">
+
+
+var cScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
+var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
+	if (error) return console.warn(error);
+			console.log(json.records);
+var	dataset=json.records		
+var vis = d3.select("#windrose");
+var arc = d3.svg.arc()
+	.innerRadius(5)
+	.outerRadius(function(d){return (d.speed*10+50);})
+	.startAngle(function(d){return cScale(d.direction+5);})
+	.endAngle(function(d){return cScale(d.direction-5);});
+
+vis.selectAll("path")
+	.data(json.records)
+	.enter()
+	.append("path")
+	.attr("d", arc)
+	.style("fill", function(d){return "rgb(0, 0, " + (d.id*30) + ")";})
+	.attr("transform", "translate(300,200)");
+});
+</script>
+
+
+{% endblock %}

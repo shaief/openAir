@@ -1,12 +1,12 @@
-import json
-import random
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from openair.records.models import Record, Parameter, Station, \
+    get_param_time_range
 import datetime
-from openair.records.models import (Record, Parameter, Station,
-                                    get_param_time_range)
-
+import json
+import random
 import time
+import itertools
 
 
 def parameters(request):
@@ -77,8 +77,11 @@ def parameter_json(request, abbr):
 
     return HttpResponse(json.dumps(data))
 
-def stationmap(request, url_id):
+def map(request):
 
+    return render(request, 'records/map.html')
+
+def stationmap(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
     context = dict(station=s, station_list=station_list)
@@ -89,8 +92,12 @@ def stationmapparam(request, url_id, abbr):
     context = dict(station=s, abbr=abbr)
     return render(request, 'records/stationmapparam.html', context)
 
-def stationmap_json(request, url_id):
+def stationmapwind(request, url_id):
+    s = get_object_or_404(Station, url_id=url_id)
+    context = dict(station=s, abbr='WD')
+    return render(request, 'records/stationmapwind_pi.html', context)
 
+def stationmap_json(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     records = []
     values = []
@@ -104,7 +111,7 @@ def stationmap_json(request, url_id):
     geom = [s.lon, s.lat]
     info = dict(records=records, geom=geom, timestamp=str(r.timestamp))
 
-    data = dict(params=params, values=values, 
+    data = dict(params=params, values=values,
                 geom=geom, timestamp=str(r.timestamp))
     return HttpResponse(json.dumps(info))
 
@@ -113,10 +120,39 @@ def stationmap_param_json(request, url_id, abbr):
     records = []
     for r in s.record_set.all().order_by('timestamp'):
         if (r.parameter.abbr == abbr):
-            records.append(dict(value=r.value, 
+            records.append(dict(value=r.value,
                                 timestamp=str(r.timestamp
                                 )))                  
     data = dict(records=records)                       
+    return HttpResponse(json.dumps(data))
+
+def stationmapwind_json(request, url_id):
+    s = get_object_or_404(Station, url_id=url_id)
+    rv = []
+    i = 0
+    records = list(s.record_set.all().order_by('timestamp'))
+    l = itertools.groupby(records, lambda x: x.timestamp)
+    for ts, records in l:
+        i+=1
+        params = {x.parameter.abbr: x.value for x in records}
+        d = {
+             'id': i,
+             'direction': params['WD'],
+             'speed': params['WS'],
+             'timestamp': unicode(ts),
+             }
+        rv.append(d)
+#         wind = {
+#                 'WD':r.parameter_set,
+#                  'WS':0}
+#                 wind['WD'] = r.value
+#             else:
+#                 wind['WS'] = r.value
+#         records.append(dict(abbr=r.parameter.abbr, value=r.value,
+#                             timestamp=str(r.timestamp), id=i,
+#                             wind=wind
+#                                 ))
+    data = dict(records=rv)    
     return HttpResponse(json.dumps(data))
 
 def record_csv(request, param_name):
@@ -150,7 +186,7 @@ def station(request, station_id, start, end):
     wd = Parameter.objects.first()
     wd_rec = get_param_time_range(wd, start, end)
     tstamps, measurements = zip(*[(x.timestamp, x.value) for x in wd_rec])
-    measurements = '['+', '.join([str(x) for x in measurements])+']'
+    measurements = '[' + ', '.join([str(x) for x in measurements]) + ']'
     context = {"measurements": measurements}
     return render(request, 'records/station_view.html', context)
 
@@ -196,4 +232,4 @@ def demo_linechart(request, station_id, start, end):
         }
     }
     return render(request, 'records/station_view.html', data)
-    #return render_to_response('linechart.html', data)
+    # return render_to_response('linechart.html', data)
