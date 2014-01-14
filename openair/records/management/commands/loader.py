@@ -25,7 +25,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         csv_file, url_id = args[0], arg[1]
-        print url_id, '  ', csv_file
         station = Station.objects.get(url_id=url_id)
         data = pd.read_csv(csv_file, index_col=[20])
         local = pytz.timezone(TIME_ZONE)
