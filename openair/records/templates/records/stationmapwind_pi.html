@@ -2,39 +2,74 @@
 {% load static %}
 
 {% block title %}
-openAir - {{ station.name }}
+openAir -מצב הרוח ב{{ station.name }}
 
 {% endblock %}
 
 {% block content %}
 <h1 align=center>מהירות וכיוון הרוח בתחנת {{ station.name }}</h1>
-
+    <div class="btn-group">
+	{% if station_list %}
+	    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
+	    <ul class="dropdown-menu">    
+	    {% for sta in station_list %}
+	        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.url_id %}">{{ sta.name }}</a></li>
+	    {% endfor %}
+	    </ul>
+	</div>
+	{% else %}
+    	<p>No pages are available.</p>
+	{% endif %}
 <div align=center>
-	<svg id="windrose" width="600" height="400"></svg>
+	<svg id="windrose" width="400" height="400"></svg>
 	<!-- <svg id="timeseries"> -->
 </div>
+
 <script type="text/javascript">
+var centerX = 200;
+var centerY = centerX;
 
+var speedColorScale = d3.scale.linear()
+    .domain([0,50])
+    .range("green","yellow","red");
+    
+var windRoseRadius = 15
 
-var cScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
+var directionScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
+var speedScale = d3.scale.linear().domain([0, 100]).range([0, 2500]);
 var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
 	if (error) return console.warn(error);
 			console.log(json.records);
 var	dataset=json.records		
 var vis = d3.select("#windrose");
 var arc = d3.svg.arc()
-	.innerRadius(5)
-	.outerRadius(function(d){return (d.speed*10+50);})
-	.startAngle(function(d){return cScale(d.direction+5);})
-	.endAngle(function(d){return cScale(d.direction-5);});
+	.innerRadius(windRoseRadius)
+	.outerRadius(function(d){return (speedScale(d.speed)+windRoseRadius);})
+	.startAngle(function(d){return directionScale(d.direction+5);})
+	.endAngle(function(d){return directionScale(d.direction-5);});
+
+var speedCircle = [0, 1, 2, 3, 4, 5, 6, 7];
+
+var circles = vis.selectAll("circle")
+                          .data(speedCircle)
+                          .enter()
+                          .append("circle");
+
+var circleAttributes = circles
+                       .attr("cx", centerX)
+                       .attr("cy", centerY)
+                       .attr("r", function (d) { return (speedScale(d)+windRoseRadius); })
+                       .style("stroke", "black")
+                       .style("fill", "none");
 
 vis.selectAll("path")
 	.data(json.records)
 	.enter()
 	.append("path")
 	.attr("d", arc)
-	.style("fill", function(d){return "rgb(0, 0, " + (d.id*30) + ")";})
-	.attr("transform", "translate(300,200)");
+	.style("fill", function(d){return speedColorScale(d.speed);})
+	.style("fill-opacity", function(d){return (d.id/10);})
+	.attr("transform", "translate(200,200)");
 });
 </script>
 

@@ -89,12 +89,14 @@ def stationmap(request, url_id):
 
 def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
-    context = dict(station=s, abbr=abbr)
+    station_list = Station.objects.all().order_by('name')
+    context = dict(station=s, abbr=abbr, station_list=station_list)
     return render(request, 'records/stationmapparam.html', context)
 
 def stationmapwind(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
-    context = dict(station=s, abbr='WD')
+    station_list = Station.objects.all().order_by('name')
+    context = dict(station=s, abbr='WD', station_list=station_list)
     return render(request, 'records/stationmapwind_pi.html', context)
 
 def stationmap_json(request, url_id):
