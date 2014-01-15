@@ -43,7 +43,7 @@ parameter:
 ``'/parameter/<abbr>/'``.
 
 parameter_json:
-``/parameter/<abbr>/json``. Returns a json that contains the latest records of the
+``'/parameter/<abbr>/json'``. Returns a json that contains the latest records of the
 selected parameter. Used to generate D3 visualizations.
 
 stationmap:
@@ -70,5 +70,5 @@ Not finished yet - but we started to pave the yellow brick road to there.
 Our goal is to visualize the data using D3.js. For that - we created an api 
 using django-tastypie.
 
-As a beginning - run the server and go to: http://localhost:8000/api/v0/station/ 
-or http://localhost:8000/api/v0/station/[station.id]
+As a beginning - run the server and go to: ``http://localhost:8000/api/v0/station/`` 
+or ``http://localhost:8000/api/v0/station/<station.id>``
