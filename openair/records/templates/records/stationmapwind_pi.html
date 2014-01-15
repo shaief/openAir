@@ -21,22 +21,21 @@ openAir -מצב הרוח ב{{ station.name }}
     	<p>No pages are available.</p>
 	{% endif %}
 <div align=center>
-	<svg id="windrose" width="400" height="400"></svg>
+	<svg id="windrose" width="500" height="500"></svg>
 	<!-- <svg id="timeseries"> -->
 </div>
 
 <script type="text/javascript">
-var centerX = 200;
+var centerX = 250;
 var centerY = centerX;
 
-var speedColorScale = d3.scale.linear()
-    .domain([0,50])
-    .range("green","yellow","red");
+var speedColorScale = d3.scale.category20c()
+    .domain([0,50]);
     
-var windRoseRadius = 15
+var windRoseRadius = 10
 
 var directionScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
-var speedScale = d3.scale.linear().domain([0, 100]).range([0, 2500]);
+var speedScale = d3.scale.linear().domain([0, 100]).range([0, 2000]);
 var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
 	if (error) return console.warn(error);
 			console.log(json.records);
@@ -45,10 +44,10 @@ var vis = d3.select("#windrose");
 var arc = d3.svg.arc()
 	.innerRadius(windRoseRadius)
 	.outerRadius(function(d){return (speedScale(d.speed)+windRoseRadius);})
-	.startAngle(function(d){return directionScale(d.direction+5);})
-	.endAngle(function(d){return directionScale(d.direction-5);});
+	.startAngle(function(d){return directionScale(d.direction+10);})
+	.endAngle(function(d){return directionScale(d.direction-10);});
 
-var speedCircle = [0, 1, 2, 3, 4, 5, 6, 7];
+var speedCircle = [0, 2, 4, 6, 8];
 
 var circles = vis.selectAll("circle")
                           .data(speedCircle)
@@ -60,6 +59,7 @@ var circleAttributes = circles
                        .attr("cy", centerY)
                        .attr("r", function (d) { return (speedScale(d)+windRoseRadius); })
                        .style("stroke", "black")
+                       .style("stroke-width", 0.25)
                        .style("fill", "none");
 
 vis.selectAll("path")
@@ -67,9 +67,16 @@ vis.selectAll("path")
 	.enter()
 	.append("path")
 	.attr("d", arc)
-	.style("fill", function(d){return speedColorScale(d.speed);})
-	.style("fill-opacity", function(d){return (d.id/10);})
-	.attr("transform", "translate(200,200)");
+	.style("stroke", "black")
+	.style("stroke-width", 0.5)
+	.style("fill", function(d) {
+	                        return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";	         
+	         })
+	// .style("fill", function(d){return speedColorScale(d.speed);})
+	.style("fill-opacity", function(d){return 0.25+(d.id/10);})
+	.attr("transform", "translate(250,250)")
+	.append("svg:title")
+	.text(function(d) { return d.direction+" deg\n"+d.speed+" m/sec\n"+d.timestamp; });
 });
 </script>
 
