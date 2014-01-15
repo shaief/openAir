@@ -46,10 +46,27 @@ parameter_json:
 ``/parameter/<abbr>/json``. Returns a json that contains the latest records of the
 selected parameter. Used to generate D3 visualizations.
 
+stationmap:
+``'/stationmap/<url_id>/'``.
+
+stationmap_json:
+``'/stationmap/json/<url_id>/<abbr>/'``. Returns a json that contains the records of the
+selected station. Used to generate D3 visualizations.
+
+stationmap_param:
+``'/stationmapparam/<url_id>/<abbr>'``.
+
+stationmapwind:
+``'/stationmapwind/<url_id>/'``.
+
+stationmap_json:
+``'/stationmapparam/json/<url_id>/<abbr>/'``. Returns a json that contains the list of records of the
+selected station and parameter. Used to generate D3 visualizations.
+
 
 ## Visualizations
 
-Not finished yet - but the we started to pave the yellow brick road to there.
+Not finished yet - but we started to pave the yellow brick road to there.
 Our goal is to visualize the data using D3.js. For that - we created an api 
 using django-tastypie.
 
