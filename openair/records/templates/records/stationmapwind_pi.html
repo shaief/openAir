@@ -9,12 +9,12 @@ openAir -מצב הרוח ב{{ station.name }}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">רוח בתחנות באזור  {{  station.zone.name }}  <b class="caret"></b></a>
         <ul class="dropdown-menu">
 			{% for sta in station_list_in_zone %}
-				{% if sta.zone.url_id %}
+				{% ifequal sta.zone.url_id zone_url_id %}
 			        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a></li>
-				{% endif %}
+				{% endifequal %}
 			{% endfor %}
         </ul>
-      </li>
+       </li>
 {% endblock %}
 {% block content %}
 <div align=center>
@@ -42,21 +42,25 @@ var centerY = centerX;
 
 var speedColorScale = d3.scale.category20c()
     .domain([0,50]);
-    
-var windRoseRadius = 10
+
+var windRoseRadius = 10;
 
 var directionScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
 var speedScale = d3.scale.linear().domain([0, 100]).range([0, 2000]);
 var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
 	if (error) return console.warn(error);
 			console.log(json.records);
-var	dataset=json.records		
+var	dataset=json.records;	
 var vis = d3.select("#windrose");
 var arc = d3.svg.arc()
 	.innerRadius(windRoseRadius)
 	.outerRadius(function(d){return (speedScale(d.speed)+windRoseRadius);})
 	.startAngle(function(d){return directionScale(d.direction+10);})
 	.endAngle(function(d){return directionScale(d.direction-10);});
+
+var idmax = d3.max(json.records, function(d){ return d.id; });
+console.log(idmax);
+var idScale = d3.scale.linear().domain([0, idmax]).range([0, 1]);
 
 var speedCircle = [0, 2, 4, 6, 8];
 
@@ -83,7 +87,7 @@ vis.selectAll("path")
 	.style("fill", function(d) {
 	                        return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";	         
 	         })
-	.style("fill-opacity", function(d){return 0.25+(d.id/10);})
+	.style("fill-opacity", function(d){return (idScale(d.id));})
 	.attr("transform", "translate(250,250)")
 	.append("svg:title")
 	.text(function(d) { return d.direction+" deg\n"+d.speed+" m/sec\n"+d.timestamp; });
