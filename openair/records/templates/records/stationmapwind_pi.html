@@ -3,28 +3,39 @@
 
 {% block title %}
 openAir -מצב הרוח ב{{ station.name }}
-
 {% endblock %}
-
+{% block navbar-list %}
+	<li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">רוח בתחנות באזור  {{  station.zone.name }}  <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+			{% for sta in station_list_in_zone %}
+				{% if sta.zone.url_id %}
+			        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a></li>
+				{% endif %}
+			{% endfor %}
+        </ul>
+      </li>
+{% endblock %}
 {% block content %}
+<div align=center>
 <h1 align=center>מהירות וכיוון הרוח בתחנת {{ station.name }}</h1>
     <div class="btn-group">
 	{% if station_list %}
 	    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
 	    <ul class="dropdown-menu">    
 	    {% for sta in station_list %}
-	        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.url_id %}">{{ sta.name }}</a></li>
+	    	{% if sta.zone.url_id %}
+	        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a></li>
+	    	{% endif %}
 	    {% endfor %}
 	    </ul>
 	</div>
 	{% else %}
     	<p>No pages are available.</p>
 	{% endif %}
-<div align=center>
 	<svg id="windrose" width="500" height="500"></svg>
-	<!-- <svg id="timeseries"> -->
 </div>
-
+<p align="center" dir="rtl">דיאגרמת רוחות בתחנת {{ station.name }} המציגה את כיוון ועוצמת הרוח על פי מדידות שנעשו בתחנה ונמצאות באינטרנט באתר המשרד להגנת הסביבה בכתובת <a>http://svivaaqm.net</a></p>
 <script type="text/javascript">
 var centerX = 250;
 var centerY = centerX;
@@ -72,7 +83,6 @@ vis.selectAll("path")
 	.style("fill", function(d) {
 	                        return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";	         
 	         })
-	// .style("fill", function(d){return speedColorScale(d.speed);})
 	.style("fill-opacity", function(d){return 0.25+(d.id/10);})
 	.attr("transform", "translate(250,250)")
 	.append("svg:title")

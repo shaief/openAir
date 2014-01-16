@@ -81,9 +81,9 @@ h1 align="center">זמן המדידה: {{ station.record_set.timestamp }}</h1>
     		 	if (d.name==='Temp'){
     		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}";}
     		 	if (d.name==='WD'){
-    		 		return "{% url 'stationmapwind' station.url_id %}";}    		 		
+    		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";}    		 		
     		 	if (d.name==='WS'){
-    		 		return "{% url 'stationmapwind' station.url_id %}";};
+    		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";};
     		 	})
 	         .append("rect")
 	         .attr("x", function(d, i){return i*(barWidth+barPadding);})

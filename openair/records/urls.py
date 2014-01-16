@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^stationmap/json/(?P<url_id>[-_()a-zA-Z0-9 ]+)/$', views.stationmap_json, name='stationmap_json'),
     url(r'^stationmap/(?P<url_id>[-_()a-zA-Z0-9 ]+)/$', views.stationmap, name='stationmap'),
     url(r'^stationmapparam/(?P<url_id>[-_()a-zA-Z0-9 ]+)/(?P<abbr>[-_()a-zA-Z0-9. ]+)/$', views.stationmapparam, name='stationmap_param'),
-    url(r'^stationmapwind/(?P<url_id>[0-9]+)/$', views.stationmapwind, name='stationmapwind'),
+    url(r'^stationmapwind/(?P<zone_url_id>[0-9]+)/(?P<station_url_id>[0-9]+)/$', views.stationmapwind, name='stationmapwind'),
     url(r'^stationmapwind/json/(?P<url_id>[0-9]+)/$', views.stationmapwind_json, name='stationmapwind_json'),
     # =====================================================================
     url(r'^map/$', views.map, name='map'),

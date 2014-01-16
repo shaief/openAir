@@ -42,6 +42,8 @@
               <li><a href="{% url 'parameters' %}">פרמטרים</a></li>
               <li><a href="{% url 'parameter' 'CO' %}">פרמטר</a></li>
               <li><a href="{% url 'stationmap' 11 %}">תחנה</a></li>
+				{% block navbar-list %}
+				{% endblock %}
             </ul>
           </div><!--/.nav-collapse -->
         </div>

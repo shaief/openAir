@@ -45,26 +45,7 @@ openAir - {{ station.name }}
 							        .append("svg")
 	                                .attr("width", w)
 	                                .attr("height", h);
-				
-				// var arc = d3.svg.arc()
-					// .innerRadius(100)
-					// .outerRadius(200)
-					// .startAngle(10)
-					// .endAngle(20);
-// 			
-					// // .outerRadius(function(d){return (d.speed*10+100);})
-					// // .startAngle(function(d){return cScale(d.direction+10);})
-					// // .endAngle(function(d){return cScale(d.direction-10);});
-// 					
-				// vis.selectAll("path")
-					// .data(data)
-					// .enter()
-					// .append("path")
-					// .attr("d", arc)
-					// .style("fill", "blue")
-					// .attr("transform", "translate(300,200)");
-		
-		
+
 			var arc=d3.svg.arc()
 				.innerRadius(100)
 			    .outerRadius(140)
@@ -81,30 +62,11 @@ openAir - {{ station.name }}
 				.attr("startAngle", function(d){return d.direction+10;})
 		        .attr("endAngle", function(d){return d.direction-10;})
 		        .attr("transform","translate(200,200)")
-		        //.attr("stroke","black")
 		        .attr("fill",function(d) {
 	                         return "rgb(0, 0, " + (d.id*30) + ")";	         
 	         			 })
-		        //.attr("stroke-width","1")
 		        .attr("id","dimen");
-// 
-	         // //.attr("x", function(d, i) {
-	         // //                return i * (w / datasetValues.length);
-	         // //})
-	         // // .attr("x", function(d, i){return i*(barWidth+barPadding)})
-	         // // .attr("y", function(d) {
-	                         // // return h - (d.speed*10);
-	         // // })
-	         // //.attr("width", w / datasetValues.length - barPadding)
-	         // // .attr("width", barWidth)
-	         // // .attr("height", function(d) {
-	                         // // return d.speed*10;
-	         // // })
-	         // // .attr("fill", function(d) {
-	                        // // return "rgb(0, 0, " + (d.id*30) + ")";	         
-	         // // })
-	         // // .append("svg:title")
-   			 // .text(function(d) { return d.timestamp; });
+
 	    });
 		
 
