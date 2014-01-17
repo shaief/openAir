@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% block head %}
+	<head>
+		 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+	     <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+	    <style>
+	    	#map { height: 400px;
+	    			width: 400px }
+	    </style>
+  	</head>
+{% endblock %}
 {% block title %}
 openAir -מצב הרוח ב{{ station.name }}
 {% endblock %}
@@ -8,8 +17,8 @@ openAir -מצב הרוח ב{{ station.name }}
 	<li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">רוח בתחנות באזור  {{  station.zone.name }}  <b class="caret"></b></a>
         <ul class="dropdown-menu">
-			{% for sta in station_list_in_zone %}
-				{% ifequal sta.zone.url_id zone_url_id %}
+			{% for sta in station_list %}
+					{% ifequal sta.zone.url_id zone_url_id %}
 			        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a></li>
 				{% endifequal %}
 			{% endfor %}
@@ -17,25 +26,42 @@ openAir -מצב הרוח ב{{ station.name }}
        </li>
 {% endblock %}
 {% block content %}
-<div align=center>
 <h1 align=center>מהירות וכיוון הרוח בתחנת {{ station.name }}</h1>
-    <div class="btn-group">
-	{% if station_list %}
-	    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
-	    <ul class="dropdown-menu">    
-	    {% for sta in station_list %}
-	    	{% if sta.zone.url_id %}
-	        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a></li>
-	    	{% endif %}
-	    {% endfor %}
-	    </ul>
+   <div class="row">
+                <div class="col-md-6">
+   					<div id="map"></div>
+   				</div>
+   				<div class="col-md-5">
+					<svg id="windrose" width="500" height="500"></svg>
+				</div>
+	    <div class="col-md-1">
+	    <div class="btn-group">
+		{% if station_list %}
+		    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
+		    <ul class="dropdown-menu">    
+		    {% for sta in station_list %}
+		    	{% if sta.zone.url_id %}
+		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a></li>
+		    	{% endif %}
+		    {% endfor %}
+		    </ul>
+		</div>
+		{% else %}
+	    	<p>No pages are available.</p>
+		{% endif %}
+		</div>
 	</div>
-	{% else %}
-    	<p>No pages are available.</p>
-	{% endif %}
-	<svg id="windrose" width="500" height="500"></svg>
-</div>
 <p align="center" dir="rtl">דיאגרמת רוחות בתחנת {{ station.name }} המציגה את כיוון ועוצמת הרוח על פי מדידות שנעשו בתחנה ונמצאות באינטרנט באתר המשרד להגנת הסביבה בכתובת <a>http://svivaaqm.net</a></p>
+
+   <script>
+   	var map = L.map('map').setView([{{ lat }}, {{ lon }}], 16);
+	   L.tileLayer('http://{s}.tile.cloudmade.com/8897a64b9ba14c60ac9fa07924a23e40/997/256/{z}/{x}/{y}.png', {
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+	    maxZoom: 18
+	}).addTo(map);
+   </script> 
+
+
 <script type="text/javascript">
 var centerX = 250;
 var centerY = centerX;
@@ -46,7 +72,7 @@ var speedColorScale = d3.scale.category20c()
 var windRoseRadius = 10;
 
 var directionScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
-var speedScale = d3.scale.linear().domain([0, 100]).range([0, 2000]);
+var speedScale = d3.scale.linear().domain([0, 100]).range([0, 1000]);
 var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
 	if (error) return console.warn(error);
 			console.log(json.records);
@@ -62,7 +88,7 @@ var idmax = d3.max(json.records, function(d){ return d.id; });
 console.log(idmax);
 var idScale = d3.scale.linear().domain([0, idmax]).range([0, 1]);
 
-var speedCircle = [0, 2, 4, 6, 8];
+var speedCircle = [0, 2, 4, 6, 8, 10];
 
 var circles = vis.selectAll("circle")
                           .data(speedCircle)
