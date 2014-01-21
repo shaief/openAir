@@ -23,13 +23,13 @@ var windRoseRadius = 10;
 // d3 scales
 var speedColorScale = d3.scale.category20c().domain([0, 50]);
 var directionScale = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
-var speedScale = d3.scale.linear().domain([0, 100]).range([0, 1000]);
+var speedScale = d3.scale.linear().domain([0, 100]).range([0, 1500]);
 
 // calling json for station's windrose
 var data = d3.json(windJson, function(error, json) {
 	if (error)
 		return console.warn(error);
-
+	var windrose_json = json.records;
 	// d3 element for windrose (not on the map)
 	var vis = d3.select("#windrose");
 	var arc = d3.svg.arc().innerRadius(windRoseRadius).outerRadius(function(d) {
@@ -41,26 +41,30 @@ var data = d3.json(windJson, function(error, json) {
 	});
 
 	// this part scale the transparency of the wings
-	var idmax = d3.max(json.records, function(d) {
-		return d.id;
+	var idmax = d3.max(json.records, function(windrose_json) {
+		return windrose_json.id;
 	});
 	var idScale = d3.scale.linear().domain([0, idmax]).range([0, 1]);
 
 	// // main windrose
 	// var circles = vis.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
 	// var circleAttributes = circles.attr("cx", centerX).attr("cy", centerY).attr("r", function(d) {
-		// return (speedScale(d) + windRoseRadius);
+	// return (speedScale(d) + windRoseRadius);
 	// }).style("stroke", "black").style("stroke-width", 0.25).style("fill", "none");
 	// vis.selectAll("path").data(json.records).enter().append("path").attr("d", arc).style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
-		// return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
+	// return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
 	// }).style("fill-opacity", function(d) {
-		// return (idScale(d.id));
+	// return (idScale(d.id));
 	// }).attr("transform", "translate(" + centerX + "," + centerY + ")").append("svg:title").text(function(d) {
-		// return d.direction + " deg\n" + d.speed + " m/sec\n" + d.timestamp;
+	// return d.direction + " deg\n" + d.speed + " m/sec\n" + d.timestamp;
 	// });
 
 	// adding all stations to the map
-	d3.json(stationsJson, function(collection) {
+	var data_stations = d3.json(stationsJson, function(error, collection) {
+		if (error)
+			return console.warn(error);
+		stations_json = [collection.features];
+		console.log(stations_json);
 		// setting d3 elements for the leaflet overlayer
 		var svg = d3.select(map.getPanes().overlayPane).append("svg");
 		var g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -87,10 +91,21 @@ var data = d3.json(windJson, function(error, json) {
 
 			// put station locations on the map :)
 			var windPoints = d3_features.attr("d", path);
+			windPoints.append("a");
+			windPoints.attr("xlink:href", function(stations_json) {
+				return (stations_url + "/" + stations_json.zone_url_id + "/" + stations_json.url_id + "/");
+			});
 			windPoints.attr("r", 500);
 			windPoints.style('fill', 'green');
 			windPoints.style("stroke", "black");
 			windPoints.style("stroke-width", 0.5);
+			windPoints.append("svg:title").text(function(stations_json) {
+				return stations_json.name;
+			});
+
+			var windroseX = projectPointToScreen(lon, lat).x;
+			var windroseY = projectPointToScreen(lon, lat).y;
+
 			console.log("map zoom: " + map.getZoom());
 			// remove scale circles from the map
 			if (map.getZoom() < 16) {
@@ -105,19 +120,20 @@ var data = d3.json(windJson, function(error, json) {
 				// d3_arcs for the windrose wings
 				d3_arcs = g.selectAll("path.arcs").data(json.records).enter().append("path");
 
-			}
-			var windroseX = projectPointToScreen(lon, lat).x
-			var windroseY = projectPointToScreen(lon, lat).y
-			d3_circles.attr("cx", windroseX).attr("cy", windroseY).attr("r", function(d) {
-				return (speedScale(d) + windRoseRadius);
-			}).style("stroke", "green").style("stroke-width", 1).style("fill", "none");
-			console.log(JSON.stringify(projectPointToScreen(lon, lat)));
+				d3_circles.attr("cx", windroseX).attr("cy", windroseY).attr("r", function(windrose_json) {
+					return (speedScale(windrose_json) + windRoseRadius);
+				}).style("stroke", "green").style("stroke-width", 1).style("fill", "none");
+				console.log(JSON.stringify(projectPointToScreen(lon, lat)));
 
-			d3_arcs.attr("d", arc).attr("transform", "translate(" + windroseX + "," + windroseY + ")").style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
-				return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
-			}).style("fill-opacity", function(d) {
-				return (idScale(d.id));
-			});
+				d3_arcs.attr("d", arc).attr("transform", "translate(" + windroseX + "," + windroseY + ")").style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
+					return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
+				}).style("fill-opacity", function(windrose_json) {
+					return (idScale(windrose_json.id));
+				}).append("svg:title").text(function(windrose_json) {
+					return windrose_json.direction + " deg\n" + windrose_json.speed + " m/sec\n" + windrose_json.timestamp;
+				});
+
+			}
 
 		}
 

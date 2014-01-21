@@ -66,6 +66,8 @@ openAir -מצב הרוח ב{{ station.name }}
 	var lon ={{lon}};
 	var windJson = "{% url 'stationmapwind_json' url_id=station.url_id %}";
 	var stationsJson = "{% url 'stations_json' %}"
+	var  s = "{% url 'stationmapwind' 8 88 %}"
+	var stations_url = s.substring(0, s.length - 6)
 </script>
 
 <script type="text/javascript" src="{% static 'openAirJS/windd3.js' %}"></script>
