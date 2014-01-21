@@ -1,7 +1,17 @@
-var map = L.map('map').setView([lat, lon], 18);
-L.tileLayer('http://{s}.tile.cloudmade.com/8897a64b9ba14c60ac9fa07924a23e40/997/256/{z}/{x}/{y}.png', {
-	attribution : 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-	maxZoom : 18
+var map = L.map('map').setView([lat, lon], 16);
+L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
+	attribution : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+	subdomains : 'abcd',
+	minZoom : 3,
+	maxZoom : 16
+	// L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+	// attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+	// subdomains: 'abcd',
+	// minZoom: 3,
+	// maxZoom: 16
+	// L.tileLayer('http://{s}.tile.cloudmade.com/8897a64b9ba14c60ac9fa07924a23e40/997/256/{z}/{x}/{y}.png', {
+	// attribution : 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+	// maxZoom : 18
 }).addTo(map);
 
 // constants
@@ -45,7 +55,7 @@ var data = d3.json(windJson, function(error, json) {
 		return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
 	}).style("fill-opacity", function(d) {
 		return (idScale(d.id));
-	}).attr("transform", "translate(250,250)").append("svg:title").text(function(d) {
+	}).attr("transform", "translate(" + centerX + "," + centerY + ")").append("svg:title").text(function(d) {
 		return d.direction + " deg\n" + d.speed + " m/sec\n" + d.timestamp;
 	});
 
@@ -60,8 +70,6 @@ var data = d3.json(windJson, function(error, json) {
 		var path = d3.geo.path().projection(transform);
 		// d3_features for the station locations
 		d3_features = g.selectAll("path").data(collection.features).enter().append("path");
-		// d3_circles for the windrose scale
-		d3_circles = g.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
 		// d3_arcs for the windrose wings
 		d3_arcs = g.selectAll("path").data(json.records).enter().append("path");
 
@@ -85,26 +93,30 @@ var data = d3.json(windJson, function(error, json) {
 			windPoints.style('fill', 'green');
 			windPoints.style("stroke", "black");
 			windPoints.style("stroke-width", 0.5);
-			console.log(collection);
-			windPoints.append("svg:title").text(collection, function(d) {
-				console.log(d.features.name);
-				return d.features.name;
-			});
-
+			console.log("map zoom: " + map.getZoom());
+			// remove scale circles from the map
+			if (map.getZoom() < 16) {
+				console.log("zooming out")
+				d3_circles.remove();
+			}
+			if (map.getZoom() > 15) {
+			// d3_circles for the windrose scale
 			// put scale circles on the map
-			var centerX = projectPointToScreen(lon, lat).x
-			var centerY = projectPointToScreen(lon, lat).y
-			console.log(centerX, centerY);
-			d3_circles.attr("cx", centerX).attr("cy", centerY).attr("r", function(d) {
+			d3_circles = g.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
+			}
+			var windroseX = projectPointToScreen(lon, lat).x
+			var windroseY = projectPointToScreen(lon, lat).y
+			d3_circles.attr("cx", windroseX).attr("cy", windroseY).attr("r", function(d) {
 				return (speedScale(d) + windRoseRadius);
-			}).style("stroke", "black").style("stroke-width", 0.5).style("fill", "none");
+			}).style("stroke", "green").style("stroke-width", 1).style("fill", "none");
 			console.log(JSON.stringify(projectPointToScreen(lon, lat)));
 
-			d3_arcs.attr("d", arc).attr("cx", centerX).attr("cy", centerY).style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
+			d3_arcs.attr("d", arc).attr("transform", "translate(" + windroseX + "," + windroseY + ")").style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
 				return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
 			}).style("fill-opacity", function(d) {
 				return (idScale(d.id));
 			});
+
 		}
 
 	});
