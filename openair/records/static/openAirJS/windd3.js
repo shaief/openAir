@@ -46,18 +46,18 @@ var data = d3.json(windJson, function(error, json) {
 	});
 	var idScale = d3.scale.linear().domain([0, idmax]).range([0, 1]);
 
-	// main windrose
-	var circles = vis.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
-	var circleAttributes = circles.attr("cx", centerX).attr("cy", centerY).attr("r", function(d) {
-		return (speedScale(d) + windRoseRadius);
-	}).style("stroke", "black").style("stroke-width", 0.25).style("fill", "none");
-	vis.selectAll("path").data(json.records).enter().append("path").attr("d", arc).style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
-		return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
-	}).style("fill-opacity", function(d) {
-		return (idScale(d.id));
-	}).attr("transform", "translate(" + centerX + "," + centerY + ")").append("svg:title").text(function(d) {
-		return d.direction + " deg\n" + d.speed + " m/sec\n" + d.timestamp;
-	});
+	// // main windrose
+	// var circles = vis.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
+	// var circleAttributes = circles.attr("cx", centerX).attr("cy", centerY).attr("r", function(d) {
+		// return (speedScale(d) + windRoseRadius);
+	// }).style("stroke", "black").style("stroke-width", 0.25).style("fill", "none");
+	// vis.selectAll("path").data(json.records).enter().append("path").attr("d", arc).style("stroke", "black").style("stroke-width", 0.5).style("fill", function(d) {
+		// return "rgb(0," + (d.id * 50) + ", " + (d.id * 10) + ")";
+	// }).style("fill-opacity", function(d) {
+		// return (idScale(d.id));
+	// }).attr("transform", "translate(" + centerX + "," + centerY + ")").append("svg:title").text(function(d) {
+		// return d.direction + " deg\n" + d.speed + " m/sec\n" + d.timestamp;
+	// });
 
 	// adding all stations to the map
 	d3.json(stationsJson, function(collection) {
@@ -69,9 +69,7 @@ var data = d3.json(windJson, function(error, json) {
 		});
 		var path = d3.geo.path().projection(transform);
 		// d3_features for the station locations
-		d3_features = g.selectAll("path").data(collection.features).enter().append("path");
-		// d3_arcs for the windrose wings
-		d3_arcs = g.selectAll("path").data(json.records).enter().append("path");
+		d3_features = g.selectAll("path.points").data(collection.features).enter().append("path");
 
 		// reset overlays with each map view reset (such as zooming in/out)
 		map.on("viewreset", putPointsOnMap);
@@ -98,11 +96,15 @@ var data = d3.json(windJson, function(error, json) {
 			if (map.getZoom() < 16) {
 				console.log("zooming out")
 				d3_circles.remove();
+				d3_arcs.remove();
 			}
 			if (map.getZoom() > 15) {
-			// d3_circles for the windrose scale
-			// put scale circles on the map
-			d3_circles = g.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
+				// d3_circles for the windrose scale
+				// put scale circles on the map
+				d3_circles = g.selectAll("circle").data(SPEED_CIRCLES).enter().append("circle");
+				// d3_arcs for the windrose wings
+				d3_arcs = g.selectAll("path.arcs").data(json.records).enter().append("path");
+
 			}
 			var windroseX = projectPointToScreen(lon, lat).x
 			var windroseY = projectPointToScreen(lon, lat).y
