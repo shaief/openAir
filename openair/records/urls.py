@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     url(r'^stationmapwind/json/(?P<url_id>[0-9]+)/$', views.stationmapwind_json, name='stationmapwind_json'),
     # =====================================================================
     url(r'^map/$', views.map, name='map'),
-    url(r'^zones$', views.zones, name='zones'),
+    url(r'^indexmap/$', TemplateView.as_view(template_name='records/indexmap.html'), name='indexmap'),
+    url(r'^zones/$', views.zones, name='zones'),
     url(r'^api/', include(v0_api.urls)),
+    # =====================================================================
+    url(r'^stations/json/$', views.stations_json, name='stations_json'),
 )
