@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from openair.records.models import Record, Parameter, Station, \
+from openair.records.models import Record, Parameter, Station, Zone, \
     get_param_time_range
 import datetime
 import json
@@ -96,7 +96,9 @@ def stationmapparam(request, url_id, abbr):
 def stationmapwind(request, zone_url_id, station_url_id):
     s = get_object_or_404(Station, url_id=station_url_id)
     station_list = Station.objects.all().order_by('name')
-    context = dict(station=s, abbr='WD', station_list=station_list, zone_url_id=zone_url_id)
+    context = dict(station=s, abbr='WD', station_list=station_list, \
+                   zone_url_id=int(zone_url_id),\
+                   lat=s.lat, lon=s.lon)
     return render(request, 'records/stationmapwind_pi.html', context)
 
 def stationmap_json(request, url_id):
@@ -120,18 +122,20 @@ def stationmap_json(request, url_id):
 def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     records = []
+    point = [s.lon, s.lat]
     for r in s.record_set.all().order_by('timestamp'):
         if (r.parameter.abbr == abbr):
             records.append(dict(value=r.value,
                                 timestamp=str(r.timestamp
                                 )))                  
-    data = dict(records=records)                       
+    data = dict(point=point, records=records)                       
     return HttpResponse(json.dumps(data))
 
 def stationmapwind_json(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     rv = []
     i = 0
+    point = [s.lon, s.lat]
     records = list(s.record_set.all().order_by('timestamp'))
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
@@ -144,18 +148,30 @@ def stationmapwind_json(request, url_id):
              'timestamp': unicode(ts),
              }
         rv.append(d)
-#         wind = {
-#                 'WD':r.parameter_set,
-#                  'WS':0}
-#                 wind['WD'] = r.value
-#             else:
-#                 wind['WS'] = r.value
-#         records.append(dict(abbr=r.parameter.abbr, value=r.value,
-#                             timestamp=str(r.timestamp), id=i,
-#                             wind=wind
-#                                 ))
-    data = dict(records=rv)    
+    data = dict(point=point, records=rv)    
     return HttpResponse(json.dumps(data))
+
+def stations_json(request):
+    s = Station.objects.all().order_by('name')
+    stations = []
+    for sta in s:
+        if not((sta.lon is None) & (sta.lat is None)):
+            if not((sta.lon==0.0) & (sta.lat==0.0)):
+                type="Feature"
+                properties=dict(name=sta.name, url_id=sta.url_id,
+                                 zone=sta.zone.name, zone_url_id=sta.zone.url_id,
+                                 location=sta.location,
+                                )
+                geometry=dict(type="Point",coordinates=[sta.lon, sta.lat])
+                stations.append(dict(type=type, properties=properties,
+                                 geometry=geometry,
+                                 name=sta.name, url_id=sta.url_id,
+                                 zone=sta.zone.name, zone_url_id=sta.zone.url_id,
+                                 location=sta.location,
+                                ))                
+    data = dict(type="FeatureCollection",features=stations)                       
+    return HttpResponse(json.dumps(data))
+
 
 def record_csv(request, param_name):
     model = get_object_or_404(Foo, param_name)
@@ -164,7 +180,7 @@ def record_csv(request, param_name):
 
 
 def zones(request):
-    latest_zone_list = Record.objects.all().order_by('-timestamp')[:5]
+    latest_zone_list = Zone.objects.all().order_by('name')
     context = {'latest_zone_list': latest_zone_list}
     return render(request, 'records/zones.html', context)
 
