@@ -84,11 +84,15 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.gis',
 
     'south',
     'tastypie',
     'django_nvd3',
     'djangobower',
+    'djgeojson',
+    'leaflet',
+
     'openair.records',
 )
 
@@ -130,4 +134,13 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+LEAFLET_CONFIG = {
+    # conf here
+    #'SPATIAL_EXTENT': (25, 25, 40, 40),
+    'DEFAULT_CENTER': (32.0, 35.0),
+    'DEFAULT_ZOOM': 8,
+    'ATTRIBUTION_PREFIX': 'openAir map is powered by django-leaflet',
+    'RESET_VIEW': False,
 }
