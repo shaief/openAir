@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html xmlns:xlink="http://www.w3.org/1999/xlink">
   <head>
+	{% block head %}
+	{% endblock %}
 	<title>
 		{% block title %}
 		{% endblock %}
@@ -9,7 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-    <script type="text/javascript" src="{% static 'lib/d3.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lib/d3.js' %}"></script>
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!-- [if lt IE 9]
@@ -71,6 +74,7 @@
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
 	{% block scripts %}
 	{% endblock %}
   </body>
