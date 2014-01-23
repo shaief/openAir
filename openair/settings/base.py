@@ -26,11 +26,11 @@ USE_TZ = True
 
 MEDIA_ROOT = ''
 MEDIA_URL = ''
-STATIC_ROOT = ''
+STATIC_ROOT = '/webapps/static/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    PROJECT_DIR.child('static'),
+    # PROJECT_DIR.child('static'),
 )
 
 STATICFILES_FINDERS = (
