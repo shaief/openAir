@@ -18,7 +18,8 @@ def parameters(request):
 def parameter(request, abbr):
     parameter_list = Parameter.objects.all()
     p = get_object_or_404(Parameter, abbr=abbr)
-    context = dict(parameter=p, parameter_list=parameter_list)
+    lastupdate = str(p.record_set.latest('id').timestamp)
+    context = dict(parameter=p, parameter_list=parameter_list, lastupdate=lastupdate)
     return render(request, 'records/parameter.html', context)
 
 
