@@ -10,11 +10,15 @@ open Air
 {% block content %}
 
 {% if latest_zone_list %}
-    <ul>
+    <div align="right" dir="rtl">
     {% for z in latest_zone_list %}
-        <li>{{ z.name }} {{ z.url_id }}</li>
+        <h4>{{ z.name }} {{ z.url_id }}</h4>
+        	{% for s in z.staion_set %}
+        		<p>{{ s.name }} {{ s.url_id }}</p>
+        	{% endfor %}
+        	
     {% endfor %}
-    </ul>
+    </div>
 
 {% else %}
     <p>No records are available.</p>

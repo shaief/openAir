@@ -3,30 +3,46 @@
 
 {% block title %}
 openAir - {{ station.name }}
+{% endblock %}
 
+{% block navbar-list %}
+<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">רשימת תחנות<b class="caret"></b></a>
+	<ul class="dropdown-menu">
+		{% for sta in station_list %}
+			{% if sta %}
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+</li>
 {% endblock %}
 
 {% block content %}
 <h1 align="center">תחנה: {{ station.name }}</h1>
-h1 align="center">זמן המדידה: {{ station.record_set.timestamp }}</h1>
-<div align="center">
-	<svg id="bars"> </svg>
-	<svg id="labels"> </svg>
-</div>
-<div id="foo" align="center">
-	
-    <div class="btn-group">
-	{% if station_list %}
-	    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
-	    <ul class="dropdown-menu">    
-	    {% for sta in station_list %}
-	        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
-	    {% endfor %}
-	    </ul>
+<h3 align="center">תחנה: {{ station.url_id }} אזור: {{ station.zone.url_id }}</h3>
+<h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate }}</span></h3>
+<div class="row">
+	<div class="col-md-11">
+		<div align="center">
+			<svg id="bars"> </svg>
+			<svg id="labels"> </svg>
+		</div>
 	</div>
-	{% else %}
-    	<p>No pages are available.</p>
-	{% endif %}
+	<div class="col-md-1">
+	    <div class="btn-group">
+		{% if station_list %}
+		    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
+		    <ul class="dropdown-menu">    
+		    {% for sta in station_list %}
+		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
+		    {% endfor %}
+		    </ul>
+		</div>
+		{% else %}
+	    	<p>No pages are available.</p>
+		{% endif %}
+	</div>
 </div>
 
 <script type="text/javascript">
