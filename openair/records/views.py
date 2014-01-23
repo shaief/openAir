@@ -16,9 +16,9 @@ def parameters(request):
 
 
 def parameter(request, abbr):
-
+    parameter_list = Parameter.objects.all()
     p = get_object_or_404(Parameter, abbr=abbr)
-    context = dict(parameter=p)
+    context = dict(parameter=p, parameter_list=parameter_list)
     return render(request, 'records/parameter.html', context)
 
 
@@ -84,7 +84,8 @@ def map(request):
 def stationmap(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
-    context = dict(station=s, station_list=station_list)
+    lastupdate = str(s.record_set.latest('id').timestamp)
+    context = dict(station=s, station_list=station_list, lastupdate=lastupdate)
     return render(request, 'records/stationmap.html', context)
 
 def stationmapparam(request, url_id, abbr):
