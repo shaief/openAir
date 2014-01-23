@@ -1,0 +1,15 @@
+##### Bootstrap 3 (Release) RTL version ######
+This is an RTL **fork** of bootstrap.css that works well for RTL pages
+This was created with a patch of R2 (https://github.com/ded/R2)
+See my post of the subject at 
+http://nirlevy.blogspot.co.il/2013/07/rtl-bootstrap-css-convertor.html
+
+Note that you will need to set the 'direction: rtl;' on your body.
+
+Also, the carousel does not work RTL so you need to set the carousel styles 
+back to be LTR (see style.css)
+
+Note that this is not thouroughly tested yet. Since this is a fork of  
+the original bootstrap.css and bootstrap.js are included as well.
+
+/NL
