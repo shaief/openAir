@@ -10,7 +10,7 @@
 	</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap3-rtl/css/bootstrap-rtl.css' %}" rel="stylesheet">
 	<script type="text/javascript" src="{% static 'lib/d3.js' %}"></script>
     
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -21,7 +21,7 @@
     [endif] -->
     <meta charset="utf-8">
   </head>
-  <body>
+  <body dir="rtl">
   	
     <!-- Wrap all page content here -->
     <div id="wrap">
@@ -36,7 +36,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'home' %}">openAir</a>
+            <a class="navbar-brand" href="{% url 'home' %}">אוויר פתוח</a>
           </div>
           <div class="collapse navbar-collapse">
 
@@ -67,7 +67,7 @@
 
     <div id="footer">
       <div class="container">
-        <p class="text-muted">Place sticky footer content here.</p>
+        <p class="text-muted">נתוני איכות אוויר בזמן אמת מאתר <a>http://svivaaqm.net</a>. האתר בהרצה. אין לסמוך על הנתונים המוצגים לצורך קבלת החלטות.</p>
       </div>
     </div>
 
