@@ -144,3 +144,16 @@ LEAFLET_CONFIG = {
     'ATTRIBUTION_PREFIX': 'openAir map is powered by django-leaflet',
     'RESET_VIEW': False,
 }
+
+
+DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', $
+            'NAME': 'openair',                      # Or path to database file if using sqlite3.
+            # The following settings are not used with sqlite3:
+            'USER': 'openair',
+            'PASSWORD': 'tuuhrp,uj',
+            'HOST': 'localhost',     # Empty for localhost through domain sockets or $
+            'PORT': '',              # Set to empty string for default.
+        }
+    }
