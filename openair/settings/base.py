@@ -152,7 +152,7 @@ DATABASES = {
             # The following settings are not used with sqlite3:
             'USER': 'openair',
             'PASSWORD': 'tuuhrp,uj',
-            'HOST': '',     # Empty for localhost through domain sockets or $
+            'HOST': 'localhost',     # Empty for localhost through domain sockets or $
             'PORT': '',              # Set to empty string for default.
         }
     }
