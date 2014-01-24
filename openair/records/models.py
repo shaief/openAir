@@ -48,7 +48,7 @@ class Station(models.Model):
 
 
 class Parameter(models.Model):
-    abbr = models.CharField(max_length=10)
+    abbr = models.CharField(max_length=20)
     name = models.CharField(max_length=25)
     description = models.TextField()
     units = models.CharField(max_length=25)
