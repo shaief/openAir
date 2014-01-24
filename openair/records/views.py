@@ -85,8 +85,10 @@ def map(request):
 def stationmap(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
-    lastupdate = str(s.record_set.latest('id').timestamp)
-    context = dict(station=s, station_list=station_list, lastupdate=lastupdate)
+    parameter_list = s.record_set.all()
+    lastupdate = s.record_set.latest('id').timestamp
+    context = dict(station=s, station_list=station_list, 
+        parameter_list=parameter_list, lastupdate=lastupdate)
     return render(request, 'records/stationmap.html', context)
 
 def stationmapparam(request, url_id, abbr):

@@ -16,6 +16,16 @@ openAir - {{ station.name }}
 		{% endfor %}
 	</ul>
 </li>
+<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים נוספים בתחנה<b class="caret"></b></a>
+    <ul class="dropdown-menu">    
+		{% for p in parameter_list %}
+			{% ifequal p '' %}
+		    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapparam' p.abbr %}">{{ p.abbr }}</a></li>
+			{% endifequal %}
+		{% endfor %}
+	</ul>
+</li>
 {% endblock %}
 
 {% block content %}
@@ -36,6 +46,19 @@ openAir - {{ station.name }}
 		    <ul class="dropdown-menu">    
 		    {% for sta in station_list %}
 		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
+		    {% endfor %}
+		    </ul>
+		</div>
+		{% else %}
+	    	<p>No pages are available.</p>
+		{% endif %}
+		{% if parameter_list %}
+		    <button data-toggle="dropdown" class="btn dropdown-toggle">פרמטרים נוספים בתחנה <span class="caret"></span></button>
+		    <ul class="dropdown-menu">    
+		    {% for p in parameter_list %}
+		    	{% ifequal p '' %}
+		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapparam' p.abbr %}">{{ p.abbr }}</a></li>
+		    	{% endifequal %}
 		    {% endfor %}
 		    </ul>
 		</div>
