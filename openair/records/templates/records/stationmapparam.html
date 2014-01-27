@@ -1,77 +1,53 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% block head %}
+<head>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+	<style>
+		#map {
+			height: 400px;
+			width: 300px;
+		}
+	</style>
+</head>
+{% endblock %}
 {% block title %}
 openAir - {{ station.name }}
 
+{% endblock %}
+{% block navbar-list %}
+<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">רשימת תחנות<b class="caret"></b></a>
+	<ul class="dropdown-menu">
+		{% for sta in station_list.record_set.parameter %}
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapparam' sta.url_id abbr %}">{{ sta.name }}</a></li>
+		{% endfor %}
+	</ul>
+</li>
 {% endblock %}
 
 {% block content %}
 <h1 align=center>תחנה: {{ station.name }}</h1>
 
 <h1 align=center>פרמטר: {{  abbr }}</h1>
-
-<div align=center>
-<svg id="timeseries">
+<div class="row">
+	<div class="col-md-3">
+		<div id="map"></div>
+	</div>
+	<div class="col-md-9">
+		<div align=center>
+			<svg id="timeseries">
+		</div>
 </div>
+</div>
+
 <script type="text/javascript">
-		//Create SVG element
-       	//Width and height
-		// a global
-	    var w = 1000;
-	    var h = 100;
-	    var hlabels = h + 20;
-	    var htimestamp = hlabels + 20;
-	    var barPadding = 3;
-	    var barWidth = 10;
-	    var svg;
-
-/* Visualizing parameters in a station */
-		
-		d3.json("{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}", function(error, json) {
-			if (error) return console.warn(error);
-			console.log([json.records]);		
-
-		// this part scale the transparency of the wings
-			var minValue = d3.min(json.records, function(d) {
-				return d.value;
-			});
-			var maxValue = d3.max(json.records, function(d) {
-				return d.value;
-			});
-			var valueScale = d3.scale.linear().domain([minValue, maxValue]).range([0, 1]);
-			var rec = ([json.records][0]);
-			//var scaled_value = valueScale(rec.value);
-			console.log(rec);
-	        //Create SVG element
-	        var svg = d3.select("#timeseries")
-	                                .append("svg")
-	                                .attr("width", w)
-	                                .attr("height", h);
-	
-	        svg.selectAll("rect")
-	        .data(json.records)
-	        .enter()
-	        .append("rect")
-	         //.attr("x", function(d, i) {
-	         //                return i * (w / datasetValues.length);
-	         //})
-	        .attr("x", function(d, i){return i*(barWidth+barPadding)})
-	        .attr("y", function(d) {
-	                         return (h-(d.value))})
-	         //.attr("width", w / datasetValues.length - barPadding)
-	        .attr("width", barWidth)
-	        .attr("height", function(d) {
-	                         return (d.value)})
-	        .attr("fill", function(d) {
-	                        return "rgb(0, 0, " + (d.value * 10) + ")";	         
-	         })
-	        .append("svg:title")
-   			.text(function(d) { return d.timestamp; });
-	    });
-		
-
+	var lon = {{ lon }}
+	var lat = {{ lat }}
+	var stationsJson = "{% url 'stations_json' %}";
+	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
 </script>
-
+<script type="text/javascript" src="{% static 'openAirJS/paramd3.js' %}"></script>
 
 {% endblock %}

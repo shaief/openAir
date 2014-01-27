@@ -17,7 +17,7 @@ openAir - {{ station.name }}
 	</ul>
 </li>
 <li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים נוספים בתחנה<b class="caret"></b></a>
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
     <ul class="dropdown-menu">    
 		{% for p in parameter_list %}
 			{% ifequal p '' %}
@@ -34,6 +34,9 @@ openAir - {{ station.name }}
 <h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate }}</span></h3>
 <div class="row">
 	<div class="col-md-11">
+		<div>
+		<svg id="parameters"></svg> 
+		</div>
 		<div align="center">
 			<svg id="bars"> </svg>
 			<svg id="labels"> </svg>
@@ -150,6 +153,57 @@ openAir - {{ station.name }}
         				 return (15+h-(d.value*4));
     				 })
     		    .attr("x", function(d, i){return i*(barWidth+barPadding) + barWidth/2})
+        	    .attr("font-family", "sans-serif")
+   			    .attr("font-size", "8px")
+   			    .attr("text-anchor", "middle")
+   			    .attr("fill", "black");	         
+
+   			var svgParams = d3.select("#parameters")
+	                                .append("svg")
+	                                .attr("width", w)
+	                                .attr("height", h);
+
+	        svgParams.selectAll("rect")
+	         .data(json.records)
+	         .enter()
+	         .append("a")
+    		 .attr("xlink:href", function(d){
+    		 	if (d.name==='CO'){
+    		 		return "{% url 'stationmap_param' station.url_id 'CO' %}";}
+    		 	if (d.name==='SO2'){
+    		 		return "{% url 'stationmap_param' station.url_id 'SO2' %}";}
+    		 	if (d.name==='PM10'){
+    		 		return "{% url 'stationmap_param' station.url_id 'PM10' %}";}
+    		 	if (d.name==='PM2.5'){
+    		 		return "{% url 'stationmap_param' station.url_id 'PM2.5' %}";}
+    		 	if (d.name==='No'){
+    		 		return "{% url 'stationmap_param' station.url_id 'No' %}";}
+    		 	if (d.name==='Nox'){
+    		 		return "{% url 'stationmap_param' station.url_id 'Nox' %}";}
+    		 	if (d.name==='No2'){
+    		 		return "{% url 'stationmap_param' station.url_id 'No2' %}";}
+    		 	if (d.name==='O3'){
+    		 		return "{% url 'stationmap_param' station.url_id 'O3' %}";}
+    		 	if (d.name==='RH'){
+    		 		return "{% url 'stationmap_param' station.url_id 'RH' %}";}
+    		 	if (d.name==='Temp'){
+    		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}";}
+    		 	if (d.name==='WD'){
+    		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";}    		 		
+    		 	if (d.name==='WS'){
+    		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";};
+    		 	})
+	         .append("text")
+	         .text(function(d){return d.name+"\n"+d.value;})
+		    .append("svg:title")
+		 	.text(function(d) { return d.name +"\n" + d.value; });
+	         svg.selectAll("text")
+			 	.data(json.records)
+			    .enter()
+			    .append("text")
+			    .text("hi")
+			    //.text(function(d) {
+        		//		 return d.name;})
         	    .attr("font-family", "sans-serif")
    			    .attr("font-size", "8px")
    			    .attr("text-anchor", "middle")
