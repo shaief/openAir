@@ -1,68 +1,86 @@
 
+var map = L.map('map').setView([lat, lon], 14);
+L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
+	attribution : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+	subdomains : 'abcd',
+	minZoom : 3,
+	maxZoom : 16
+}).addTo(map);
 
-		var map = L.map('map').setView([lat, lon], 14);
-		L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
-			attribution : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-			subdomains : 'abcd',
-			minZoom : 3,
-			maxZoom : 16
-		}).addTo(map);
+// L.geoJson(stationsJson).addTo(map);
+// var myLayer = L.geoJson().addTo(map);
+// myLayer.addData(stationsJson);
 
-		// L.geoJson(stationsJson).addTo(map);
-		// var myLayer = L.geoJson().addTo(map);
-		// myLayer.addData(stationsJson);
+// define chart size:
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
+    width = 500 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
-		//Create SVG element
-       	//Width and height
-		// a global
-	    var w = 400;
-	    var h = 200;
-	    var hlabels = h + 20;
-	    var htimestamp = hlabels + 20;
-	    var barPadding = 3;
-	    var barWidth = 10;
-	    var svg;
+// define paddings:
+var barPadding = 3;
+var barWidth = 10;
+var padding = 30;
 
-/* Visualizing parameters in a station */
-		
-		d3.json(paramjson, function(error, json) {
+// scales:
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+// axis:
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+// defining the chart:
+var chart = d3.select("#timeseries")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// calling the JSON file:
+d3.json(paramjson, function(error, json) {
 			if (error) return console.warn(error);
-			console.log([json.records]);		
+			console.log([json.records])
+	// defining data:
+	data = json.records
 
-		// this part scale the transparency of the wings
-			var minValue = d3.min(json.records, function(d) {
-				return d.value;
-			});
-			var maxValue = d3.max(json.records, function(d) {
-				return d.value;
-			});
-			var valueScale = d3.scale.linear().domain([minValue, maxValue]).range([0, 1]);
-			var rec = ([json.records][0]);
-			//var scaled_value = valueScale(rec.value);
-			console.log(rec);
-	        //Create SVG element
-	        var svg = d3.select("#timeseries")
-	                                .append("svg")
-	                                .attr("width", w)
-	                                .attr("height", h);
-	
-	        svg.selectAll("rect")
-	        .data(json.records)
-	        .enter()
-	        .append("rect")
-	         //.attr("x", function(d, i) {
-	         //                return i * (w / datasetValues.length);
-	         //})
-	        .attr("x", function(d, i){return i*(barWidth+barPadding)})
-	        .attr("y", function(d) {
-	                         return (h-(d.value))})
-	         //.attr("width", w / datasetValues.length - barPadding)
-	        .attr("width", barWidth)
-	        .attr("height", function(d) {
-	                         return (d.value)})
-	        .attr("fill", function(d) {
-	                        return "rgb(0, 0, " + (d.value * 10) + ")";	         
-	         })
-	        .append("svg:title")
-   			.text(function(d) { return d.timestamp; });
-	    });
+	x.domain(data.map(function(d) { return d.timestamp; }));
+	y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+// draw axis:
+	chart.append("g")
+	  .attr("class", "x axis")
+	  .attr("transform", "translate(0," + height + ")")
+	  .call(xAxis);
+	chart.append("g")
+	  .attr("class", "y axis")
+	  .call(yAxis);
+
+	// draw bars:
+	chart.selectAll(".bar")
+	  .data(data)
+	  .enter().append("rect")
+	  .attr("class", "bar")
+	  .attr("x", function(d) { return x(d.timestamp); })
+	  .attr("y", function(d) { return y(d.value); })
+	  .attr("height", function(d) { return height - y(d.value); })
+	  .attr("width", x.rangeBand())
+	  .attr("fill", function(d) {
+	     return "rgb(0, 0, " + (d.value * 10) + ")";	         
+	     })
+	// add texts when hover:
+	  .append("svg:title")
+	  .text(function(d) { return d.value + "\n" + d.timestamp; });
+});
+
+function type(d) {
+  d.value = +d.value; // coerce to number
+  return d;
+};

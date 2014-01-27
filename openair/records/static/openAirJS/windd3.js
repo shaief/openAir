@@ -91,8 +91,7 @@ var data = d3.json(windJson, function(error, json) {
 
 			// put station locations on the map :)
 			var windPoints = d3_features.attr("d", path);
-			windPoints.append("a");
-			windPoints.attr("xlink:href", function(stations_json) {
+			windPoints.append("a").attr("xlink:href", function(stations_json) {
 				return (stations_url + "/" + stations_json.zone_url_id + "/" + stations_json.url_id + "/");
 			});
 			windPoints.attr("r", 500);
@@ -102,6 +101,7 @@ var data = d3.json(windJson, function(error, json) {
 			windPoints.append("svg:title").text(function(stations_json) {
 				return stations_json.name;
 			});
+			
 
 			var windroseX = projectPointToScreen(lon, lat).x;
 			var windroseY = projectPointToScreen(lon, lat).y;
