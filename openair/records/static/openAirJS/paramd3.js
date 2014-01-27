@@ -28,6 +28,9 @@ var x = d3.scale.ordinal()
 var y = d3.scale.linear()
     .range([height, 0]);
 
+var colorScale = d3.scale.linear()
+    .range([0, 255]);
+
 // axis:
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -53,6 +56,7 @@ d3.json(paramjson, function(error, json) {
 
 	x.domain(data.map(function(d) { return d.timestamp; }));
 	y.domain([0, d3.max(data, function(d) { return d.value; })]);
+	colorScale.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
 
 // draw axis:
 	chart.append("g")
@@ -80,7 +84,7 @@ d3.json(paramjson, function(error, json) {
 	  .attr("height", function(d) { return height - y(d.value); })
 	  .attr("width", x.rangeBand())
 	  .attr("fill", function(d) {
-	     return "rgb(0, 0, " + (d.value * 10) + ")";	         
+	     return "rgb(0, 0, " + Math.round(colorScale(d.value)) + ")";	         
 	     })
 	// add texts when hover:
 	  .append("svg:title")
