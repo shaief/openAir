@@ -30,7 +30,7 @@ openAir - {{ station.name }}
 {% block content %}
 <h1 align=center>תחנה: {{ station.name }}</h1>
 
-<h1 align=center>פרמטר: {{  abbr }}</h1>
+<h1 align=center>פרמטר: {{ abbr }}</h1>
 <div class="row">
 	<div class="col-md-3">
 		<div id="map"></div>
@@ -43,8 +43,8 @@ openAir - {{ station.name }}
 </div>
 
 <script type="text/javascript">
-	var lon = {{ lon }}
-	var lat = {{ lat }}
+	var lon = 0//{{ lon }}
+	var lat = 0//{{ lat }}
 	var stationsJson = "{% url 'stations_json' %}";
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
 </script>
