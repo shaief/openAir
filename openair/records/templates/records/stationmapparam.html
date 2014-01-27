@@ -43,8 +43,9 @@ openAir - {{ station.name }}
 </div>
 
 <script type="text/javascript">
-	var lon = 0//{{ lon }}
-	var lat = 0//{{ lat }}
+	console.log({{ lon }}, {{ lat }})
+	var lon = {{ lon }}
+	var lat = {{ lat }}
 	var stationsJson = "{% url 'stations_json' %}";
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
 </script>
