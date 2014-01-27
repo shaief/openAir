@@ -94,8 +94,10 @@ def stationmap(request, url_id):
 def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
-    stations_has_param = station_list.filter()
-    context = dict(station=s, abbr=abbr, station_list=station_list)
+    lastupdate = s.record_set.latest('id').timestamp
+    stations_has_param = station_list.filter()    
+    context = dict(station=s, abbr=abbr, station_list=station_list,
+        lastupdate=lastupdate)
     return render(request, 'records/stationmapparam.html', context)
 
 def stationmapwind(request, zone_url_id, station_url_id):
