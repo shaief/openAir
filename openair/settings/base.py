@@ -30,7 +30,7 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    # PROJECT_DIR.child('static'),
+    PROJECT_DIR.child('static'),
 )
 
 STATICFILES_FINDERS = (

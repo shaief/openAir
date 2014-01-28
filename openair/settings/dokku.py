@@ -9,9 +9,9 @@ TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = (
 	'openair.dokku.shaief.com',
-	)
+)
 
-STATIC_ROOT = PROJECT_DIR.child('static')
+STATIC_ROOT = PROJECT_DIR.child('staticroot')
 
 SECRET_KEY = environ.get('SECRET_KEY')
 
