@@ -7,6 +7,10 @@ ENV = 'dokku'
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+ALLOWED_HOSTS = (
+	'openair.dokku.shaief.com',
+	)
+
 SECRET_KEY = environ.get('SECRET_KEY')
 
 DATABASES = {
