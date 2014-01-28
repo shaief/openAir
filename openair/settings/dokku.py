@@ -11,6 +11,8 @@ ALLOWED_HOSTS = (
 	'openair.dokku.shaief.com',
 	)
 
+STATIC_ROOT = PROJECT_DIR.child('static')
+
 SECRET_KEY = environ.get('SECRET_KEY')
 
 DATABASES = {
