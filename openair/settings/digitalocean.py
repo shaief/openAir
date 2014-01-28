@@ -1,6 +1,6 @@
 from os import environ
 from .base import *
-import dj_databse_url
+import dj_database_url
 
 ENV = 'digitalocean'
 
