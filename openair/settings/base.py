@@ -89,7 +89,7 @@ INSTALLED_APPS = (
     'south',
     'tastypie',
     'django_nvd3',
-    'djangobower',
+    # 'djangobower',
     'gunicorn',
 
     'openair.records',
