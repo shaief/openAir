@@ -96,17 +96,18 @@ INSTALLED_APPS = (
 )
 
 
-BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
+# BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
 
-BOWER_INSTALLED_APPS = (
-    'jquery#1.9',
-    'underscore',
-)
+# BOWER_INSTALLED_APPS = (
+#     'jquery#1.9',
+#     'underscore',
+# )
 
-# on debian based systems 
-# sudo  ln -s /usr/bin/nodejs /usr/bin/node
+# # on debian based systems 
+# # sudo  ln -s /usr/bin/nodejs /usr/bin/node
 
-BOWER_PATH = "/usr/local/bin/bower"
+# BOWER_PATH = "/usr/local/bin/bower"
+
 SITE_ID = 1
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
