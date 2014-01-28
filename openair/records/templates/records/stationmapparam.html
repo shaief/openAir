@@ -47,7 +47,7 @@ openAir - {{ station.name }}
 	<div class="col-md-9">
 			<h1 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h1>
 <h1 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h1>
-<h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate }}</span></h3>
+<h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
 		<div align=center>
 			<svg id="timeseries">
 		</div>
