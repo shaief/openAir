@@ -82,22 +82,32 @@ def map(request):
 
     return render(request, 'records/map.html')
 
-def stationmap(request, url_id):
+def stationparams(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
     parameter_list = s.record_set.all()
     lastupdate = s.record_set.latest('id').timestamp
     context = dict(station=s, station_list=station_list, 
         parameter_list=parameter_list, lastupdate=lastupdate)
+    return render(request, 'records/stationparams.html', context)
+
+def stationmap(request, url_id):
+    s = get_object_or_404(Station, url_id=url_id)
+    station_list = Station.objects.all().order_by('name')
+    station_params = Parameter.objects.filter(record__station__url_id=url_id).distinct()
+    lastupdate = s.record_set.latest('id').timestamp
+    context = dict(station=s, station_list=station_list, 
+        station_params=station_params, lastupdate=lastupdate)
     return render(request, 'records/stationmap.html', context)
 
 def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
-    stations_has_param = station_list.filter()    
+    station_params = Parameter.objects.filter(record__station__url_id=url_id).distinct()
+    # stations_has_param = station_list.filter() 
     context = dict(station=s, abbr=abbr, station_list=station_list,
-        lastupdate=lastupdate)
+        station_params=station_params, lastupdate=lastupdate)
     return render(request, 'records/stationmapparam.html', context)
 
 def stationmapwind(request, zone_url_id, station_url_id):
