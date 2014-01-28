@@ -2,7 +2,7 @@ from os import environ
 from .base import *
 import dj_database_url
 
-ENV = 'digitalocean'
+ENV = 'dokku'
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
