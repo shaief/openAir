@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'tastypie',
     'django_nvd3',
     # 'djangobower',
+    'storages',
     'gunicorn',
 
     'openair.records',
