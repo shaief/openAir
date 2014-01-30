@@ -37,7 +37,7 @@ def parameter_json(request, abbr):
                 [record['name'] for record in records]:
             records.append(dict(name=r.station.name,
                                 zone=r.station.zone.name,
-                                timestamp=(r.timestamp).strftime("%Y-%m-%d %H:%M"),
+                                timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"),
                                 zone_id=r.station.zone.url_id,
                                 value=r.value))
 
