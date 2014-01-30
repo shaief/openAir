@@ -18,7 +18,7 @@ def parameters(request):
 def parameter(request, abbr):
     parameter_list = Parameter.objects.all()
     p = get_object_or_404(Parameter, abbr=abbr)
-    lastupdate = str(p.record_set.latest('id').timestamp)
+    lastupdate = p.record_set.latest('id').timestamp
     context = dict(parameter=p, parameter_list=parameter_list, lastupdate=lastupdate)
     return render(request, 'records/parameter.html', context)
 
@@ -105,7 +105,6 @@ def stationmapparam(request, url_id, abbr):
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
     station_params = Parameter.objects.filter(record__station__url_id=url_id).distinct()
-    # stations_has_param = station_list.filter() 
     context = dict(station=s, abbr=abbr, station_list=station_list,
         station_params=station_params, lastupdate=lastupdate)
     return render(request, 'records/stationmapparam.html', context)
