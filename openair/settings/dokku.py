@@ -15,9 +15,11 @@ ALLOWED_HOSTS = (
 
 SECRET_KEY = environ.get('SECRET_KEY')
 
-DATABASES = {
-    'default': dj_database_url.config()
-}
+# DATABASES = {
+#     'default': dj_database_url.config()
+# }
+
+DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
 redis_url = urlparse.urlparse(environ.get('REDIS_URL'))
 
