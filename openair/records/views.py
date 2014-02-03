@@ -37,7 +37,10 @@ def parameter_json(request, abbr):
                 [record['name'] for record in records]:
             records.append(dict(name=r.station.name,
                                 zone=r.station.zone.name,
-                                timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"),
+                                #station_url=()
+                                datestamp = (r.timestamp).strftime("%d-%m-%Y"),
+                                timestamp=(r.timestamp).strftime("%H:%M"),
+                                datetimestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"),
                                 zone_id=r.station.zone.url_id,
                                 value=r.value))
 
@@ -87,9 +90,11 @@ def stationparams(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
     parameter_list = s.record_set.all()
+    station_params = Parameter.objects.filter(record__station__url_id=url_id).distinct()
     lastupdate = s.record_set.latest('id').timestamp
     context = dict(station=s, station_list=station_list, 
-        parameter_list=parameter_list, lastupdate=lastupdate)
+        parameter_list=parameter_list, lastupdate=lastupdate,
+        station_params=station_params)
     return render(request, 'records/stationparams.html', context)
 
 def stationmap(request, url_id):
@@ -130,7 +135,8 @@ def stationmap_json(request, url_id):
                                 value=r.value,
                                 ))
     geom = [s.lon, s.lat]
-    info = dict(records=records, geom=geom, timestamp=str(r.timestamp))
+
+    info = dict(records=records, geom=geom, timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"))
 
     data = dict(params=params, values=values,
                 geom=geom, timestamp=str(r.timestamp))
@@ -140,11 +146,10 @@ def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     records = []
     point = [s.lon, s.lat]
-    for r in s.record_set.all().order_by('timestamp'):
+    for r in s.record_set.all().order_by('timestamp')[:24]:
         if (r.parameter.abbr == abbr):
             records.append(dict(value=r.value,
-                                timestamp=str(r.timestamp
-                                )))                  
+                                timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y")))                  
     data = dict(point=point, records=records)                       
     return HttpResponse(json.dumps(data))
 
@@ -153,7 +158,7 @@ def stationmapwind_json(request, url_id):
     rv = []
     i = 0
     point = [s.lon, s.lat]
-    records = list(s.record_set.all().order_by('timestamp'))
+    records = list(s.record_set.all().order_by('timestamp')[:24])
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
         i+=1
