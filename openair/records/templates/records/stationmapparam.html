@@ -56,6 +56,8 @@ openAir - {{ station.name }}
 			<h1 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h1>
 <h1 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h1>
 <h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
+<h3 align="center">ערך ממוצע: <span dir="ltr">{{ total_average_value }}</span></h3>
+
 		<div align=center>
 			<svg id="timeseries">
 		</div>
@@ -69,6 +71,7 @@ openAir - {{ station.name }}
 	var lat = {{ station.lat }}
 	var stationsJson = "{% url 'stations_json' %}";
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
+	var total_average_value = {{ total_average_value }}
 </script>
 <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 <script src="crossfilter.v1.min.js"></script>

@@ -96,12 +96,23 @@ d3.json(paramjson, function(error, json) {
 	console.log(json.average_value);
 	average_value = json.average_value;
 
-	var myLine = chart.append("svg:line")
+	var stationAverage = chart.append("svg:line")
 	    .attr("x1", 0)
 	    .attr("y1", y(average_value))
 	    .attr("x2", width)
 	    .attr("y2", y(average_value))
-	    .style("stroke", "rgb(124,255,0)");
+	    .style("stroke", "rgb(124,255,0)")
+	    .append("svg:title")
+	    .text(function(d) { return "ממוצע בתחנה: " + average_value; });
+
+
+	var totalAverage = chart.append("svg:line")
+	    .attr("x1", 0)
+	    .attr("y1", y(total_average_value))
+	    .attr("x2", width)
+	    .attr("y2", y(total_average_value))
+	    .style("stroke", "rgb(124,0,255)")
+	    .text(function(d) { return "ממוצע כללי: " + total_average_value; });
 
 });
 

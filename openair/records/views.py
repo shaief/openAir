@@ -111,9 +111,12 @@ def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
+    abbr_id = Parameter.objects.get(abbr=abbr).id
+    total_average_value = Record.objects.filter(parameter=abbr_id).aggregate(Avg('value'))
     station_params = Parameter.objects.filter(record__station__url_id=url_id).distinct()
     context = dict(station=s, abbr=abbr, station_list=station_list,
-        station_params=station_params, lastupdate=lastupdate)
+        station_params=station_params, lastupdate=lastupdate,
+        total_average_value=total_average_value['value__avg'])
     return render(request, 'records/stationmapparam.html', context)
 
 def stationmapwind(request, zone_url_id, station_url_id):

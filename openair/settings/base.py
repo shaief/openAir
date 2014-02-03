@@ -90,7 +90,6 @@ INSTALLED_APPS = (
     'tastypie',
     'django_nvd3',
     # 'djangobower',
-    'storages',
     'gunicorn',
 
     'openair.records',
@@ -136,28 +135,3 @@ LOGGING = {
         },
     }
 }
-<<<<<<< HEAD
-
-LEAFLET_CONFIG = {
-    # conf here
-    #'SPATIAL_EXTENT': (25, 25, 40, 40),
-    'DEFAULT_CENTER': (32.0, 35.0),
-    'DEFAULT_ZOOM': 8,
-    'ATTRIBUTION_PREFIX': 'openAir map is powered by django-leaflet',
-    'RESET_VIEW': False,
-}
-
-
-DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', $
-            'NAME': 'openair',                      # Or path to database file if using sqlite3.
-            # The following settings are not used with sqlite3:
-            'USER': 'openAir',
-            'PASSWORD': 'tuuhrakfuko',
-            'HOST': 'localhost',     # Empty for localhost through domain sockets or $
-            'PORT': '',              # Set to empty string for default.
-        }
-    }
-=======
->>>>>>> origin/master
