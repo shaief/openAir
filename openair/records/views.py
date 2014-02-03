@@ -8,6 +8,7 @@ import random
 import time
 import itertools
 
+from django.db.models import Avg
 
 def parameters(request):
     latest_record_list = Record.objects.all().order_by('station')[:10]
@@ -146,11 +147,16 @@ def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     records = []
     point = [s.lon, s.lat]
+    number_of_values = 0
+    sum_values = 0
     for r in s.record_set.all().order_by('timestamp')[:24]:
         if (r.parameter.abbr == abbr):
+            number_of_values += 1
+            sum_values += r.value
             records.append(dict(value=r.value,
-                                timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y")))                  
-    data = dict(point=point, records=records)                       
+                                timestamp=r.timestamp.isoformat()))
+    average_value = sum_values / number_of_values
+    data = dict(point=point, records=records, average_value=average_value)                       
     return HttpResponse(json.dumps(data))
 
 def stationmapwind_json(request, url_id):
