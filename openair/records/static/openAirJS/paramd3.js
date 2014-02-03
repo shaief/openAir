@@ -13,9 +13,9 @@ L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
 // myLayer.addData(stationsJson);
 
 // define chart size:
-var margin = {top: 20, right: 30, bottom: 150, left: 40},
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
     width = 500 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 300 - margin.top - margin.bottom;
 
 // define paddings:
 var barPadding = 3;
@@ -89,7 +89,20 @@ d3.json(paramjson, function(error, json) {
 	     })
 	// add texts when hover:
 	  .append("svg:title")
-	  .text(function(d) { return d.value + "\n" + d.timestamp; });
+	  .text(function(d) { return d.value + "\n" + d.timestamp + "\n" + d.average_value; });
+
+
+	// draw an average line...
+	console.log(json.average_value);
+	average_value = json.average_value;
+
+	var myLine = chart.append("svg:line")
+	    .attr("x1", 0)
+	    .attr("y1", y(average_value))
+	    .attr("x2", width)
+	    .attr("y2", y(average_value))
+	    .style("stroke", "rgb(124,255,0)");
+
 });
 
 function type(d) {

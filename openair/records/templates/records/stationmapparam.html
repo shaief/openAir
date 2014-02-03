@@ -2,7 +2,7 @@
 {% load static %}
 {% block head %}
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+	
 	<style>
 		#map {
 			height: 400px;
@@ -62,6 +62,7 @@ openAir - {{ station.name }}
 </div>
 </div>
 
+
 <script type="text/javascript">
 	console.log({{ station.lon }}, {{ station.lat }})
 	var lon = {{ station.lon }}
@@ -69,6 +70,8 @@ openAir - {{ station.name }}
 	var stationsJson = "{% url 'stations_json' %}";
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
 </script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+<script src="crossfilter.v1.min.js"></script>
 <script type="text/javascript" src="{% static 'openAirJS/paramd3.js' %}"></script>
 
 {% endblock %}
