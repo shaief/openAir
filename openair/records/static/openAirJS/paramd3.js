@@ -7,14 +7,15 @@ L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
 	maxZoom : 16
 }).addTo(map);
 
+// stations_data = d3.json(stationsJson)
 // L.geoJson(stationsJson).addTo(map);
 // var myLayer = L.geoJson().addTo(map);
 // myLayer.addData(stationsJson);
 
 // define chart size:
-var margin = {top: 20, right: 30, bottom: 30, left: 40},
+var margin = {top: 20, right: 30, bottom: 150, left: 40},
     width = 500 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    height = 400 - margin.top - margin.bottom;
 
 // define paddings:
 var barPadding = 3;

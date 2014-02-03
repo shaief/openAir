@@ -26,18 +26,18 @@ USE_TZ = True
 
 MEDIA_ROOT = ''
 MEDIA_URL = ''
-STATIC_ROOT = '/webapps/static/'
+STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    # PROJECT_DIR.child('static'),
+    PROJECT_DIR.child('records', 'static'),
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #   'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'djangobower.finders.BowerFinder',
+    # 'djangobower.finders.BowerFinder',
 )
 
 SECRET_KEY = 'supersecretkeythatisoverridedlateron'
@@ -84,31 +84,31 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'django.contrib.gis',
 
     'django_extensions',
     'south',
     'tastypie',
     'django_nvd3',
-    'djangobower',
-    'djgeojson',
-    'leaflet',
+    # 'djangobower',
+    'storages',
+    'gunicorn',
 
     'openair.records',
 )
 
 
-BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
+# BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
 
-BOWER_INSTALLED_APPS = (
-    'jquery#1.9',
-    'underscore',
-)
+# BOWER_INSTALLED_APPS = (
+#     'jquery#1.9',
+#     'underscore',
+# )
 
-# on debian based systems 
-# sudo  ln -s /usr/bin/nodejs /usr/bin/node
+# # on debian based systems 
+# # sudo  ln -s /usr/bin/nodejs /usr/bin/node
 
-BOWER_PATH = "/usr/local/bin/bower"
+# BOWER_PATH = "/usr/local/bin/bower"
+
 SITE_ID = 1
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
@@ -136,6 +136,7 @@ LOGGING = {
         },
     }
 }
+<<<<<<< HEAD
 
 LEAFLET_CONFIG = {
     # conf here
@@ -158,3 +159,5 @@ DATABASES = {
             'PORT': '',              # Set to empty string for default.
         }
     }
+=======
+>>>>>>> origin/master

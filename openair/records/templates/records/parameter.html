@@ -20,15 +20,15 @@ openAir - Parameter: {{ parameter.abbr }}
 {% endblock %}
 {% block content %}
 <h1>פרמטר: {{ parameter.abbr }}</h1>
-<h3>עדכון אחרון: <span dir="ltr">{{ lastupdate }}</span></h3>
-
+<h3>עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
 <div class="buttons"></div>
 
 <table class="table">
 	<thead><tr>
-	<th>Zone</th>
-	<th>Station</th>
-	<th>Value</th>
+	<th>אזור</th>
+	<th>שם התחנה</th>
+	<th>זמן המדידה</th>
+	<th>ערך נמדד</th>
 	<th width="200px"></th>
 	</tr></thead>
 	<tbody id="records"></tbody>
@@ -94,6 +94,12 @@ openAir - Parameter: {{ parameter.abbr }}
 		records.append("td")
 			.text(function(d) {
 				return d["name"]; 
+			});
+
+		// name column
+		records.append("td")
+			.text(function(d) {
+				return d["timestamp"]; 
 			});
 
 		// value column
