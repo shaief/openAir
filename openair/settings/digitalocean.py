@@ -10,5 +10,6 @@ TEMPLATE_DEBUG = DEBUG
 SECRET_KEY = environ.get('SECRET_KEY')
 
 DATABASES = {
-	'default': dj_database_url.config()
+	'default': dj_database_url.config(),
+	'HOST': 'localhost',
 }
