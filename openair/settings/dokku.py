@@ -55,3 +55,10 @@ RAVEN_CONFIG = {
 INSTALLED_APPS += (
     'raven.contrib.django.raven_compat',
 )
+
+CELERYBEAT_SCHEDULE = {
+    'records': {
+        'task': 'openair.records.tasks.scrape_data',
+        'schedule': timedelta(minutes=10)
+    }
+}
