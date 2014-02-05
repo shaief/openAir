@@ -4,6 +4,8 @@ import urlparse
 from os import environ
 from .base import *
 
+from datetime import timedelta
+
 ENV = 'dokku'
 
 DEBUG = False
