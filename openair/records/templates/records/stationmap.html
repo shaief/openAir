@@ -6,19 +6,29 @@ openAir - {{ station.name }}
 {% endblock %}
 
 {% block navbar-list %}
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">רשימת תחנות<b class="caret"></b></a>
-	<ul class="dropdown-menu">
-		{% for sta in station_list %}
-			{% if sta %}
-			<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
-			{% endif %}
-		{% endfor %}
-	</ul>
+<li class="dropdown"><a role="menu" data-toggle="dropdown" href="#"> תחנות<b class="caret"></b></a>
+    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+        {% for zon in zone_list %}
+            <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
+                    {{ zon.name }}
+                </a>
+            <ul class="dropdown-menu">
+                {% for sta in station_list %}
+                    {% ifequal sta.zone.url_id zon.url_id %}
+                        <li><a tabindex="-1" href="{% url 'stationmap' sta.url_id %}">
+                            {{ sta.name }}
+                        </a></li>
+                    {% endifequal %}
+                {% endfor %}
+            </ul>
+            </li>
+        {% endfor %}
+    </ul>
 </li>
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
-		    <ul class="dropdown-menu">    
+		    <ul class="dropdown-menu">
 		    {% for sp in station_params %}
 		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
 		    {% endfor %}
@@ -33,7 +43,7 @@ openAir - {{ station.name }}
 <div class="row">
 	<div class="col-md-11">
 		<div>
-		<svg id="parameters"></svg> 
+		<svg id="parameters"></svg>
 		</div>
 		<div align="center">
 			<svg id="bars"> </svg>
@@ -44,7 +54,7 @@ openAir - {{ station.name }}
 	    <div class="btn-group">
 		{% if station_list %}
 		    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
-		    <ul class="dropdown-menu">    
+		    <ul class="dropdown-menu">
 		    {% for sta in station_list %}
 		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
 		    {% endfor %}
@@ -55,7 +65,7 @@ openAir - {{ station.name }}
 		{% endif %}
 		{% if station_params %}
 		    <button data-toggle="dropdown" class="btn dropdown-toggle">פרמטרים נוספים בתחנה <span class="caret"></span></button>
-		    <ul class="dropdown-menu">    
+		    <ul class="dropdown-menu">
 		    {% for sp in station_params %}
 		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
 		    {% endfor %}
@@ -152,7 +162,7 @@ openAir - {{ station.name }}
         	    .attr("font-family", "sans-serif")
    			    .attr("font-size", "8px")
    			    .attr("text-anchor", "middle")
-   			    .attr("fill", "black");	         
+   			    .attr("fill", "black");
 
    			var svgParams = d3.select("#parameters")
 	                                .append("svg")
@@ -203,7 +213,7 @@ openAir - {{ station.name }}
         	    .attr("font-family", "sans-serif")
    			    .attr("font-size", "8px")
    			    .attr("text-anchor", "middle")
-   			    .attr("fill", "black");	         
+   			    .attr("fill", "black");
 		 });
 
 /* Visualizing parameters in a station */

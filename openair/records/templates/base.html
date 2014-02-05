@@ -8,11 +8,13 @@
 		{% block title %}
 		{% endblock %}
 	</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="{% static 'bootstrap3-rtl/css/bootstrap-rtl.css' %}" rel="stylesheet">
-	<script type="text/javascript" src="{% static 'lib/d3.js' %}"></script>
-    
+    <link href="{% static 'css/submenus.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'lib/d3.js' %}"></script>
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!-- [if lt IE 9]
@@ -46,8 +48,10 @@
               <li><a href="{% url 'parameter' 'CO' %}">פרמטר</a></li>
               <li><a href="{% url 'stationmap' 11 %}">תחנה</a></li>
               <li><a href="{% url 'stationmapwind' 8 137 %}">מפת רוח :)</a></li>
-				{% block navbar-list %}
-				{% endblock %}
+
+                {% block navbar-list %}
+                {% endblock %}
+
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -77,9 +81,10 @@
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
-	{% block scripts %}
-	{% endblock %}
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+
+    {% block scripts %}
+    {% endblock %}
   </body>
 </html>
 

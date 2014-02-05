@@ -106,17 +106,20 @@ def stationparams(request, url_id):
 
 def stationmap(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
+    zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
     lastupdate = s.record_set.latest('id').timestamp
     context = dict(station=s, station_list=station_list,
-        station_params=station_params, lastupdate=lastupdate)
+        zone_list=zone_list, station_params=station_params,
+        lastupdate=lastupdate)
     return render(request, 'records/stationmap.html', context)
 
 
 def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
+    zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
     abbr_id = Parameter.objects.get(abbr=abbr).id
@@ -126,17 +129,19 @@ def stationmapparam(request, url_id, abbr):
         filter(record__station__url_id=url_id).distinct()
     context = dict(station=s, abbr=abbr, station_list=station_list,
         station_params=station_params, lastupdate=lastupdate,
+        zone_list=zone_list,
         total_average_value=total_average_value['value__avg'])
     return render(request, 'records/stationmapparam.html', context)
 
 
 def stationmapwind(request, zone_url_id, station_url_id):
     s = get_object_or_404(Station, url_id=station_url_id)
+    zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     station_has_wind = Station.objects.\
         filter(record__parameter__abbr='WD').distinct().order_by('name')
     context = dict(station=s, abbr='WD', station_list=station_list,
-                   station_has_wind=station_has_wind,
+                   station_has_wind=station_has_wind, zone_list=zone_list,
                    zone_url_id=int(zone_url_id),
                    lat=s.lat, lon=s.lon)
     return render(request, 'records/stationmapwind_pi.html', context)
