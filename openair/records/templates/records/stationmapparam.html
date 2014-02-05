@@ -26,19 +26,30 @@ openAir - {{ station.name }}
 
 {% endblock %}
 {% block navbar-list %}
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">רשימת תחנות<b class="caret"></b></a>
-	<ul class="dropdown-menu">
-		{% for sta in station_list.record_set.parameter %}
-		{% if abbr in sta.record_set %}
-			<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmapparam' sta.url_id abbr %}">{{ sta.name }}</a></li>
-		{% endif %}
-		{% endfor %}
-	</ul>
+<li class="dropdown"><a role="menu" data-toggle="dropdown" href="#">רשימת תחנות<b class="caret"></b></a>
+    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+        {% for zon in zone_list %}
+            <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
+                    {{ zon.name }}
+                </a>
+            <ul class="dropdown-menu">
+                {% for sta in station_list %}
+                    {% ifequal sta.zone.url_id zon.url_id %}
+                        <li><a tabindex="-1" href="{% url 'stationmap' sta.url_id %}">
+                            {{ sta.name }}
+                        </a></li>
+                    {% endifequal %}
+                {% endfor %}
+            </ul>
+            </li>
+        {% endfor %}
+    </ul>
 </li>
+
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
-		    <ul class="dropdown-menu">    
+		    <ul class="dropdown-menu">
 		    {% for sp in station_params %}
 		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
 		    {% endfor %}
