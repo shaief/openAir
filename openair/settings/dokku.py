@@ -23,7 +23,8 @@ SECRET_KEY = environ.get('SECRET_KEY')
 
 DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
-redis_url = urlparse.urlparse(environ.get('REDIS_URL'))
+BROKER_URL = REDIS_URL = environ.get('REDIS_URL')
+redis_url = urlparse.urlparse(REDIS_URL)
 
 CACHES = {
     'default': {

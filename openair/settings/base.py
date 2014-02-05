@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     # 'djangobower',
     'storages',
     'gunicorn',
+    'celery',
 
     'openair.records',
 )
@@ -104,7 +105,7 @@ INSTALLED_APPS = (
 #     'underscore',
 # )
 
-# # on debian based systems 
+# # on debian based systems
 # # sudo  ln -s /usr/bin/nodejs /usr/bin/node
 
 # BOWER_PATH = "/usr/local/bin/bower"
