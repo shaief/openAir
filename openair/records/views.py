@@ -134,7 +134,7 @@ def stationmapwind(request, zone_url_id, station_url_id):
     s = get_object_or_404(Station, url_id=station_url_id)
     station_list = Station.objects.all().order_by('name')
     station_has_wind = Station.objects.\
-        filter(record__parameter__abbr='WD').distinct()
+        filter(record__parameter__abbr='WD').distinct().order_by('name')
     context = dict(station=s, abbr='WD', station_list=station_list,
                    station_has_wind=station_has_wind,
                    zone_url_id=int(zone_url_id),
