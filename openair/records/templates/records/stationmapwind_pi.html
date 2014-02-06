@@ -63,8 +63,10 @@ openAir -מצב הרוח ב{{ station.name }}
 	var lat ={{lat}};
 	var lon ={{lon}};
 	var windJson = "{% url 'stationmapwind_json' url_id=station.url_id %}";
+	var w = "{% url 'stationmapwind_json' url_id=1 %}";
+	var windUrl = w.substring(0, w.length -2);
 	var stationsJson = "{% url 'stations_json' %}"
-	var  s = "{% url 'stationmapwind' 8 88 %}"
+	var s = "{% url 'stationmapwind' 8 88 %}"
 	var stations_url = s.substring(0, s.length - 6)
 </script>
 

@@ -61,10 +61,14 @@ var data = d3.json(windJson, function(error, json) {
 
 	// adding all stations to the map
 	var data_stations = d3.json(stationsJson, function(error, collection) {
-		if (error)
-			return console.warn(error);
+		if (error) return console.warn(error);
 		stations_json = [collection.features];
+		var stations_json_features = stations_json[0];
 		console.log(stations_json);
+                  console.log(stations_json[0]);
+                  console.log(stations_json[0][0]);
+                  console.log(stations_json[0][0].geometry);
+                  console.log(stations_json[0][0].geometry.coordinates);
 		// setting d3 elements for the leaflet overlayer
 		var svg = d3.select(map.getPanes().overlayPane).append("svg");
 		var g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -78,6 +82,34 @@ var data = d3.json(windJson, function(error, json) {
 		// reset overlays with each map view reset (such as zooming in/out)
 		map.on("viewreset", putPointsOnMap);
 		putPointsOnMap();
+
+                  map.on("dragend", mapMoved);
+
+                function mapMoved(){
+                    console.log("center: " + map.getCenter());
+                    var mapCenter = map.getCenter();
+                    console.log("array length: " + stations_json_features.length);
+                    var sortable = [];
+                    for (var sta = 0; sta < stations_json_features.length; sta++){
+                        var pLat = stations_json_features[sta].geometry.coordinates[0];
+                        var pLon = stations_json_features[sta].geometry.coordinates[1]
+                        var station_url_id =  stations_json_features[sta].url_id;
+                        var zone_url_id = stations_json_features[sta].zone_url_id;
+                        var dist = mapCenter.distanceTo(new L.latLng(pLon, pLat));
+                        console.log("sta "+ sta + " url " + station_url_id + " dist "+ dist);
+                        sortable.push([sta, zone_url_id, station_url_id, pLon, pLat, dist]);
+                        };
+                    sortable.sort(function(a, b) {
+                        return (a[5]-b[5]);
+                        });
+                    console.log("closest point: " + sortable[0]);
+                    console.log(windUrl);
+/*
+                    var newWindJson = windUrl + sortable[0][2];
+                    var data = d3.json(newWindJson);
+                    var windrose_json = json.records;
+*/
+                    };
 
 		function putPointsOnMap() {
 			bounds = path.bounds(collection);
@@ -105,7 +137,7 @@ var data = d3.json(windJson, function(error, json) {
 
 			var windroseX = projectPointToScreen(lon, lat).x;
 			var windroseY = projectPointToScreen(lon, lat).y;
-
+			
 			console.log("map zoom: " + map.getZoom());
 			// remove scale circles from the map
 			if (map.getZoom() < 16) {
