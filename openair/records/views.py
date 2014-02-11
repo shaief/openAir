@@ -174,7 +174,7 @@ def stationmap_param_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().order_by('timestamp')[:24]:
+    for r in s.record_set.all().order_by('timestamp'):
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
@@ -190,7 +190,7 @@ def stationmapwind_json(request, url_id):
     rv = []
     i = 0
     point = [s.lon, s.lat]
-    records = list(s.record_set.all().order_by('timestamp')[:24])
+    records = list(s.record_set.all().order_by('timestamp'))
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
         i += 1
