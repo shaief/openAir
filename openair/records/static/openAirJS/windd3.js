@@ -104,11 +104,9 @@ var data = d3.json(windJson, function(error, json) {
                         });
                     console.log("closest point: " + sortable[0]);
                     console.log(windUrl);
-/*
                     var newWindJson = windUrl + sortable[0][2];
                     var data = d3.json(newWindJson);
                     var windrose_json = json.records;
-*/
                     };
 
 		function putPointsOnMap() {

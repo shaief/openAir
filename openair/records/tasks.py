@@ -5,7 +5,6 @@ from openair.records.scraper import scrape_zone
 from openair.celery import app
 
 import pytz
-import logging
 
 local = pytz.timezone(TIME_ZONE)
 
