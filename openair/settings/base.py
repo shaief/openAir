@@ -92,7 +92,8 @@ INSTALLED_APPS = (
     # 'djangobower',
     'storages',
     'gunicorn',
-    'celery',
+    'djcelery',
+    'kombu.transport.django',
 
     'openair.records',
 )
