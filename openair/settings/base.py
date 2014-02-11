@@ -138,3 +138,11 @@ LOGGING = {
         },
     }
 }
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERYBEAT_SCHEDULE = {
+    'scraper': {
+        'task': 'openair.records.tasks.scrape_data',
+        'schedule': timedelta(seconds=10)
+}

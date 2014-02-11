@@ -11,6 +11,8 @@ local = pytz.timezone(TIME_ZONE)
 
 @app.task
 def scrape_data():
+    print "running task - scrapping data"
+    return
     # run over all of the zones
     for zone in Zone.objects.all():
 
