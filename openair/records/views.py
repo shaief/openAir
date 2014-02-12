@@ -138,11 +138,13 @@ def stationmapwind(request, zone_url_id, station_url_id):
     s = get_object_or_404(Station, url_id=station_url_id)
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
+    station_params = Parameter.objects.\
+        filter(record__station__url_id=station_url_id).distinct()
     station_has_wind = Station.objects.\
         filter(record__parameter__abbr='WD').distinct().order_by('name')
     context = dict(station=s, abbr='WD', station_list=station_list,
                    station_has_wind=station_has_wind, zone_list=zone_list,
-                   zone_url_id=int(zone_url_id),
+                   zone_url_id=int(zone_url_id), station_params=station_params,
                    lat=s.lat, lon=s.lon)
     return render(request, 'records/stationmapwind_pi.html', context)
 
