@@ -13,6 +13,29 @@
 openAir -מצב הרוח ב{{ station.name }}
 {% endblock %}
 {% block navbar-list %}
+<li class="dropdown"><a role="menu" data-toggle="dropdown" href="#">רשימת תחנות שמודדות רוח<b class="caret"></b></a>
+    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+        {% for zon in zone_list %}
+            <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
+                    {{ zon.name }}
+                </a>
+            <ul class="dropdown-menu">
+                {% for sta in station_list %}
+                	{% if sta in station_has_wind %}
+                    {% ifequal sta.zone.url_id zon.url_id %}
+                        <li><a tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">
+                            {{ sta.name }}
+                        </a></li>
+                    {% endifequal %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</li>
+
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
 		    <ul class="dropdown-menu">
