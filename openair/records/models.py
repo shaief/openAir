@@ -52,6 +52,10 @@ class Parameter(models.Model):
     name = models.CharField(max_length=25)
     description = models.TextField()
     units = models.CharField(max_length=25)
+    standard_hourly = models.IntegerField(null=True, blank=True)
+    standard_8hours = models.IntegerField(null=True, blank=True)
+    standard_daily = models.IntegerField(null=True, blank=True)
+    standard_yearly = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):  # Python 3: def __str__(self):
         return self.abbr
