@@ -21,8 +21,11 @@ def parameter(request, abbr):
     parameter_list = Parameter.objects.all()
     p = get_object_or_404(Parameter, abbr=abbr)
     lastupdate = p.record_set.latest('id').timestamp
-    context = dict(parameter=p, parameter_list=parameter_list,
-                    lastupdate=lastupdate)
+    context = dict(
+        parameter=p,
+        parameter_list=parameter_list,
+        lastupdate=lastupdate
+    )
     return render(request, 'records/parameter.html', context)
 
 
@@ -38,14 +41,16 @@ def parameter_json(request, abbr):
 
         if not r.station.name in \
                 [record['name'] for record in records]:
-            records.append(dict(name=r.station.name,
-                        zone=r.station.zone.name,
-                        #station_url=()
-                        datestamp=(r.timestamp).strftime("%d-%m-%Y"),
-                        timestamp=(r.timestamp).strftime("%H:%M"),
-                        datetimestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"),
-                        zone_id=r.station.zone.url_id,
-                        value=r.value))
+            records.append(dict(
+                name=r.station.name,
+                zone=r.station.zone.name,
+                datestamp=(r.timestamp).strftime("%d-%m-%Y"),
+                timestamp=(r.timestamp).strftime("%H:%M"),
+                datetimestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"),
+                station_id=r.station.url_id,
+                zone_id=r.station.zone.url_id,
+                value=r.value)
+            )
 
             if not r.station.zone.url_id in \
                     [z['zone_id'] for z in zones]:
@@ -98,9 +103,13 @@ def stationparams(request, url_id):
     station_params = Parameter.objects. \
         filter(record__station__url_id=url_id).distinct()
     lastupdate = s.record_set.latest('id').timestamp
-    context = dict(station=s, station_list=station_list,
-        parameter_list=parameter_list, lastupdate=lastupdate,
-        station_params=station_params)
+    context = dict(
+        station=s,
+        station_list=station_list,
+        parameter_list=parameter_list,
+        lastupdate=lastupdate,
+        station_params=station_params
+    )
     return render(request, 'records/stationparams.html', context)
 
 
@@ -111,9 +120,13 @@ def stationmap(request, url_id):
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
     lastupdate = s.record_set.latest('id').timestamp
-    context = dict(station=s, station_list=station_list,
-        zone_list=zone_list, station_params=station_params,
-        lastupdate=lastupdate)
+    context = dict(
+        station=s,
+        station_list=station_list,
+        zone_list=zone_list,
+        station_params=station_params,
+        lastupdate=lastupdate
+    )
     return render(request, 'records/stationmap.html', context)
 
 
@@ -127,10 +140,15 @@ def stationmapparam(request, url_id, abbr):
         filter(parameter=abbr_id).aggregate(Avg('value'))
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
-    context = dict(station=s, abbr=abbr, station_list=station_list,
-        station_params=station_params, lastupdate=lastupdate,
+    context = dict(
+        station=s,
+        abbr=abbr,
+        station_list=station_list,
+        station_params=station_params,
+        lastupdate=lastupdate,
         zone_list=zone_list,
-        total_average_value=total_average_value['value__avg'])
+        total_average_value=total_average_value['value__avg']
+    )
     return render(request, 'records/stationmapparam.html', context)
 
 
@@ -142,10 +160,15 @@ def stationmapwind(request, zone_url_id, station_url_id):
         filter(record__station__url_id=station_url_id).distinct()
     station_has_wind = Station.objects.\
         filter(record__parameter__abbr='WD').distinct().order_by('name')
-    context = dict(station=s, abbr='WD', station_list=station_list,
-                   station_has_wind=station_has_wind, zone_list=zone_list,
-                   zone_url_id=int(zone_url_id), station_params=station_params,
-                   lat=s.lat, lon=s.lon)
+    context = dict(station=s,
+                   abbr='WD',
+                   station_list=station_list,
+                   station_has_wind=station_has_wind,
+                   zone_list=zone_list,
+                   zone_url_id=int(zone_url_id),
+                   station_params=station_params,
+                   lat=s.lat, lon=s.lon
+                   )
     return render(request, 'records/stationmapwind_pi.html', context)
 
 
@@ -162,11 +185,18 @@ def stationmap_json(request, url_id):
                                 ))
     geom = [s.lon, s.lat]
 
-    info = dict(records=records, geom=geom,
-        timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y"))
+    info = dict(
+        records=records,
+        geom=geom,
+        timestamp=(r.timestamp).strftime("%H:%M %d-%m-%Y")
+    )
 
-    data = dict(params=params, values=values,
-                geom=geom, timestamp=str(r.timestamp))
+    data = dict(
+        params=params,
+        values=values,
+        geom=geom,
+        timestamp=str(r.timestamp)
+    )
     return HttpResponse(json.dumps(info))
 
 
@@ -176,14 +206,30 @@ def stationmap_param_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().order_by('timestamp'):
+    for r in s.record_set.get(parameter=abbr).order_by('timestamp')[:24]:
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
-            records.append(dict(value=r.value,
-                                timestamp=r.timestamp.isoformat()))
-    average_value = sum_values / number_of_values
-    data = dict(point=point, records=records, average_value=average_value)
+            records.append(
+                dict(
+                    value=r.value,
+                    timestamp=r.timestamp.isoformat(),
+                    day=r.timestamp.day,
+                    month=r.timestamp.month,
+                    year=r.timestamp.year,
+                    hour=r.timestamp.hour,
+                    minutes=r.timestamp.minute
+                )
+            )
+    if number_of_values > 0:
+        average_value = sum_values / number_of_values
+    else:
+        average_value = 'No measurements for ' + abbr
+    data = dict(
+        point=point,
+        records=records,
+        average_value=average_value
+    )
     return HttpResponse(json.dumps(data))
 
 
@@ -215,17 +261,28 @@ def stations_json(request):
         if not((sta.lon is None) & (sta.lat is None)):
             if not((sta.lon == 0.0) & (sta.lat == 0.0)):
                 type = "Feature"
-                properties = dict(name=sta.name, url_id=sta.url_id,
-                         zone=sta.zone.name, zone_url_id=sta.zone.url_id,
-                         location=sta.location,
-                        )
-                geometry = dict(type="Point", coordinates=[sta.lon, sta.lat])
-                stations.append(dict(type=type, properties=properties,
-                             geometry=geometry,
-                             name=sta.name, url_id=sta.url_id,
-                             zone=sta.zone.name, zone_url_id=sta.zone.url_id,
-                             location=sta.location,
-                            ))
+                properties = dict(
+                    name=sta.name,
+                    url_id=sta.url_id,
+                    zone=sta.zone.name,
+                    zone_url_id=sta.zone.url_id,
+                    location=sta.location,
+                )
+                geometry = dict(
+                    type="Point",
+                    coordinates=[sta.lon, sta.lat]
+                )
+                stations.append(dict(
+                    type=type,
+                    properties=properties,
+                    geometry=geometry,
+                    name=sta.name,
+                    url_id=sta.url_id,
+                    zone=sta.zone.name,
+                    zone_url_id=sta.zone.url_id,
+                    location=sta.location,
+                )
+                )
     data = dict(type="FeatureCollection", features=stations)
     return HttpResponse(json.dumps(data))
 
