@@ -206,9 +206,7 @@ def stationmap_param_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().
-    filter(parameter__abbr=abbr).
-    order_by('-timestamp')[:24]:
+    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-timestamp')[:24]:
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
