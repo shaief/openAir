@@ -67,10 +67,14 @@ openAir - {{ station.name }}
 			<h1 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h1>
 <h1 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h1>
 <h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
-<h3 align="center">ערך ממוצע: <span dir="ltr">{{ total_average_value }}</span></h3>
+<h3 align="center">ערך ממוצע בכל התחנות: <span dir="ltr">{{ total_average_value }}</span></h3>
+<h3 align="center" id="average_value">ערך ממוצע בתחנה: <span dir="ltr">{{ total_average_value }}</span></h3>
 
 		<div align=center>
 			<svg id="timeseries">
+		</div>
+		<div align=center>
+			<svg id="demo">
 		</div>
 </div>
 </div>

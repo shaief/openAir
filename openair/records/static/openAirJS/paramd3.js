@@ -89,8 +89,10 @@ d3.json(paramjson, function(error, json) {
 	     })
 	// add texts when hover:
 	  .append("svg:title")
-	  .text(function(d) { return d.value + "\n" + d.timestamp + "\n" + d.average_value; });
-
+	  .text(function(d) { return d.value + "\n" + 
+	  					d.hour + ":" + d.minutes + 
+	  					"\n" + d.day + "/" + d.month + "/" + d.year + 
+	  					"\n" + d.average_value; });
 
 	// draw an average line...
 	console.log(json.average_value);
