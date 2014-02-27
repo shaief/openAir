@@ -15,11 +15,13 @@ L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
 // define chart size:
 var margin = {top: 20, right: 30, bottom: 30, left: 40},
     width = 500 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    chartHeight = 300 - margin.top - margin.bottom;
+
+var barWidth = 10;
+var barHeight = chartHeight*0.75;
 
 // define paddings:
 var barPadding = 3;
-var barWidth = 10;
 var padding = 30;
 
 // scales:
@@ -27,7 +29,7 @@ var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
 
 var y = d3.scale.linear()
-    .range([height, 0]);
+    .range([barHeight, 0]);
 
 var colorScale = d3.scale.linear()
     .range([0, 255]);
@@ -44,16 +46,9 @@ var yAxis = d3.svg.axis()
 // defining the chart:
 var chart = d3.select("#timeseries")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("height", barHeight + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var chartAll = d3.select("#timeseriesAll")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 
 // calling the JSON file:
 d3.json(paramjson, function(error, json) {
@@ -63,60 +58,30 @@ d3.json(paramjson, function(error, json) {
 	// defining data:
 	data = json.records
 	dataAll = json.all_records;
+	var maxValue = d3.max(data, function(d) { return d.value; });
+	var maxDomain = Math.max(maxValue, total_average_value);
 	x.domain(data.map(function(d) { return d.timestamp; }));
-	y.domain([0, d3.max(data, function(d) { return d.value; })]);
-	colorScale.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
+	y.domain([0, maxDomain]);
+	colorScale.domain([d3.min(data, function(d) { return d.value; }), maxDomain]);
 
 // draw axis:
 	chart.append("g")
 	  .attr("class", "x axis")
-	  .attr("transform", "translate(0," + height + ")")
+	  .attr("transform", "translate(0," + barHeight + ")")
 	  .call(xAxis)
 	  .selectAll("text")  
             .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", function(d) {
-                return "rotate(65)" 
-                });
+            .attr("dx", "0.5em")
+            .attr("dy", "-0.5em")
+            .attr("transform", "rotate(90)");
 	chart.append("g")
 	  .attr("class", "y axis")
-	  .call(yAxis);
-
-chartAll.append("g")
-	  .attr("class", "x axis")
-	  .attr("transform", "translate(0," + height + ")")
-	  .call(xAxis)
+	  .call(yAxis)
 	  .selectAll("text")  
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", function(d) {
-                return "rotate(65)" 
-                });
-	chartAll.append("g")
-	  .attr("class", "y axis")
-	  .call(yAxis);
-
-
-	// draw bars:
-	chartAll.selectAll(".bar")
-	  .data(dataAll)
-	  .enter().append("rect")
-	  .attr("class", "bar")
-	  .attr("x", function(d) { return x(d.timestamp); })
-	  .attr("y", function(d) { return y(d.value); })
-	  .attr("height", function(d) { return height - y(d.value); })
-	  .attr("width", x.rangeBand())
-	  .attr("fill", function(d) {
-	     return "rgb(0, 0, " + Math.round(colorScale(d.value)) + ")";	         
-	     })
-	// add texts when hover:
-	  .append("svg:title")
-	  .text(function(d) { return d.value + "\n" + 
-	  					d.hour + ":" + d.minutes + 
-	  					"\n" + d.day + "/" + d.month + "/" + d.year + 
-	  					"\n" + d.average_value; });
+      .style("text-anchor", "end")
+      .attr("align", "right")
+      .attr("dx", "-1em")
+      .attr("dy", "0.3em");
 
 	// draw bars:
 	chart.selectAll(".bar")
@@ -125,7 +90,7 @@ chartAll.append("g")
 	  .attr("class", "bar")
 	  .attr("x", function(d) { return x(d.timestamp); })
 	  .attr("y", function(d) { return y(d.value); })
-	  .attr("height", function(d) { return height - y(d.value); })
+	  .attr("height", function(d) { return barHeight - y(d.value); })
 	  .attr("width", x.rangeBand())
 	  .attr("fill", function(d) {
 	     return "rgb(0, 0, " + Math.round(colorScale(d.value)) + ")";	         
@@ -135,11 +100,11 @@ chartAll.append("g")
 	  .text(function(d) { return d.value + "\n" + 
 	  					d.hour + ":" + d.minutes + 
 	  					"\n" + d.day + "/" + d.month + "/" + d.year + 
-	  					"\n" + d.average_value; });
+	  					"\n" + average_value; });
 
 	// draw an average line...
 	console.log(json.average_value);
-	average_value = json.average_value;
+	//average_value = json.average_value;
 
 	var stationAverage = chart.append("svg:line")
 	    .attr("x1", 0)

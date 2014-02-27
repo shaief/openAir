@@ -138,6 +138,10 @@ def stationmapparam(request, url_id, abbr):
     abbr_id = Parameter.objects.get(abbr=abbr).id
     total_average_value = Record.objects.\
         filter(parameter=abbr_id).aggregate(Avg('value'))
+    average_value = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        aggregate(Avg('value'))
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
     context = dict(
@@ -147,6 +151,7 @@ def stationmapparam(request, url_id, abbr):
         station_params=station_params,
         lastupdate=lastupdate,
         zone_list=zone_list,
+        average_value=average_value['value__avg'],
         total_average_value=total_average_value['value__avg']
     )
     return render(request, 'records/stationmapparam.html', context)
