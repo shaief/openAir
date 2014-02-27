@@ -60,16 +60,14 @@ openAir - {{ station.name }}
 {% block content %}
 
 <div class="row">
-	<div class="col-md-3">
-		<div id="map"></div>
-	</div>
-	<div class="col-md-9">
-			<h1 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h1>
-<h1 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h1>
-<h3 align="center">עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
-<h3 align="center">ערך ממוצע בכל התחנות: <span dir="ltr">{{ total_average_value|floatformat:-2 }}</span></h3>
-<h3 align="center" id="average_value">ערך ממוצע בתחנה: <span dir="ltr">{{ average_value|floatformat:-2 }}</span></h3>
-
+<div class="col-md-3">
+			<h2 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h2>
+<h2 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h2>
+<h4 align="center">עדכון אחרון: <strong><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></strong></h4>
+<h4 align="center">ערך ממוצע בכל התחנות: <strong><span dir="ltr">{{ total_average_value|floatformat:-2 }}</span></strong></h4>
+<h4 align="center" id="average_value">ערך ממוצע בתחנה: <strong><span dir="ltr">{{ average_value|floatformat:-2 }}</span></strong></h4>
+</div>
+	<div class="col-md-6">
 		<div align=center>
 			<svg id="timeseries">
 		</svg>
@@ -80,6 +78,10 @@ openAir - {{ station.name }}
 		<div align=center>
 			<svg id="demo"></svg>
 		</div>
+		</div>
+	<div class="col-md-3">
+		<div id="map"></div>
+	</div>
 </div>
 </div>
 
