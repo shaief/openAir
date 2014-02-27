@@ -62,7 +62,7 @@ d3.json(paramjson, function(error, json) {
 			console.log([json.records])
 	// defining data:
 	data = json.records
-	allData = json.all_records;
+	dataAll = json.all_records;
 	x.domain(data.map(function(d) { return d.timestamp; }));
 	y.domain([0, d3.max(data, function(d) { return d.value; })]);
 	colorScale.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
