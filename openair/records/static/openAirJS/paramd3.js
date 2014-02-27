@@ -101,7 +101,7 @@ chartAll.append("g")
 
 	// draw bars:
 	chartAll.selectAll(".bar")
-	  .data(data)
+	  .data(dataAll)
 	  .enter().append("rect")
 	  .attr("class", "bar")
 	  .attr("x", function(d) { return x(d.timestamp); })
