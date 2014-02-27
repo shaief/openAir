@@ -202,6 +202,7 @@ def stationmap_json(request, url_id):
 
 def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
+    all_records = []
     records = []
     point = [s.lon, s.lat]
     number_of_values = 0
@@ -212,6 +213,7 @@ def stationmap_param_json(request, url_id, abbr):
             sum_values += r.value
             records.append(
                 dict(
+                    record_id = number_of_values,
                     value=r.value,
                     timestamp=r.timestamp.isoformat(),
                     day=r.timestamp.day,
@@ -225,8 +227,25 @@ def stationmap_param_json(request, url_id, abbr):
         average_value = sum_values / number_of_values
     else:
         average_value = 'No measurements for ' + abbr
+    number_of_values = 0
+    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-timestamp'):
+        if (r.parameter.abbr == abbr):
+            number_of_values += 1
+            all_records.append(
+                dict(
+                    record_id = number_of_values,
+                    value=r.value,
+                    timestamp=r.timestamp.isoformat(),
+                    day=r.timestamp.day,
+                    month=r.timestamp.month,
+                    year=r.timestamp.year,
+                    hour=r.timestamp.hour,
+                    minutes=r.timestamp.minute
+                )
+            )
     data = dict(
         point=point,
+        all_records=all_records,
         records=records,
         average_value=average_value
     )

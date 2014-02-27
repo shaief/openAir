@@ -48,13 +48,21 @@ var chart = d3.select("#timeseries")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var chartAll = d3.select("#timeseriesAll")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
 // calling the JSON file:
 d3.json(paramjson, function(error, json) {
 			if (error) return console.warn(error);
+			console.log([json.all_records])
 			console.log([json.records])
 	// defining data:
 	data = json.records
-
+	allData = json.all_records;
 	x.domain(data.map(function(d) { return d.timestamp; }));
 	y.domain([0, d3.max(data, function(d) { return d.value; })]);
 	colorScale.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
@@ -74,6 +82,41 @@ d3.json(paramjson, function(error, json) {
 	chart.append("g")
 	  .attr("class", "y axis")
 	  .call(yAxis);
+
+chartAll.append("g")
+	  .attr("class", "x axis")
+	  .attr("transform", "translate(0," + height + ")")
+	  .call(xAxis)
+	  .selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                return "rotate(65)" 
+                });
+	chartAll.append("g")
+	  .attr("class", "y axis")
+	  .call(yAxis);
+
+
+	// draw bars:
+	chartAll.selectAll(".bar")
+	  .data(data)
+	  .enter().append("rect")
+	  .attr("class", "bar")
+	  .attr("x", function(d) { return x(d.timestamp); })
+	  .attr("y", function(d) { return y(d.value); })
+	  .attr("height", function(d) { return height - y(d.value); })
+	  .attr("width", x.rangeBand())
+	  .attr("fill", function(d) {
+	     return "rgb(0, 0, " + Math.round(colorScale(d.value)) + ")";	         
+	     })
+	// add texts when hover:
+	  .append("svg:title")
+	  .text(function(d) { return d.value + "\n" + 
+	  					d.hour + ":" + d.minutes + 
+	  					"\n" + d.day + "/" + d.month + "/" + d.year + 
+	  					"\n" + d.average_value; });
 
 	// draw bars:
 	chart.selectAll(".bar")
