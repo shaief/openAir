@@ -274,6 +274,8 @@ def stationmapwind_json(request, url_id):
              'timestamp': unicode(ts),
              }
         rv.append(d)
+        if i==24:
+            break
     data = dict(point=point, records=rv)
     return HttpResponse(json.dumps(data))
 
