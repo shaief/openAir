@@ -4,7 +4,7 @@ L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
 	attribution : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
 	subdomains : 'abcd',
 	minZoom : 3,
-	maxZoom : 16
+	maxZoom : 18
 }).addTo(map);
 
 // stations_data = d3.json(stationsJson)
@@ -56,7 +56,7 @@ d3.json(paramjson, function(error, json) {
 			console.log([json.all_records])
 			console.log([json.records])
 	// defining data:
-	data = json.records
+	data = json.records.slice(0,24)
 	dataAll = json.all_records;
 	var maxValue = d3.max(data, function(d) { return d.value; });
 	var maxDomain = Math.max(maxValue, total_average_value);
