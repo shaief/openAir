@@ -262,7 +262,7 @@ def stationmapwind_json(request, url_id):
     rv = []
     i = 0
     point = [s.lon, s.lat]
-    records = list(s.record_set.all().order_by('timestamp')[:24])
+    records = list(s.record_set.all().order_by('timestamp'))
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
         i += 1
