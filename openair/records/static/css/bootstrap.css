@@ -7,7 +7,6 @@
  */
 
 /*! normalize.css v2.1.3 | MIT License | git.io/normalize */
-@import url(http://fonts.googleapis.com/earlyaccess/alefhebrew.css);
 
 article,
 aside,
@@ -41,7 +40,7 @@ template {
 }
 
 html {
-  font-family: "Alef Hebrew",sans-serif;
+  font-family: "Alef",sans-serif;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
