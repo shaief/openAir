@@ -136,23 +136,40 @@ def stationmapparam(request, url_id, abbr):
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
     abbr_id = Parameter.objects.get(abbr=abbr).id
+    p = Parameter.objects.get(abbr=abbr)
+    # averages - total:
     total_average_value = Record.objects.\
         filter(parameter=abbr_id).aggregate(Avg('value'))
     average_value = Record.objects.\
         filter(parameter=abbr_id).\
         filter(station__url_id=url_id).\
         aggregate(Avg('value'))
+    #averages - by time of the day:
+    total_average_value_hour = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(timestamp__hour=lastupdate.hour).\
+        aggregate(Avg('value'))
+    average_value_hour = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__hour=lastupdate.hour).\
+        aggregate(Avg('value'))
+    # list all the parameters in this station
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
+    # Context to render:
     context = dict(
         station=s,
+        parameter=p,
         abbr=abbr,
         station_list=station_list,
         station_params=station_params,
         lastupdate=lastupdate,
         zone_list=zone_list,
         average_value=average_value['value__avg'],
-        total_average_value=total_average_value['value__avg']
+        total_average_value=total_average_value['value__avg'],
+        average_by_hour=average_value_hour['value__avg'],
+        total_average_by_hour=total_average_value_hour['value__avg'],
     )
     return render(request, 'records/stationmapparam.html', context)
 

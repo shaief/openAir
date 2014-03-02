@@ -1,25 +1,26 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head %}
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
-	
-	<style>
-		#map {
-			height: 400px;
-			width: 300px;
-		}
-		.axis path,
-		.axis line {
-		    fill: none;
-		    stroke: black;
-		    shape-rendering: crispEdges;
-		}
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
 
-		.axis text {
-		    font-family: sans-serif;
-		    font-size: 11px;
-		}
-	</style>
+<style>
+	#map {
+		height: 400px;
+		width: 300px;
+	}
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: black;
+		shape-rendering: crispEdges;
+	}
+
+	.axis text {
+		text-align: "right";
+		font-family: sans-serif;
+		font-size: 11px;
+	}
+</style>
 {% endblock %}
 {% block title %}
 openAir - {{ station.name }}
@@ -27,58 +28,71 @@ openAir - {{ station.name }}
 {% endblock %}
 {% block navbar-list %}
 <li class="dropdown"><a role="menu" data-toggle="dropdown" href="#">רשימת תחנות<b class="caret"></b></a>
-    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-        {% for zon in zone_list %}
-            <li class="dropdown-submenu">
-                <a tabindex="-1" href="#">
-                    {{ zon.name }}
-                </a>
-            <ul class="dropdown-menu">
-                {% for sta in station_list %}
-                    {% ifequal sta.zone.url_id zon.url_id %}
-                        <li><a tabindex="-1" href="{% url 'stationmap' sta.url_id %}">
-                            {{ sta.name }}
-                        </a></li>
-                    {% endifequal %}
-                {% endfor %}
-            </ul>
-            </li>
-        {% endfor %}
-    </ul>
+	<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+		{% for zon in zone_list %}
+		<li class="dropdown-submenu">
+			<a tabindex="-1" href="#">
+				{{ zon.name }}
+			</a>
+			<ul class="dropdown-menu">
+				{% for sta in station_list %}
+				{% ifequal sta.zone.url_id zon.url_id %}
+				<li><a tabindex="-1" href="{% url 'stationmap' sta.url_id %}">
+					{{ sta.name }}
+				</a></li>
+				{% endifequal %}
+				{% endfor %}
+			</ul>
+		</li>
+		{% endfor %}
+	</ul>
 </li>
 
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
-		    <ul class="dropdown-menu">
-		    {% for sp in station_params %}
-		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
-		    {% endfor %}
-		    </ul>
+	<ul class="dropdown-menu">
+		{% for sp in station_params %}
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
+		{% endfor %}
+	</ul>
 </li>
 {% endblock %}
 
 {% block content %}
 
 <div class="row">
-<div class="col-md-3">
-			<h2 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h2>
-<h2 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h2>
-<h4 align="center">עדכון אחרון: <strong><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></strong></h4>
-<h4 align="center">ערך ממוצע בכל התחנות: <strong><span dir="ltr">{{ total_average_value|floatformat:-2 }}</span></strong></h4>
-<h4 align="center" id="average_value">ערך ממוצע בתחנה: <strong><span dir="ltr">{{ average_value|floatformat:-2 }}</span></strong></h4>
-</div>
+	<div class="col-md-3">
+		<div>
+			<h4 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h4>
+			<h4 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h4>
+			<h5 align="center">עדכון אחרון: <strong><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></strong></h5>
+		</div>
+		<div>
+			<h4 align="right">פרמרט: {{ parameter.abbr }} - {{ parameter.name }}</h4>
+			<h4 align="right">יחידות מדידה: {{ parameter.units }}</h4>
+			<h4 align="right">הסבר בקצרה: </h4><p align="justify">{{ parameter.description }}</p>
+		</div>
+	</div>
 	<div class="col-md-6">
 		<div align=center>
 			<svg id="timeseries">
-		</svg>
+				<button id="trbutton">Show all data</button>
+			</svg>
+			<div>
+				<h5 align="right">ערך ממוצע בכל התחנות: <strong><span dir="ltr">{{ total_average_value|floatformat:-2 }}</span></strong></h5>
+				<h5 align="right">ערך ממוצע בתחנה: <strong><span dir="ltr">{{ average_value|floatformat:-2 }}</span></strong></h5>
+				<h5 align="right">ערך ממוצע בכל התחנות בשעה זו של היום: <strong><span dir="ltr">{{ total_average_by_hour|floatformat:-2 }}</span></strong></h5>
+				<h5 align="right">ערך ממוצע בתחנה בשעה זו של היום: <strong><span dir="ltr">{{ average_by_hour|floatformat:-2 }}</span></strong></h5>
+				<h5 align="right">גבול מותר עליון - שעתי: {{ parameter.standard_hourly }}</h5>
+				<h5 align="right">גבול מותר עליון - 8 שעות: {{ parameter.standard_8hours }}</h5>
+				<h5 align="right">גבול מותר עליון - יממתי: {{ parameter.standard_daily }}</h5>
+				<h5 align="right">גבול מותר עליון - שנתי: {{ parameter.standard_yearly }}</h5>
+			</div>
 		</div>
 		<div align=center>
-			<svg id="timeseriesAll"></svg>
+			<svg id="timeseriesLine"></svg>
 		</div>
-		<div align=center>
-			<svg id="demo"></svg>
-		</div>
-		</div>
+	</div>
 	<div class="col-md-3">
 		<div id="map"></div>
 	</div>
@@ -94,6 +108,8 @@ openAir - {{ station.name }}
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
 	var total_average_value = {{ total_average_value }}
 	var average_value = {{ average_value }}
+	var total_average_value_hour = {{ total_average_by_hour }}
+	var average_value_hour = {{ average_by_hour }}
 </script>
 <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 <script src="crossfilter.v1.min.js"></script>
