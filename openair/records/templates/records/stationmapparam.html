@@ -64,11 +64,10 @@ openAir - {{ station.name }}
 	<div class="col-md-3">
 		<div>
 			<h4 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h4>
-			<h4 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }}</a></h4>
+			<h4 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }} - {{ parameter.name }}</a></h4>
 			<h5 align="center">עדכון אחרון: <strong><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></strong></h5>
 		</div>
 		<div>
-			<h4 align="right">פרמרט: {{ parameter.abbr }} - {{ parameter.name }}</h4>
 			<h4 align="right">יחידות מדידה: {{ parameter.units }}</h4>
 			<h4 align="right">הסבר בקצרה: </h4><p align="justify">{{ parameter.description }}</p>
 		</div>
@@ -108,8 +107,12 @@ openAir - {{ station.name }}
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
 	var total_average_value = {{ total_average_value }}
 	var average_value = {{ average_value }}
-	var total_average_value_hour = {{ total_average_by_hour }}
-	var average_value_hour = {{ average_by_hour }}
+	// var total_average_value_hour = {{ total_average_by_hour }}
+	// var average_value_hour = {{ average_by_hour }}
+	var standard_hourly = {{ standardHourly }}
+	var standard_8hours = {{ standard8Hours }}
+	var standard_daily	= {{ standardDaily }}
+    var standard_yearly = {{ standardYearly }}
 </script>
 <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 <script src="crossfilter.v1.min.js"></script>

@@ -76,6 +76,9 @@ def parameter_json(request, abbr):
         p.high_level = max_record - boundery * records_range
     else:
         p.high_level = None
+
+    p.low_level = p.standard_yearly
+    p.high_level = p.standard_hourly
     # -------------------------------------------------------------
 
     info = dict(abbr=p.abbr)
@@ -157,6 +160,23 @@ def stationmapparam(request, url_id, abbr):
     # list all the parameters in this station
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
+    
+    try:
+        standardHourly = int(p.standard_hourly)
+    except:
+        standardHourly = -1000
+    try:
+        standard8Hours = int(p.standard_8hours)
+    except:
+        standard8Hours = -1000
+    try:
+        standardDaily = int(p.standard_daily)
+    except:
+        standardDaily = -1000
+    try:
+        standardYearly = int(p.standard_yearly)
+    except:
+        standardYearly = -1000
     # Context to render:
     context = dict(
         station=s,
@@ -170,6 +190,10 @@ def stationmapparam(request, url_id, abbr):
         total_average_value=total_average_value['value__avg'],
         average_by_hour=average_value_hour['value__avg'],
         total_average_by_hour=total_average_value_hour['value__avg'],
+        standardHourly=standardHourly,
+        standard8Hours=standard8Hours,
+        standardDaily=standardDaily,
+        standardYearly=standardYearly,
     )
     return render(request, 'records/stationmapparam.html', context)
 

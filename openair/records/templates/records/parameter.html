@@ -19,8 +19,24 @@ openAir - Parameter: {{ parameter.abbr }}
 </li>
 {% endblock %}
 {% block content %}
-<h1>פרמטר: {{ parameter.abbr }}</h1>
-<h3>עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
+<div class="row">
+	<div class="col-md-4">
+		<h1>פרמטר: {{ parameter.abbr }}</h1>
+		<h3>עדכון אחרון: <span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
+	</div>
+	<div class="col-md-4">
+		<h4>פרמטר: {{ parameter.name }}</h4>
+		<h4>יחידת מדידה: {{ parameter.units }}</h4>
+		<h5 align="right">גבול מותר עליון - שעתי: {{ parameter.standard_hourly }}</h5>
+		<h5 align="right">גבול מותר עליון - 8 שעות: {{ parameter.standard_8hours }}</h5>
+		<h5 align="right">גבול מותר עליון - יממתי: {{ parameter.standard_daily }}</h5>
+		<h5 align="right">גבול מותר עליון - שנתי: {{ parameter.standard_yearly }}</h5>
+	</div>
+	<div class="col-md-4">
+		<p><strong>הסבר:</strong> {{ parameter.description }}</p>
+	</div>
+</div>
+
 <div class="buttons"></div>
 
 <table class="table">

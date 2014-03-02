@@ -37,7 +37,8 @@ var colorScale = d3.scale.linear()
 // axis:
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom");
+    .orient("bottom")
+    .tickFormat(d3.time.format("%H:%M"));
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -50,13 +51,19 @@ var chart = d3.select("#timeseries")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var button = d3.select("#trbutton")
+
 // calling the JSON file:
 d3.json(paramjson, function(error, json) {
 			if (error) return console.warn(error);
 			console.log([json.all_records])
 			console.log([json.records])
+	
+	json.records.forEach(function(d) {
+    	d.timestamp = new Date(d.timestamp);
+    });
 	// defining data:
-	data = json.records.slice(0,24)
+	data = json.records
 	dataAll = json.all_records;
 	var maxValue = d3.max(data, function(d) { return d.value; });
 	var maxDomain = Math.max(maxValue, total_average_value);
@@ -85,7 +92,7 @@ d3.json(paramjson, function(error, json) {
 
 	// draw bars:
 	chart.selectAll(".bar")
-	  .data(data)
+	  .data(data.slice(0,24))
 	  .enter().append("rect")
 	  .attr("class", "bar")
 	  .attr("x", function(d) { return x(d.timestamp); })
@@ -99,13 +106,12 @@ d3.json(paramjson, function(error, json) {
 	  .append("svg:title")
 	  .text(function(d) { return d.value + "\n" + 
 	  					d.hour + ":" + d.minutes + 
-	  					"\n" + d.day + "/" + d.month + "/" + d.year + 
-	  					"\n" + average_value; });
+	  					"\n" + d.day + "/" + d.month + "/" + d.year 
+	  					});
 
 	// draw an average line...
 	console.log(json.average_value);
-	//average_value = json.average_value;
-
+	
 	var stationAverage = chart.append("svg:line")
 	    .attr("x1", 0)
 	    .attr("y1", y(average_value))
@@ -124,8 +130,56 @@ d3.json(paramjson, function(error, json) {
 	    .style("stroke", "rgb(124,0,255)")
 	    .text(function(d) { return "ממוצע כללי: " + total_average_value; });
 
+	var hourly = chart.append("svg:line")
+	    .attr("x1", 0)
+	    .attr("y1", y(standard_hourly))
+	    .attr("x2", width)
+	    .attr("y2", y(standard_hourly))
+	    .style("stroke", "rgb(255,0,0)")
+	    .style("stroke-dasharray", "5,5,2,2");
+
+	var eightHours = chart.append("svg:line")
+	    .attr("x1", 0)
+	    .attr("y1", y(standard_8hours))
+	    .attr("x2", width)
+	    .attr("y2", y(standard_8hours))
+	    .style("stroke", "rgb(124,100,255)")
+	    .style("stroke-dasharray", "10,10,5,5");
+	    
+	var daily = chart.append("svg:line")
+	    .attr("x1", 0)
+	    .attr("y1", y(standard_daily))
+	    .attr("x2", width)
+	    .attr("y2", y(standard_daily))
+	    .style("stroke", "rgb(255,0,0)")
+	    .style("stroke-dasharray", "20,20");
+	    
+	var yearly = chart.append("svg:line")
+	    .attr("x1", 0)
+	    .attr("y1", y(standard_yearly))
+	    .attr("x2", width)
+	    .attr("y2", y(standard_yearly))
+	    .style("stroke", "rgb(0,0,255)")
+	    .style("stroke-dasharray", "20,20");
+
+	button.on("click", function() {
+	  console.log("button pressed");
+	  redraw()});
+
 });
 
+
+function redraw() { 
+    // Update…
+    chart.selectAll("rect")
+       .data(data)
+       .transition()
+       .duration(1000)
+       .attr("fill", function(d) {
+	     return "rgb(0, 0, " + Math.round(colorScale(d.value)) + ")";	         
+	     })
+ 
+};
 function type(d) {
   d.value = +d.value; // coerce to number
   return d;
