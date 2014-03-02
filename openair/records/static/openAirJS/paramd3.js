@@ -56,15 +56,13 @@ var button = d3.select("#trbutton")
 // calling the JSON file:
 d3.json(paramjson, function(error, json) {
 			if (error) return console.warn(error);
-			console.log([json.all_records])
 			console.log([json.records])
 	
 	json.records.forEach(function(d) {
     	d.timestamp = new Date(d.timestamp);
     });
 	// defining data:
-	data = json.records
-	dataAll = json.all_records;
+	data = json.records;
 	var maxValue = d3.max(data, function(d) { return d.value; });
 	var maxDomain = Math.max(maxValue, total_average_value);
 	x.domain(data.map(function(d) { return d.timestamp; }));
@@ -132,33 +130,33 @@ d3.json(paramjson, function(error, json) {
 
 	var hourly = chart.append("svg:line")
 	    .attr("x1", 0)
-	    .attr("y1", y(standard_hourly))
+	    .attr("y1", y(standardHourly))
 	    .attr("x2", width)
-	    .attr("y2", y(standard_hourly))
+	    .attr("y2", y(standardHourly))
 	    .style("stroke", "rgb(255,0,0)")
 	    .style("stroke-dasharray", "5,5,2,2");
 
 	var eightHours = chart.append("svg:line")
 	    .attr("x1", 0)
-	    .attr("y1", y(standard_8hours))
+	    .attr("y1", y(standard8Hours))
 	    .attr("x2", width)
-	    .attr("y2", y(standard_8hours))
+	    .attr("y2", y(standard8Hours))
 	    .style("stroke", "rgb(124,100,255)")
 	    .style("stroke-dasharray", "10,10,5,5");
 	    
 	var daily = chart.append("svg:line")
 	    .attr("x1", 0)
-	    .attr("y1", y(standard_daily))
+	    .attr("y1", y(standardDaily))
 	    .attr("x2", width)
-	    .attr("y2", y(standard_daily))
+	    .attr("y2", y(standardDaily))
 	    .style("stroke", "rgb(255,0,0)")
 	    .style("stroke-dasharray", "20,20");
 	    
 	var yearly = chart.append("svg:line")
 	    .attr("x1", 0)
-	    .attr("y1", y(standard_yearly))
+	    .attr("y1", y(standardYearly))
 	    .attr("x2", width)
-	    .attr("y2", y(standard_yearly))
+	    .attr("y2", y(standardYearly))
 	    .style("stroke", "rgb(0,0,255)")
 	    .style("stroke-dasharray", "20,20");
 
