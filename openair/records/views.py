@@ -160,21 +160,21 @@ def stationmapparam(request, url_id, abbr):
     # list all the parameters in this station
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
-    
+  
     try:
-        standardHourly = int(p.standard_hourly)
+        standardHourly = float(p.standard_hourly)
     except:
         standardHourly = -1000
     try:
-        standard8Hours = int(p.standard_8hours)
+        standard8Hours = float(p.standard_8hours)
     except:
         standard8Hours = -1000
     try:
-        standardDaily = int(p.standard_daily)
+        standardDaily = float(p.standard_daily)
     except:
         standardDaily = -1000
     try:
-        standardYearly = int(p.standard_yearly)
+        standardYearly = float(p.standard_yearly)
     except:
         standardYearly = -1000
     # Context to render:
