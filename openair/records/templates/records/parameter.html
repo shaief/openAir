@@ -33,7 +33,7 @@ openAir - Parameter: {{ parameter.abbr }}
 		<h5 align="right">גבול מותר עליון - שנתי: {{ parameter.standard_yearly }}</h5>
 	</div>
 	<div class="col-md-4">
-		<p><strong>הסבר:</strong> {{ parameter.description }}</p>
+		<h4>הסבר:</h4> <p>{{ parameter.description }}</p>
 	</div>
 </div>
 
@@ -143,45 +143,136 @@ openAir - Parameter: {{ parameter.abbr }}
 				height: h,
 			});
 
-		// if there is a low_level show it
-		if (data.info.low_level) {
+		// // if there is a low_level show it
+		// if (data.info.low_level) {
+		// 	graph.append("rect")
+		// 		.attr({
+		// 			x: 0,
+		// 			y: 0,
+		// 			width: x(data.info.low_level),
+		// 			height: h,
+		// 			opacity: 0.3,
+		// 		});
+
+		// 	graph.append("line")
+		// 		.attr({
+		// 			x1: x(data.info.low_level),
+		// 			y1: 0,
+		// 			x2: x(data.info.low_level),
+		// 			y2: h,
+		// 			stroke: "black",
+		// 		});
+		// }
+
+		// // if there is a high_level show it
+		// if (data.info.high_level) {
+		// 	graph.append("rect")
+		// 		.attr({
+		// 			x: x(data.info.high_level),
+		// 			y: 0,
+		// 			width: w - x(data.info.high_level),
+		// 			height: h,
+		// 			opacity: 0.3,
+		// 		});
+
+		// 	graph.append("line")
+		// 		.attr({
+		// 			x1: x(data.info.high_level),
+		// 			y1: 0,
+		// 			x2: x(data.info.high_level),
+		// 			y2: h,
+		// 			stroke: "black",
+		// 		});
+		// }
+
+		// if there is a standard_hourly show it
+		if (data.info.standard_hourly) {
+			graph.append("rect")
+				.attr({
+					// x: x(data.info.standard_hourly),
+					x: 0,
+					y: 0,
+					// width: w - x(data.info.standard_hourly),
+					width: 0,
+					height: h,
+					opacity: 1,
+				});
+
+			graph.append("line")
+				.attr({
+					x1: x(data.info.standard_hourly),
+					y1: 0,
+					x2: x(data.info.standard_hourly),
+					y2: h,
+					stroke: "#FF0000",
+				});
+		}
+
+		// if there is a standard_8hours show it
+		if (data.info.standard_8hours) {
+			graph.append("rect")
+				.attr({
+					//x: x(data.info.standard_8hours),
+					x: 0,
+					y: 0,
+					//width: w - x(data.info.standard_8hours),
+					width: 0,
+					height: h,
+					opacity: 1,
+				});
+
+			graph.append("line")
+				.attr({
+					x1: x(data.info.standard_8hours),
+					y1: 0,
+					x2: x(data.info.standard_8hours),
+					y2: h,
+					stroke: "#FF6600",
+				});
+		}
+
+		// if there is a standard_daily show it
+		if (data.info.standard_daily) {
+			graph.append("rect")
+				.attr({
+					// x: x(data.info.standard_daily),
+					x: 0,
+					y: 0,
+					// width: w - x(data.info.standard_daily),
+					width: 0,
+					height: h,
+					opacity: 1,
+				});
+
+			graph.append("line")
+				.attr({
+					x1: x(data.info.standard_daily),
+					y1: 0,
+					x2: x(data.info.standard_daily),
+					y2: h,
+					stroke: "#FF9900",
+				});
+		}
+
+		// if there is a standard_yearly show it
+		if (data.info.standard_yearly) {
 			graph.append("rect")
 				.attr({
 					x: 0,
 					y: 0,
-					width: x(data.info.low_level),
+					// width: w-x(data.info.standard_yearly),
+					width: 0,
 					height: h,
-					opacity: 0.3,
+					opacity: 1,
 				});
 
 			graph.append("line")
 				.attr({
-					x1: x(data.info.low_level),
+					x1: x(data.info.standard_yearly),
 					y1: 0,
-					x2: x(data.info.low_level),
+					x2: x(data.info.standard_yearly),
 					y2: h,
-					stroke: "black",
-				});
-		}
-
-		// if there is a high_level show it
-		if (data.info.high_level) {
-			graph.append("rect")
-				.attr({
-					x: x(data.info.high_level),
-					y: 0,
-					width: w - x(data.info.high_level),
-					height: h,
-					opacity: 0.3,
-				});
-
-			graph.append("line")
-				.attr({
-					x1: x(data.info.high_level),
-					y1: 0,
-					x2: x(data.info.high_level),
-					y2: h,
-					stroke: "black",
+					stroke: "#FFFF00",
 				});
 		}
 
@@ -209,21 +300,42 @@ openAir - Parameter: {{ parameter.abbr }}
 					// otherwise mark it with blue
 
 					// start by check if the bounderies exist
-					if (data.info.low_level) {
-						if (d.value < data.info.low_level) {
+					if (data.info.standard_yearly) {
+						if (d.value < data.info.standard_yearly) {
 							return "green";
 						}
 					}
 
 					// and also to the high_level
-					if (data.info.high_level) {
-						if (d.value > data.info.high_level) {
-							return "red";
+					if (data.info.standard_hourly) {
+						if (d.value > data.info.standard_hourly) {
+							return "#FF0000";
+						}
+					}
+
+					// and also to the high_level
+					if (data.info.standard_8hours||data.info.standard_hourly) {
+						if (d.value > data.info.standard_8hours || d.value < data.info.standard_hourly) {
+							return "#FF6600";
+						}
+					}
+					
+					// and also to the high_level
+					if (data.info.standard_daily||data.info.standard_8hours) {
+						if (d.value > data.info.standard_daily || d.value < data.info.standard_8hours) {
+							return "#FF9900";
+						}
+					}
+
+					// and also to the high_level
+					if (data.info.standard_daily||data.info.standard_yearly) {
+						if (d.value > data.info.standard_yearly || d.value < data.info.standard_daily) {
+							return "#FFFF00";
 						}
 					}
 
 					// if no "if" passed return "black"
-					return "orange";
+					return "grey";
 				},
 			});
 
