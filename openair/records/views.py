@@ -138,7 +138,7 @@ def stationmapparam(request, url_id, abbr):
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
-    twentyfourth = s.record_set.all().order_by('-timestamp').reverse()[24].timestamp
+    twentyfourth = s.record_set.all().order_by('-timestamp')[24].timestamp
     abbr_id = Parameter.objects.get(abbr=abbr).id
     p = Parameter.objects.get(abbr=abbr)
     # averages - total:
