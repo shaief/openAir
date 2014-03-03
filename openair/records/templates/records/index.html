@@ -2,21 +2,22 @@
 {% load static %}
 
 <title>
-{% block title %}
-open Air
-{% endblock %}
+  {% block title %}
+  open Air
+  {% endblock %}
 </title>
 
-
+{% block navbar-list %}
+{% endblock %}
 
 {% block content %}
-<br/>
-<br/>
-<br/>
-	<h1>ברוכים הבאים וברוכות הבאות לאתר אוויר של כולם</h1>
-	<h2>המטרה שלנו - הנגשת נתוני איכות אוויר מאתר המשרד להגנת הסביבה</h2>
-	<h3>since 12/2013</h3>
-	<p>אנחנו עוד בבניה. אנא התאזרו בסבלנות</p>
+
+<h1 align="center"><strong>אוויר של כולם</strong> ברוכים הבאים וברוכות הבאות</h1>
+<h2 align="center">הנגשת נתוני איכות אוויר בזמן אמת מאתר המשרד להגנת הסביבה</h2>
+<div align="center"><img src="{% static "images/20140303dust.JPG" %}", width="600">
+  <img src="{% static "images/20140303_15-00_AirQuality_svivaaqm.jpg" %}", width="270">
+</div>
+<p align="center">אנחנו עוד בבניה. אנא התאזרו בסבלנות</p>
 <!-- <ul class="nav nav-tabs">
   <li class="active"><a href="#">List</a></li>
   <li><a href="about.html">About</a></li>
@@ -24,10 +25,10 @@ open Air
 <!-- {% if latest_page_list %}
     <ul>
     {% for page in latest_page_list %}
-        <!-- <li><a href="{% url 'pages:detail' page.id %}">{{ page.word }}</a></li> -->
+    <!-- <li><a href="{% url 'pages:detail' page.id %}">{{ page.word }}</a></li> -->
         <!-- <li><a href="{% url 'pages:words' page.word %}">{{ page.word }}</a></li>
     {% endfor %}
-    </ul> -->
+  </ul> -->
       <!-- <ul class="list-group">
           {% for p in page %}
             <li class="list-group-item">
@@ -36,8 +37,8 @@ open Air
                 </a>
             </li>
           {% endfor %}
-      </ul> -->
-<!-- {% else %} -->
-    <!-- <p>No pages are available.</p> -->
-<!-- {% endif %} --> 
-{% endblock %}
+        </ul> -->
+        <!-- {% else %} -->
+        <!-- <p>No pages are available.</p> -->
+        <!-- {% endif %} --> 
+        {% endblock %}
