@@ -74,6 +74,7 @@ openAir - {{ station.name }}
 	</div>
 	<div class="col-md-6">
 		<div align=center>
+			<h3>24 מדידות אחרונות: <br>{{ twentyfourth|date:"d/m/Y H:i" }} - {{ lastupdate|date:"d/m/Y H:i" }}</h3>
 			<svg id="timeseries">
 				<button id="trbutton">Show all data</button>
 			</svg>
