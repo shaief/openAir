@@ -37,7 +37,7 @@ def parameter_json(request, abbr):
 
     zones = []
 
-    for r in p.record_set.all().order_by('timestamp'):
+    for r in p.record_set.all().order_by('-timestamp')[100]:
 
         if not r.station.name in \
                 [record['name'] for record in records]:
@@ -223,7 +223,7 @@ def stationmap_json(request, url_id):
     records = []
     values = []
     params = []
-    for r in s.record_set.all().order_by('timestamp'):
+    for r in s.record_set.all().order_by('-timestamp')[100]:
         if not r.parameter.abbr in \
                 [record['name'] for record in records]:
             records.append(dict(name=r.parameter.abbr,
@@ -252,7 +252,7 @@ def stationmap_param_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-timestamp'):
+    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-timestamp')[100]:
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
@@ -286,7 +286,7 @@ def stationmapwind_json(request, url_id):
     rv = []
     i = 0
     point = [s.lon, s.lat]
-    records = list(s.record_set.all().order_by('-timestamp'))
+    records = list(s.record_set.all().order_by('-timestamp')[100])
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
         i += 1
