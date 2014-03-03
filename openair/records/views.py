@@ -286,18 +286,20 @@ def stationmapwind_json(request, url_id):
     rv = []
     i = 0
     point = [s.lon, s.lat]
-    records = list(s.record_set.all().order_by('-timestamp')[:100])
+    records = list(s.record_set.all().order_by('-timestamp'))
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
         i += 1
         params = {x.parameter.abbr: x.value for x in records}
         d = {
-             'id': i,
-             'direction': params['WD'],
-             'speed': params['WS'],
-             'timestamp': unicode(ts),
-             }
+            'id': i,
+            'direction': params['WD'],
+            'speed': params['WS'],
+            'timestamp': unicode(ts),
+        }
         rv.append(d)
+        if i==100:
+            break
     data = dict(point=point, records=rv)
     return HttpResponse(json.dumps(data))
 
