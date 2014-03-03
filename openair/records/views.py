@@ -89,6 +89,18 @@ def parameter_json(request, abbr):
     if not p.high_level is None:
         info['high_level'] = p.high_level
 
+    if not p.standard_hourly is None:
+        info['standard_hourly'] = p.standard_hourly
+
+    if not p.standard_8hours is None:
+        info['standard_8hours'] = p.standard_8hours
+
+    if not p.standard_daily is None:
+        info['standard_daily'] = p.standard_daily
+
+    if not p.standard_yearly is None:
+        info['standard_yearly'] = p.standard_yearly
+
     data = dict(info=info, records=records, zones=zones)
 
     return HttpResponse(json.dumps(data))
