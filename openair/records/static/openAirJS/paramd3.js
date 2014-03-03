@@ -128,6 +128,23 @@ chart.append("g")
 	.style("stroke", "rgb(124,0,255)")
 	.text(function(d) { return "ממוצע כללי: " + total_average_value; });
 
+	var stationAverageHour = chart.append("svg:line")
+	.attr("x1", 0)
+	.attr("y1", y(average_value_hour))
+	.attr("x2", width)
+	.attr("y2", y(average_value_hour))
+	.style("stroke", "rgb(124,255,0)")
+	.style("stroke-dasharray", "5,5,2,2");
+
+
+	var totalAverageHour = chart.append("svg:line")
+	.attr("x1", 0)
+	.attr("y1", y(total_average_value_hour))
+	.attr("x2", width)
+	.attr("y2", y(total_average_value_hour))
+	.style("stroke", "rgb(124,0,255)")
+	.style("stroke-dasharray", "5,5,2,2");
+
 	var hourly = chart.append("svg:line")
 	.attr("x1", 0)
 	.attr("y1", y(standardHourly))
