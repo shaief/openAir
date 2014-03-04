@@ -150,7 +150,8 @@ def stationmapparam(request, url_id, abbr):
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
-    twentyfourth = s.record_set.all().order_by('-timestamp')[23].timestamp
+    twentyfourth = s.record_set.all().filter(parameter__abbr=abbr).\
+        order_by('-timestamp')[24].timestamp
     abbr_id = Parameter.objects.get(abbr=abbr).id
     p = Parameter.objects.get(abbr=abbr)
     # averages - total:
@@ -173,7 +174,7 @@ def stationmapparam(request, url_id, abbr):
     # list all the parameters in this station
     station_params = Parameter.objects.\
         filter(record__station__url_id=url_id).distinct()
- 
+
     try:
         standardHourly = float(p.standard_hourly)
     except:
