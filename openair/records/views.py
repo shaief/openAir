@@ -151,7 +151,7 @@ def stationmapparam(request, url_id, abbr):
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
     twentyfourth = s.record_set.all().filter(parameter__abbr=abbr).\
-        order_by('-timestamp')[24].timestamp
+        order_by('-id')[3].timestamp
     abbr_id = Parameter.objects.get(abbr=abbr).id
     p = Parameter.objects.get(abbr=abbr)
     # averages - total:
@@ -178,19 +178,28 @@ def stationmapparam(request, url_id, abbr):
     try:
         standardHourly = float(p.standard_hourly)
     except:
-        standardHourly = -1000
+        standardHourly = -9999
     try:
         standard8Hours = float(p.standard_8hours)
     except:
-        standard8Hours = -1000
+        standard8Hours = -9999
     try:
         standardDaily = float(p.standard_daily)
     except:
-        standardDaily = -1000
+        standardDaily = -9999
     try:
         standardYearly = float(p.standard_yearly)
     except:
-        standardYearly = -1000
+        standardYearly = -9999
+    try:
+        average_value_hour = float(average_value_hour['value__avg'])
+    except:
+        average_value_hour = -9999
+    try:
+        total_average_value_hour = float(total_average_value_hour['value__avg'])
+    except:
+        total_average_value_hour = -9999
+
     # Context to render:
     context = dict(
         station=s,
@@ -203,8 +212,8 @@ def stationmapparam(request, url_id, abbr):
         zone_list=zone_list,
         average_value=average_value['value__avg'],
         total_average_value=total_average_value['value__avg'],
-        average_by_hour=average_value_hour['value__avg'],
-        total_average_by_hour=total_average_value_hour['value__avg'],
+        average_by_hour=average_value_hour,
+        total_average_by_hour=total_average_value_hour,
         standardHourly=standardHourly,
         standard8Hours=standard8Hours,
         standardDaily=standardDaily,
@@ -238,7 +247,7 @@ def stationmap_json(request, url_id):
     records = []
     values = []
     params = []
-    for r in s.record_set.all().order_by('-timestamp')[:100]:
+    for r in s.record_set.all().order_by('-id')[:100]:
         if not r.parameter.abbr in \
                 [record['name'] for record in records]:
             records.append(dict(name=r.parameter.abbr,
@@ -296,12 +305,79 @@ def stationmap_param_json(request, url_id, abbr):
     return HttpResponse(json.dumps(data))
 
 
+def dailyparam_json(request, url_id, abbr):
+    today = datetime.datetime.now()
+    yesterday = datetime.datetime.now()+datetime.timedelta(days=-1)
+    two_days_ago = datetime.datetime.now()+datetime.timedelta(days=-2)
+    three_days_ago = datetime.datetime.now()+datetime.timedelta(days=-3)
+    four_days_ago = datetime.datetime.now()+datetime.timedelta(days=-4)
+    five_days_ago = datetime.datetime.now()+datetime.timedelta(days=-5)
+    six_days_ago = datetime.datetime.now()+datetime.timedelta(days=-6)
+    a_week_ago = datetime.datetime.now()+datetime.timedelta(days=-7)
+    abbr_id = Parameter.objects.get(abbr=abbr).id
+    today_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(yesterday, today)).\
+        aggregate(average=Avg('value'))
+    yesterday_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(two_days_ago, yesterday)).\
+        aggregate(average=Avg('value'))
+    two_days_ago_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(three_days_ago, two_days_ago)).\
+        aggregate(average=Avg('value'))
+    three_days_ago_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(four_days_ago, three_days_ago)).\
+        aggregate(average=Avg('value'))
+    four_days_ago_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(five_days_ago, four_days_ago)).\
+        aggregate(average=Avg('value'))
+    five_days_ago_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(six_days_ago, five_days_ago)).\
+        aggregate(average=Avg('value'))
+    six_days_ago_avg = Record.objects.\
+        filter(parameter=abbr_id).\
+        filter(station__url_id=url_id).\
+        filter(timestamp__range=(a_week_ago, six_days_ago)).\
+        aggregate(average=Avg('value'))
+    data = dict(
+        url_id=url_id,
+        abbr=abbr,
+        today_avg=today_avg['average'],
+        yesterday_avg=yesterday_avg['average'],
+        two_days_ago_avg=two_days_ago_avg['average'],
+        three_days_ago_avg=three_days_ago_avg['average'],
+        four_days_ago_avg=four_days_ago_avg['average'],
+        five_days_ago_avg=five_days_ago_avg['average'],
+        six_days_ago_avg=six_days_ago_avg['average'],
+        daily_avg=[today_avg['average'],
+                   yesterday_avg['average'],
+                   two_days_ago_avg['average'],
+                   three_days_ago_avg['average'],
+                   four_days_ago_avg['average'],
+                   five_days_ago_avg['average'],
+                   six_days_ago_avg['average'],
+                   ]
+    )
+    return HttpResponse(json.dumps(data))
+
+
 def stationmapwind_json(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     rv = []
     i = 0
     point = [s.lon, s.lat]
-    records = list(s.record_set.all().order_by('-timestamp'))
+    records = list(s.record_set.all().order_by('-id'))
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
         i += 1
