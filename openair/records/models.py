@@ -64,7 +64,7 @@ class Parameter(models.Model):
 class Record(models.Model):
     parameter = models.ForeignKey(Parameter)
     station = models.ForeignKey(Station)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(db_index=True)
     value = models.FloatField(blank=True, null=True)
 
     def __unicode__(self):  # Python 3: def __str__(self):
