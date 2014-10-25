@@ -150,7 +150,7 @@ def stationmap(request, url_id):
 def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
-    print '{} all records_length'.format(allrecords_length)
+
     if allrecords_length > 24:
         number_of_records = 24
     else:
@@ -290,7 +290,8 @@ def stationmap_param_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id')[:number_of_records]:
+    print '{} count records'.format(number_of_records)
+    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'):
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
@@ -306,6 +307,9 @@ def stationmap_param_json(request, url_id, abbr):
                     minutes=r.timestamp.minute
                 )
             )
+            if number_of_values == number_of_records:
+                break
+
     if number_of_values > 0:
         average_value = sum_values / number_of_values
     else:
