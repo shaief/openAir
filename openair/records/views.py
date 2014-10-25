@@ -1,7 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from openair.records.models import Record, Parameter, Station, Zone, \
+from openair.records.models import Record, \
+    Parameter, \
+    Station, \
+    Zone, \
     get_param_time_range
+
 import datetime
 import json
 import random
@@ -30,14 +34,13 @@ def parameter(request, abbr):
 
 
 def parameter_json(request, abbr):
-
     p = get_object_or_404(Parameter, abbr=abbr)
 
     records = []
 
     zones = []
 
-    for r in p.record_set.all().order_by('-timestamp')[:100]:
+    for r in p.record_set.all().order_by('-id')[:100]:
 
         if not r.station.name in \
                 [record['name'] for record in records]:
@@ -107,7 +110,6 @@ def parameter_json(request, abbr):
 
 
 def map(request):
-
     return render(request, 'records/map.html')
 
 
@@ -132,7 +134,7 @@ def stationmap(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
-    station_params = Parameter.objects.\
+    station_params = Parameter.objects. \
         filter(record__station__url_id=url_id).distinct()
     lastupdate = s.record_set.latest('id').timestamp
     context = dict(
@@ -147,32 +149,38 @@ def stationmap(request, url_id):
 
 def stationmapparam(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
+    allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
+    print '{} all records_length'.format(allrecords_length)
+    if allrecords_length > 24:
+        number_of_records = 24
+    else:
+        number_of_records = allrecords_length-1
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
-    twentyfourth = s.record_set.all().filter(parameter__abbr=abbr).\
-        order_by('-id')[3].timestamp
+    twentyfourth = s.record_set.all().filter(parameter__abbr=abbr). \
+        order_by('-id')[number_of_records].timestamp
     abbr_id = Parameter.objects.get(abbr=abbr).id
     p = Parameter.objects.get(abbr=abbr)
     # averages - total:
-    total_average_value = Record.objects.\
+    total_average_value = Record.objects. \
         filter(parameter=abbr_id).aggregate(Avg('value'))
-    average_value = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
+    average_value = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
         aggregate(Avg('value'))
-    #averages - by time of the day:
-    total_average_value_hour = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(timestamp__hour=lastupdate.hour).\
+    # averages - by time of the day:
+    total_average_value_hour = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(timestamp__hour=lastupdate.hour). \
         aggregate(Avg('value'))
-    average_value_hour = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__hour=lastupdate.hour).\
+    average_value_hour = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__hour=lastupdate.hour). \
         aggregate(Avg('value'))
     # list all the parameters in this station
-    station_params = Parameter.objects.\
+    station_params = Parameter.objects. \
         filter(record__station__url_id=url_id).distinct()
 
     try:
@@ -226,9 +234,9 @@ def stationmapwind(request, zone_url_id, station_url_id):
     s = get_object_or_404(Station, url_id=station_url_id)
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
-    station_params = Parameter.objects.\
+    station_params = Parameter.objects. \
         filter(record__station__url_id=station_url_id).distinct()
-    station_has_wind = Station.objects.\
+    station_has_wind = Station.objects. \
         filter(record__parameter__abbr='WD').distinct().order_by('name')
     context = dict(station=s,
                    abbr='WD',
@@ -238,7 +246,7 @@ def stationmapwind(request, zone_url_id, station_url_id):
                    zone_url_id=int(zone_url_id),
                    station_params=station_params,
                    lat=s.lat, lon=s.lon
-                   )
+    )
     return render(request, 'records/stationmapwind_pi.html', context)
 
 
@@ -252,7 +260,7 @@ def stationmap_json(request, url_id):
                 [record['name'] for record in records]:
             records.append(dict(name=r.parameter.abbr,
                                 value=r.value,
-                                ))
+            ))
     geom = [s.lon, s.lat]
 
     info = dict(
@@ -272,11 +280,17 @@ def stationmap_json(request, url_id):
 
 def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
+    allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
+    print '{} all records_length'.format(allrecords_length)
+    if allrecords_length > 24:
+        number_of_records = 24
+    else:
+        number_of_records = allrecords_length-1
     records = []
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-timestamp')[:24]:
+    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id')[:number_of_records]:
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
@@ -307,48 +321,48 @@ def stationmap_param_json(request, url_id, abbr):
 
 def dailyparam_json(request, url_id, abbr):
     today = datetime.datetime.now()
-    yesterday = datetime.datetime.now()+datetime.timedelta(days=-1)
-    two_days_ago = datetime.datetime.now()+datetime.timedelta(days=-2)
-    three_days_ago = datetime.datetime.now()+datetime.timedelta(days=-3)
-    four_days_ago = datetime.datetime.now()+datetime.timedelta(days=-4)
-    five_days_ago = datetime.datetime.now()+datetime.timedelta(days=-5)
-    six_days_ago = datetime.datetime.now()+datetime.timedelta(days=-6)
-    a_week_ago = datetime.datetime.now()+datetime.timedelta(days=-7)
+    yesterday = datetime.datetime.now() + datetime.timedelta(days=-1)
+    two_days_ago = datetime.datetime.now() + datetime.timedelta(days=-2)
+    three_days_ago = datetime.datetime.now() + datetime.timedelta(days=-3)
+    four_days_ago = datetime.datetime.now() + datetime.timedelta(days=-4)
+    five_days_ago = datetime.datetime.now() + datetime.timedelta(days=-5)
+    six_days_ago = datetime.datetime.now() + datetime.timedelta(days=-6)
+    a_week_ago = datetime.datetime.now() + datetime.timedelta(days=-7)
     abbr_id = Parameter.objects.get(abbr=abbr).id
-    today_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(yesterday, today)).\
+    today_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(yesterday, today)). \
         aggregate(average=Avg('value'))
-    yesterday_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(two_days_ago, yesterday)).\
+    yesterday_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(two_days_ago, yesterday)). \
         aggregate(average=Avg('value'))
-    two_days_ago_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(three_days_ago, two_days_ago)).\
+    two_days_ago_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(three_days_ago, two_days_ago)). \
         aggregate(average=Avg('value'))
-    three_days_ago_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(four_days_ago, three_days_ago)).\
+    three_days_ago_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(four_days_ago, three_days_ago)). \
         aggregate(average=Avg('value'))
-    four_days_ago_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(five_days_ago, four_days_ago)).\
+    four_days_ago_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(five_days_ago, four_days_ago)). \
         aggregate(average=Avg('value'))
-    five_days_ago_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(six_days_ago, five_days_ago)).\
+    five_days_ago_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(six_days_ago, five_days_ago)). \
         aggregate(average=Avg('value'))
-    six_days_ago_avg = Record.objects.\
-        filter(parameter=abbr_id).\
-        filter(station__url_id=url_id).\
-        filter(timestamp__range=(a_week_ago, six_days_ago)).\
+    six_days_ago_avg = Record.objects. \
+        filter(parameter=abbr_id). \
+        filter(station__url_id=url_id). \
+        filter(timestamp__range=(a_week_ago, six_days_ago)). \
         aggregate(average=Avg('value'))
     data = dict(
         url_id=url_id,
@@ -367,7 +381,7 @@ def dailyparam_json(request, url_id, abbr):
                    four_days_ago_avg['average'],
                    five_days_ago_avg['average'],
                    six_days_ago_avg['average'],
-                   ]
+        ]
     )
     return HttpResponse(json.dumps(data))
 
@@ -399,8 +413,8 @@ def stations_json(request):
     s = Station.objects.all().order_by('name')
     stations = []
     for sta in s:
-        if not((sta.lon is None) & (sta.lat is None)):
-            if not((sta.lon == 0.0) & (sta.lat == 0.0)):
+        if not ((sta.lon is None) & (sta.lat is None)):
+            if not ((sta.lon == 0.0) & (sta.lat == 0.0)):
                 type = "Feature"
                 properties = dict(
                     name=sta.name,
