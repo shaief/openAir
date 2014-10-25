@@ -22,6 +22,7 @@ Next, you can import some data using:
 python manage.py hardcode_zones_to_db
 python manage.py run_scraper
 python manage.py scrape_stations_info
+python manage.py parameters_data
 ```
 
 You now have a basic environment to work on :)
@@ -49,17 +50,17 @@ selected parameter. Used to generate D3 visualizations.
 stationmap:
 ``'/stationmap/<url_id>/'``.
 
-stationmap_json:
+station_json:
 ``'/stationmap/json/<url_id>/<abbr>/'``. Returns a json that contains the records of the
 selected station. Used to generate D3 visualizations.
 
 stationmap_param:
 ``'/stationmapparam/<url_id>/<abbr>'``.
 
-stationmapwind:
-``'/stationmapwind/<url_id>/'``.
+wind:
+``'/wind/<url_id>/'``.
 
-stationmap_json:
+station_json:
 ``'/stationmapparam/json/<url_id>/<abbr>/'``. Returns a json that contains the list of records of the
 selected station and parameter. Used to generate D3 visualizations.
 
