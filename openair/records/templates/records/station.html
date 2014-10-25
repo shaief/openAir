@@ -25,7 +25,7 @@ openAir - {{ station.name }}
 			<ul class="dropdown-menu">
 				{% for sta in station_list %}
 				{% ifequal sta.zone.url_id zon.url_id %}
-				<li><a tabindex="-1" href="{% url 'stationmap' sta.url_id %}">
+				<li><a tabindex="-1" href="{% url 'station' sta.url_id %}">
 					{{ sta.name }}
 				</a></li>
 				{% endifequal %}
@@ -90,7 +90,7 @@ openAir - {{ station.name }}
 		    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
 		    <ul class="dropdown-menu">
 		    {% for sta in station_list %}
-		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap' sta.url_id %}">{{ sta.name }}</a></li>
+		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'station' sta.url_id %}">{{ sta.name }}</a></li>
 		    {% endfor %}
 		    </ul>
 		</div>
@@ -173,9 +173,9 @@ openAir - {{ station.name }}
 //     		 	if (d.name==='Temp'){
 //     		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}";}
 //     		 	if (d.name==='WD'){
-//     		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";}    		 		
+//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";}
 //     		 	if (d.name==='WS'){
-//     		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";};
+//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";};
 //     		 	})
 // 	         .append("rect")
 // 	         .attr("x", function(d, i){return i*(barWidth+barPadding);})
@@ -239,9 +239,9 @@ openAir - {{ station.name }}
 //     		 	if (d.name==='Temp'){
 //     		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}";}
 //     		 	if (d.name==='WD'){
-//     		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";}    		 		
+//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";}
 //     		 	if (d.name==='WS'){
-//     		 		return "{% url 'stationmapwind' station.zone.url_id station.url_id %}";};
+//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";};
 //     		 	})
 // 	         .append("text")
 // 	         .text(function(d){return d.name+"\n"+d.value;})

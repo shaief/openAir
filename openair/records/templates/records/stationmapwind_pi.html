@@ -13,6 +13,27 @@
 openAir -מצב הרוח ב{{ station.name }}
 {% endblock %}
 {% block navbar-list %}
+<li class="dropdown"><a role="menu" data-toggle="dropdown" href="#">רשימת תחנות<b class="caret"></b></a>
+    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+        {% for zon in zone_list %}
+            <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
+                    {{ zon.name }}
+                </a>
+            <ul class="dropdown-menu">
+                {% for sta in station_list %}
+                    {% ifequal sta.zone.url_id zon.url_id %}
+                        <li><a tabindex="-1" href="{% url 'station' sta.url_id %}">
+                            {{ sta.name }}
+                        </a></li>
+                    {% endifequal %}
+                {% endfor %}
+            </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</li>
+
 <li class="dropdown"><a role="menu" data-toggle="dropdown" href="#">רשימת תחנות שמודדות רוח<b class="caret"></b></a>
     <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
         {% for zon in zone_list %}
@@ -24,7 +45,7 @@ openAir -מצב הרוח ב{{ station.name }}
                 {% for sta in station_list %}
                 	{% if sta in station_has_wind %}
                     {% ifequal sta.zone.url_id zon.url_id %}
-                        <li><a tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">
+                        <li><a tabindex="-1" href="{% url 'wind' sta.zone.url_id sta.url_id %}">
                             {{ sta.name }}
                         </a></li>
                     {% endifequal %}
@@ -37,6 +58,19 @@ openAir -מצב הרוח ב{{ station.name }}
 </li>
 
 <li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">רוח בתחנות באזור  {{  station.zone.name }} <b class="caret"></b></a>
+	<ul class="dropdown-menu">
+		{% for sta in station_has_wind %}
+		{% ifequal sta.zone.url_id zone_url_id %}
+		<li role="presentation">
+			<a role="menuitem" tabindex="-1" href="{% url 'wind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a>
+		</li>
+		{% endifequal %}
+		{% endfor %}
+	</ul>
+</li>
+
+<li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
 		    <ul class="dropdown-menu">
 		    {% for sp in station_params %}
@@ -44,18 +78,7 @@ openAir -מצב הרוח ב{{ station.name }}
 		    {% endfor %}
 		    </ul>
 </li>
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">רוח בתחנות באזור  {{  station.zone.name }} <b class="caret"></b></a>
-	<ul class="dropdown-menu">
-		{% for sta in station_has_wind %}
-		{% ifequal sta.zone.url_id zone_url_id %}
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a>
-		</li>
-		{% endifequal %}
-		{% endfor %}
-	</ul>
-</li>
+
 {% endblock %}
 {% block content %}
 <h1 align=center>מהירות וכיוון הרוח בתחנת {{ station.name }}</h1>
@@ -63,28 +86,6 @@ openAir -מצב הרוח ב{{ station.name }}
 <div class="row">
 	<div class="col-md-11">
 		<div id="map"></div>
-	</div>
-	<div class="col-md-1">
-		<div class="btn-group">
-			{% if station_list %}
-			<button data-toggle="dropdown" class="btn dropdown-toggle">
-				תחנות <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu">
-				{% for sta in station_has_wind %}
-				{% if sta.zone.url_id %}
-				<li role="presentation">
-					<a role="menuitem" tabindex="-1" href="{% url 'stationmapwind' sta.zone.url_id sta.url_id %}">{{ sta.name }}</a>
-				</li>
-				{% endif %}
-				{% endfor %}
-			</ul>
-		</div>
-		{% else %}
-		<p>
-			No pages are available.
-		</p>
-		{% endif %}
 	</div>
 </div>
 <p align="center" dir="rtl">
@@ -97,7 +98,7 @@ openAir -מצב הרוח ב{{ station.name }}
 	var w = "{% url 'stationmapwind_json' url_id=1 %}";
 	var windUrl = w.substring(0, w.length -2);
 	var stationsJson = "{% url 'stations_json' %}"
-	var s = "{% url 'stationmapwind' 8 88 %}"
+	var s = "{% url 'wind' 8 88 %}"
 	var stations_url = s.substring(0, s.length - 6)
 </script>
 

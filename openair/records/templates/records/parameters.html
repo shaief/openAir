@@ -17,13 +17,13 @@ open Air - parameters
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
 				        <a data-toggle="collapse" data-parent="#accordion" href="#param-{{r.id}}">
-				          {{ r.station.url_id }}
+				          {{ r.station.url_id }} {{ r.station.name }}
 				        </a>
 				      </h4>
 				    </div>
 				    <div id="param-{{r.id}}" class="panel-collapse collapsing">
 				      <div class="panel-body">
-				        {{ r.value }}
+				        {{ r.value }} {{ r.parameter }}
 				      </div>
 				    </div>
 			        <!-- <li>{{ r.parameter }}        {{ r.value }}</li> -->

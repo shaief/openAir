@@ -37,7 +37,7 @@ openAir - {{ station.name }}
 			<ul class="dropdown-menu">
 				{% for sta in station_list %}
 				{% ifequal sta.zone.url_id zon.url_id %}
-				<li><a tabindex="-1" href="{% url 'stationmap' sta.url_id %}">
+				<li><a tabindex="-1" href="{% url 'station' sta.url_id %}">
 					{{ sta.name }}
 				</a></li>
 				{% endifequal %}
@@ -63,7 +63,7 @@ openAir - {{ station.name }}
 <div class="row">
 	<div class="col-md-3">
 		<div>
-			<h4 align=center>תחנה: <a href="{% url 'stationmap' station.url_id %}">{{ station.name }}</a></h4>
+			<h4 align=center>תחנה: <a href="{% url 'station' station.url_id %}">{{ station.name }}</a></h4>
 			<h4 align=center>פרמטר: <a href="{% url 'parameter' abbr %}">{{ abbr }} - {{ parameter.name }}</a></h4>
 			<h5 align="center">עדכון אחרון: <strong><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></strong></h5>
 		</div>
@@ -90,7 +90,7 @@ openAir - {{ station.name }}
 			</div>
 		</div>
 		<div align=center>
-			<svg id="timeseriesLine"></svg>
+			<svg id="dailyAverages"></svg>
 		</div>
 	</div>
 	<div class="col-md-3">
@@ -106,10 +106,11 @@ openAir - {{ station.name }}
 	var lat = {{ station.lat }}
 	var stationsJson = "{% url 'stations_json' %}";
 	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
+	var daily_avg_json = "{% url 'dailyparam_json' url_id=station.url_id abbr=abbr %}";
 	var total_average_value = {{ total_average_value }}
 	var average_value = {{ average_value }}
-	// var total_average_value_hour = {{ total_average_by_hour }}
-	// var average_value_hour = {{ average_by_hour }}
+	var total_average_value_hour = {{ total_average_by_hour }}
+	var average_value_hour = {{ average_by_hour }}
 	var standardHourly = {{ standardHourly }}
 	var standard8Hours = {{ standard8Hours }}
 	var standardDaily	= {{ standardDaily }}
