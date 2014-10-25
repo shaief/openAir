@@ -53,6 +53,13 @@ var chart = d3.select("#timeseries")
 
 var button = d3.select("#trbutton")
 
+// defining the chart:
+var dailyChart = d3.select("#dailyAverages")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", chartHeight + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 // calling the JSON file:
 d3.json(paramjson, function(error, json) {
 	if (error) return console.warn(error);
@@ -199,3 +206,38 @@ function type(d) {
   d.value = +d.value; // coerce to number
   return d;
 };
+
+// calling the JSON file:
+d3.json(daily_avg_json, function(error, dailyjson) {
+			if (error) return console.warn(error);
+			console.log(dailyjson)
+	// defining data:
+data = dailyjson.daily_avg
+console.log(data)
+	y.domain([0, d3.max(data, function(d) { return d; })]);
+	colorScale.domain([d3.min(data, function(d) { return d; }), d3.max(data, function(d) { return d; })]);
+
+// draw axis:
+	chart.append("g")
+	  .attr("class", "x axis")
+	  .attr("transform", "translate(0," + chartHeight + ")")
+	  .call(xAxis)
+	  .selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em");
+	chart.append("g")
+	  .attr("class", "y axis")
+	  .call(yAxis);
+
+	// draw bars:
+	dailyChart.selectAll(".bar")
+	  .data(data)
+	  .enter().append("rect")
+	  .attr("class", "bar")
+	  .attr("y", function(d) { return y(d); })
+	  .attr("height", function(d) { return chartHeight - y(d); })
+	  .attr("fill", function(d) {
+	     return "rgb(0, 0, " + Math.round(colorScale(d)) + ")";	         
+	     });
+});
