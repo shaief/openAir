@@ -27,7 +27,7 @@ openAir - {{ station.name }}
 
 /* Visualizing parameters in a station */
 		
-		var data = d3.json("{% url 'stationmapwind_json' url_id=station.url_id %}", function(error, json) {
+		var data = d3.json("{% url 'wind_json' url_id=station.url_id %}", function(error, json) {
 			if (error) return console.warn(error);
 			console.log(json.records);		
 			

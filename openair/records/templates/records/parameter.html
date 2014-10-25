@@ -54,7 +54,7 @@ openAir - Parameter: {{ parameter.abbr }}
 <script type="text/javascript">
 	var param_abbr = "{{ parameter.abbr }}"
 
-	var s = "{% url 'stationmap_param' url_id=137 abbr=parameter.abbr %}"
+	var s = "{% url 'station_parameters' url_id=137 abbr=parameter.abbr %}"
 	var station_param_url = s.substring(0, s.length - 8)
 	var table = d3.select("#records");
 

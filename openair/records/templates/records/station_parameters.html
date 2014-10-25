@@ -52,7 +52,7 @@ openAir - {{ station.name }}
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
 	<ul class="dropdown-menu">
 		{% for sp in station_params %}
-		<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'station_parameters' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
 		{% endfor %}
 	</ul>
 </li>
@@ -105,7 +105,7 @@ openAir - {{ station.name }}
 	var lon = {{ station.lon }}
 	var lat = {{ station.lat }}
 	var stationsJson = "{% url 'stations_json' %}";
-	var paramjson = "{% url 'stationmap_param_json' url_id=station.url_id abbr=abbr %}";
+	var paramjson = "{% url 'station_parameters_json' url_id=station.url_id abbr=abbr %}";
 	var daily_avg_json = "{% url 'dailyparam_json' url_id=station.url_id abbr=abbr %}";
 	var total_average_value = {{ total_average_value }}
 	var average_value = {{ average_value }}

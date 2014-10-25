@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head %}
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
 <style>
-	#map {
-		height: 400px;
-		width: 300px;
-	}
+    #map {
+    height: 400px;
+    width: 300px;
+    }
 </style>
 {% endblock %}
 
@@ -16,102 +16,69 @@ openAir - {{ station.name }}
 
 {% block navbar-list %}
 <li class="dropdown"><a role="menu" data-toggle="dropdown" href="#">רשימת תחנות<b class="caret"></b></a>
-	<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-		{% for zon in zone_list %}
-		<li class="dropdown-submenu">
-			<a tabindex="-1" href="#">
-				{{ zon.name }}
-			</a>
-			<ul class="dropdown-menu">
-				{% for sta in station_list %}
-				{% ifequal sta.zone.url_id zon.url_id %}
-				<li><a tabindex="-1" href="{% url 'station' sta.url_id %}">
-					{{ sta.name }}
-				</a></li>
-				{% endifequal %}
-				{% endfor %}
-			</ul>
-		</li>
-		{% endfor %}
-	</ul>
+    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+        {% for zon in zone_list %}
+        <li class="dropdown-submenu">
+            <a tabindex="-1" href="#">
+                {{ zon.name }}
+            </a>
+            <ul class="dropdown-menu">
+                {% for sta in station_list %}
+                {% ifequal sta.zone.url_id zon.url_id %}
+                <li><a tabindex="-1" href="{% url 'station' sta.url_id %}">
+                    {{ sta.name }}
+                </a></li>
+                {% endifequal %}
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
 </li>
 <li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
-	<ul class="dropdown-menu">
-		{% for sp in station_params %}
-		<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
-		{% endfor %}
-	</ul>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
+    <ul class="dropdown-menu">
+        {% for sp in station_params %}
+        <li role="presentation"><a role="menuitem" tabindex="-1"
+                                   href="{% url 'station_parameters' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
+        {% endfor %}
+    </ul>
 </li>
 {% endblock %}
 
 {% block content %}
 <div class="row", align="center">
 <div class="col-md-4">
-<h1 align="center">תחנה: {{ station.name }}</h1>
-<h3 align="center">תחנה: {{ station.url_id }} אזור: {{ station.zone.url_id }}</h3>
-<h3 align="center">עדכון אחרון: <br><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
+    <h1 align="center">תחנה: {{ station.name }}</h1>
+
+    <h3 align="center">תחנה: {{ station.url_id }} אזור: {{ station.zone.url_id }}</h3>
+
+    <h3 align="center">עדכון אחרון: <br><span dir="ltr">{{ lastupdate|date:"d/m/Y H:i" }}</span></h3>
 </div>
 {% if station_params %}
-	<div class="col-md-4">
-		<h3>בתחנה זו נמדדים הפרמטרים הבאים:</h3>
-		<table class="table table-striped">
-			<tbody>
-				{% for sp in station_params %}
-				<tr>
-					<td><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></td>
-					<td>{{ sp.name }}</td>
-					<td>{{ sp.units }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+<div class="col-md-4">
+    <h3>בתחנה זו נמדדים הפרמטרים הבאים:</h3>
+    <table class="table table-striped">
+        <tbody>
+        {% for sp in station_params %}
+        <tr>
+            <td><a role="menuitem" tabindex="-1" href="{% url 'station_parameters' station.url_id sp.abbr %}">{{ sp.abbr }}</a></td>
+            <td>{{ sp.name }}</td>
+            <td>{{ sp.units }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <p>No pages are available.</p>
 {% endif %}
-	<div class="col-md-4">
-		<div id="map"></div>
-	</div>
+<div class="col-md-4">
+    <div id="map"></div>
 </div>
-<!--<div class="row">
-	<div class="col-md-11">
-		<div>
-			<svg id="parameters"></svg>
-		</div>
-		<div align="center">
-			<svg id="bars"> </svg>
-			<svg id="labels"> </svg>
-		</div>
-	</div> -->
-<!--{# 	<div class="col-md-1">
-	    <div class="btn-group">
-		{% if station_list %}
-		    <button data-toggle="dropdown" class="btn dropdown-toggle">תחנות <span class="caret"></span></button>
-		    <ul class="dropdown-menu">
-		    {% for sta in station_list %}
-		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'station' sta.url_id %}">{{ sta.name }}</a></li>
-		    {% endfor %}
-		    </ul>
-		</div>
-		{% else %}
-	    	<p>No pages are available.</p>
-		{% endif %}
-		{% if station_params %}
-		    <button data-toggle="dropdown" class="btn dropdown-toggle">פרמטרים נוספים בתחנה <span class="caret"></span></button>
-		    <ul class="dropdown-menu">
-		    {% for sp in station_params %}
-		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
-		    {% endfor %}
-		    </ul>
-		</div>
-		{% else %}
-	    	<p>No pages are available.</p>
-	    	{% endif %} #}-->
-	    </div>
-	</div>
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
-	<script type="text/javascript">
+
+<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+<script type="text/javascript">
 		var lon = {{ station.lon }}
 		var lat = {{ station.lat }}
 		var map = L.map('map').setView([lat, lon], 14);
@@ -121,146 +88,5 @@ openAir - {{ station.name }}
 			minZoom : 3,
 			maxZoom : 18
 	}).addTo(map);
-
-// 		//Create SVG element
-//        	//Width and height
-// 		// a global
-// 	    var w = 1000;
-// 	    var h = 200;
-// 	    var hlabels = h + 20;
-// 	    var htimestamp = hlabels + 20;
-// 	    var barPadding = 3;
-// 	    var barWidth = 25;
-// 	    var svg;
-
-// 		d3.json("{% url 'stationmap_json' station.url_id %}", function(error, json) {
-// 			if (error) return console.warn(error);
-// 			//var datasetValues = json.values;
-// 			//var datasetParams = json.params;
-// 			//var timestamp = json.timestamp;
-// 			console.log(json.records);	
-// 			console.log(json.timestamp);	
-
-// 	        //Create SVG element
-// 	        var svg = d3.select("#bars")
-// 	                                .append("svg")
-// 	                                .attr("width", w)
-// 	                                .attr("height", h);
-
-// 	        svg.selectAll("rect")
-// 	         .data(json.records)
-// 	         .enter()
-// 	         .append("a")
-//     		 .attr("xlink:href", function(d){
-//     		 	if (d.name==='CO'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'CO' %}";}
-//     		 	if (d.name==='SO2'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'SO2' %}";}
-//     		 	if (d.name==='PM10'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'PM10' %}";}
-//     		 	if (d.name==='PM2.5'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'PM2.5' %}";}
-//     		 	if (d.name==='No'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'No' %}";}
-//     		 	if (d.name==='Nox'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'Nox' %}";}
-//     		 	if (d.name==='No2'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'No2' %}";}
-//     		 	if (d.name==='O3'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'O3' %}";}
-//     		 	if (d.name==='RH'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'RH' %}";}
-//     		 	if (d.name==='Temp'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}";}
-//     		 	if (d.name==='WD'){
-//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";}
-//     		 	if (d.name==='WS'){
-//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";};
-//     		 	})
-// 	         .append("rect")
-// 	         .attr("x", function(d, i){return i*(barWidth+barPadding);})
-// 	         .attr("y", function(d) {return h/2 - (d.value * 4);})
-// 	         .attr("width", barWidth)
-// 	         .attr("height", function(d) {
-// 	                         return d.value * 4;
-// 	         })
-// 	         .attr("fill", function(d) {
-// 	                        return "rgb(0, 0, " + (d.value * 10) + ")";
-// 	         })
-// 	         .append("text")
-// 	         .text(function(d){return d.name+"\n"+d.value;})
-// 		    .append("svg:title")
-// 		 	.text(function(d) { return d.name +"\n" + d.value; });
-
-// 	         svg.selectAll("text")
-// 			 	.data(json)
-// 			    .enter()
-// 			    .append("text")
-// 			    .text("hi")
-// 			    //.text(function(d) {
-//         		//		 return d.name;})
-//         	    .attr("y", function(d) {
-//         				 return (15+h-(d.value*4));
-//     				 })
-//     		    .attr("x", function(d, i){return i*(barWidth+barPadding) + barWidth/2})
-//         	    .attr("font-family", "sans-serif")
-//    			    .attr("font-size", "8px")
-//    			    .attr("text-anchor", "middle")
-//    			    .attr("fill", "black");
-
-//    			var svgParams = d3.select("#parameters")
-// 	                                .append("svg")
-// 	                                .attr("width", w)
-// 	                                .attr("height", h);
-
-// 	        svgParams.selectAll("rect")
-// 	         .data(json.records)
-// 	         .enter()
-// 	         .append("a")
-//     		 .attr("xlink:href", function(d){
-//     		 	if (d.name==='CO'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'CO' %}";}
-//     		 	if (d.name==='SO2'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'SO2' %}";}
-//     		 	if (d.name==='PM10'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'PM10' %}";}
-//     		 	if (d.name==='PM2.5'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'PM2.5' %}";}
-//     		 	if (d.name==='No'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'No' %}";}
-//     		 	if (d.name==='Nox'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'Nox' %}";}
-//     		 	if (d.name==='No2'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'No2' %}";}
-//     		 	if (d.name==='O3'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'O3' %}";}
-//     		 	if (d.name==='RH'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'RH' %}";}
-//     		 	if (d.name==='Temp'){
-//     		 		return "{% url 'stationmap_param' station.url_id 'Temp' %}";}
-//     		 	if (d.name==='WD'){
-//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";}
-//     		 	if (d.name==='WS'){
-//     		 		return "{% url 'wind' station.zone.url_id station.url_id %}";};
-//     		 	})
-// 	         .append("text")
-// 	         .text(function(d){return d.name+"\n"+d.value;})
-// 		    .append("svg:title")
-// 		 	.text(function(d) { return d.name +"\n" + d.value; });
-// 	         svg.selectAll("text")
-// 			 	.data(json.records)
-// 			    .enter()
-// 			    .append("text")
-// 			    .text("hi")
-// 			    //.text(function(d) {
-//         		//		 return d.name;})
-//         	    .attr("font-family", "sans-serif")
-//    			    .attr("font-size", "8px")
-//    			    .attr("text-anchor", "middle")
-//    			    .attr("fill", "black");
-// 		 });
-
-// /* Visualizing parameters in a station */
-
 </script>
 {% endblock %}

@@ -74,7 +74,7 @@ openAir -מצב הרוח ב{{ station.name }}
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">פרמטרים הנמדדים בתחנה<b class="caret"></b></a>
 		    <ul class="dropdown-menu">
 		    {% for sp in station_params %}
-		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'stationmap_param' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
+		        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'station_parameters' station.url_id sp.abbr %}">{{ sp.abbr }}</a></li>
 		    {% endfor %}
 		    </ul>
 </li>
@@ -94,8 +94,8 @@ openAir -מצב הרוח ב{{ station.name }}
 <script type="text/javascript">
 	var lat ={{lat}};
 	var lon ={{lon}};
-	var windJson = "{% url 'stationmapwind_json' url_id=station.url_id %}";
-	var w = "{% url 'stationmapwind_json' url_id=1 %}";
+	var windJson = "{% url 'wind_json' url_id=station.url_id %}";
+	var w = "{% url 'wind_json' url_id=1 %}";
 	var windUrl = w.substring(0, w.length -2);
 	var stationsJson = "{% url 'stations_json' %}"
 	var s = "{% url 'wind' 8 88 %}"

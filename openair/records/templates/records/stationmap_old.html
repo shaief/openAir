@@ -40,7 +40,7 @@ openAir - {{ station.name }}
 	    var barWidth = 25;
 	    var svg;
 
-		d3.json("{% url 'stationmap_json' station.url_id %}", function(error, json) {
+		d3.json("{% url 'station_json' station.url_id %}", function(error, json) {
 			if (error) return console.warn(error);
 			var datasetValues = json.values;
 			var datasetParams = json.params;
