@@ -113,24 +113,7 @@ def map(request):
     return render(request, 'records/map.html')
 
 
-def stationparams(request, url_id):
-    s = get_object_or_404(Station, url_id=url_id)
-    station_list = Station.objects.all().order_by('name')
-    parameter_list = s.record_set.all()
-    station_params = Parameter.objects. \
-        filter(record__station__url_id=url_id).distinct()
-    lastupdate = s.record_set.latest('id').timestamp
-    context = dict(
-        station=s,
-        station_list=station_list,
-        parameter_list=parameter_list,
-        lastupdate=lastupdate,
-        station_params=station_params
-    )
-    return render(request, 'records/stationparams.html', context)
-
-
-def stationmap(request, url_id):
+def station(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
@@ -144,17 +127,17 @@ def stationmap(request, url_id):
         station_params=station_params,
         lastupdate=lastupdate
     )
-    return render(request, 'records/stationmap.html', context)
+    return render(request, 'records/station.html', context)
 
 
-def stationmapparam(request, url_id, abbr):
+def station_parameters(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
 
     if allrecords_length > 24:
         number_of_records = 24
     else:
-        number_of_records = allrecords_length-1
+        number_of_records = allrecords_length - 1
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
@@ -227,10 +210,10 @@ def stationmapparam(request, url_id, abbr):
         standardDaily=standardDaily,
         standardYearly=standardYearly,
     )
-    return render(request, 'records/stationmapparam.html', context)
+    return render(request, 'records/station_parameters.html', context)
 
 
-def stationmapwind(request, zone_url_id, station_url_id):
+def wind(request, zone_url_id, station_url_id):
     s = get_object_or_404(Station, url_id=station_url_id)
     zone_list = Zone.objects.all().order_by('name')
     station_list = Station.objects.all().order_by('name')
@@ -281,16 +264,14 @@ def stationmap_json(request, url_id):
 def stationmap_param_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
-    print '{} all records_length'.format(allrecords_length)
     if allrecords_length > 24:
         number_of_records = 24
     else:
-        number_of_records = allrecords_length-1
+        number_of_records = allrecords_length - 1
     records = []
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    print '{} count records'.format(number_of_records)
     for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'):
         if (r.parameter.abbr == abbr):
             number_of_values += 1
