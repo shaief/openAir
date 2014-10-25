@@ -233,7 +233,7 @@ def wind(request, zone_url_id, station_url_id):
     return render(request, 'records/stationmapwind_pi.html', context)
 
 
-def stationmap_json(request, url_id):
+def station_json(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     records = []
     values = []
@@ -261,7 +261,7 @@ def stationmap_json(request, url_id):
     return HttpResponse(json.dumps(info))
 
 
-def stationmap_param_json(request, url_id, abbr):
+def station_parameters_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
     allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
     if allrecords_length > 24:
@@ -371,7 +371,7 @@ def dailyparam_json(request, url_id, abbr):
     return HttpResponse(json.dumps(data))
 
 
-def stationmapwind_json(request, url_id):
+def wind_json(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
     rv = []
     i = 0
