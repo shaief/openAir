@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand  # , CommandError
 import pytz
 from openair.settings.base import TIME_ZONE
 from openair.records.models import Zone, Station, Parameter, Record
