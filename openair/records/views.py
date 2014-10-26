@@ -263,7 +263,7 @@ def station_json(request, url_id):
 
 def station_parameters_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
-    allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
+    allrecords_length = s.record_set.all().filter(parameter__abbr=abbr).order_by('-id').count()
     if allrecords_length > 24:
         number_of_records = 24
     else:
@@ -272,7 +272,8 @@ def station_parameters_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id')[:number_of_records]:
+    last_24_records = s.record_set.all().filter(parameter__abbr=abbr).order_by('-id')[:number_of_records]
+    for r in last_24_records:
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
@@ -373,23 +374,30 @@ def dailyparam_json(request, url_id, abbr):
 
 def wind_json(request, url_id):
     s = get_object_or_404(Station, url_id=url_id)
+    allrecords_length = len(s.record_set.all().order_by('-id'))
+    if allrecords_length > 100:
+        number_of_records = 100
+    else:
+        number_of_records = allrecords_length - 1
     rv = []
     i = 0
     point = [s.lon, s.lat]
     records = list(s.record_set.all().order_by('-id'))
+    print '\n\n\n*******{} type of records***'.format(type(records[0]))
     l = itertools.groupby(records, lambda x: x.timestamp)
     for ts, records in l:
-        i += 1
         params = {x.parameter.abbr: x.value for x in records}
-        d = {
-            'id': i,
-            'direction': params['WD'],
-            'speed': params['WS'],
-            'timestamp': unicode(ts),
-        }
-        rv.append(d)
-        if i == 50:
-            break
+        if params['WD'] and params['WS']:
+            i += 1
+            d = {
+                'id': i,
+                'direction': params['WD'],
+                'speed': params['WS'],
+                'timestamp': unicode(ts),
+                }
+            rv.append(d)
+            if i == 24:
+                break
     data = dict(point=point, records=rv)
     return HttpResponse(json.dumps(data))
 
