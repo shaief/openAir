@@ -272,7 +272,7 @@ def station_parameters_json(request, url_id, abbr):
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'):
+    for r in s.record_set.all().filter(parameter__abbr=abbr).order_by('-id')[:number_of_records]:
         if (r.parameter.abbr == abbr):
             number_of_values += 1
             sum_values += r.value
