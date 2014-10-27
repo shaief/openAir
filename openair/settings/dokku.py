@@ -8,7 +8,7 @@ from datetime import timedelta
 
 ENV = 'dokku'
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = (
