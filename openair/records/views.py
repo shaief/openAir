@@ -132,39 +132,34 @@ def station(request, url_id):
 
 def station_parameters(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
-    allrecords_length = len(s.record_set.all().filter(parameter__abbr=abbr).order_by('-id'))
-
-    if allrecords_length > 24:
-        number_of_records = 24
-    else:
-        number_of_records = allrecords_length - 1
-    zone_list = Zone.objects.all().order_by('name')
-    station_list = Station.objects.all().order_by('name')
+    zone_list = Zone.objects.order_by('name')
+    station_list = Station.objects.order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
-    twentyfourth = s.record_set.all().filter(parameter__abbr=abbr). \
-        order_by('-id')[number_of_records].timestamp
-    abbr_id = Parameter.objects.get(abbr=abbr).id
+    twentyfourth = s.record_set.filter(parameter=p).order_by('-id')[24:25][0].timestamp
     p = Parameter.objects.get(abbr=abbr)
     # averages - total:
-    total_average_value = Record.objects. \
-        filter(parameter=abbr_id).aggregate(Avg('value'))
-    average_value = Record.objects. \
-        filter(parameter=abbr_id). \
-        filter(station__url_id=url_id). \
-        aggregate(Avg('value'))
+    total_average_value = p.record_set.aggregate(Avg('value'))  # TODO optimize
+    # average_value = Record.objects. \
+    #     filter(parameter=p). \
+    #     filter(station__url_id=url_id). \
+    #     aggregate(Avg('value'))
+    # # averages - by time of the day:
+    # total_average_value_hour = Record.objects. \
+    #     filter(parameter=p). \
+    #     filter(timestamp__hour=lastupdate.hour). \
+    #     aggregate(Avg('value'))
+    # average_value_hour = Record.objects. \
+    #     filter(parameter=p). \
+    #     filter(station__url_id=url_id). \
+    #     filter(timestamp__hour=lastupdate.hour). \
+    #     aggregate(Avg('value'))
+    total_average_value = p.record_set.aggregate(Avg('value'))  # TODO optimize
+    average_value = 0
     # averages - by time of the day:
-    total_average_value_hour = Record.objects. \
-        filter(parameter=abbr_id). \
-        filter(timestamp__hour=lastupdate.hour). \
-        aggregate(Avg('value'))
-    average_value_hour = Record.objects. \
-        filter(parameter=abbr_id). \
-        filter(station__url_id=url_id). \
-        filter(timestamp__hour=lastupdate.hour). \
-        aggregate(Avg('value'))
+    total_average_value_hour = 0
+    average_value_hour = 0
     # list all the parameters in this station
-    station_params = Parameter.objects. \
-        filter(record__station__url_id=url_id).distinct()
+    station_params = Parameter.objects.filter(record__station__url_id=url_id).distinct()
 
     try:
         standardHourly = float(p.standard_hourly)
