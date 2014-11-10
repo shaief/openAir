@@ -135,10 +135,10 @@ def station_parameters(request, url_id, abbr):
     zone_list = Zone.objects.order_by('name')
     station_list = Station.objects.order_by('name')
     lastupdate = s.record_set.latest('id').timestamp
-    twentyfourth = s.record_set.filter(parameter=p).order_by('-id')[24:25][0].timestamp
+    twentyfourth = s.record_set.filter(parameter__abbr=abbr).order_by('-id')[24:25][0].timestamp
     p = Parameter.objects.get(abbr=abbr)
     # averages - total:
-    total_average_value = p.record_set.aggregate(Avg('value'))  # TODO optimize
+    # total_average_value = p.record_set.aggregate(Avg('value'))  # TODO optimize
     # average_value = Record.objects. \
     #     filter(parameter=p). \
     #     filter(station__url_id=url_id). \
@@ -153,7 +153,7 @@ def station_parameters(request, url_id, abbr):
     #     filter(station__url_id=url_id). \
     #     filter(timestamp__hour=lastupdate.hour). \
     #     aggregate(Avg('value'))
-    total_average_value = p.record_set.aggregate(Avg('value'))  # TODO optimize
+    total_average_value = 0
     average_value = 0
     # averages - by time of the day:
     total_average_value_hour = 0
@@ -178,11 +178,13 @@ def station_parameters(request, url_id, abbr):
     except:
         standardYearly = -9999
     try:
-        average_value_hour = float(average_value_hour['value__avg'])
+        # average_value_hour = float(average_value_hour['value__avg'])
+        average_value_hour = 0
     except:
         average_value_hour = -9999
     try:
-        total_average_value_hour = float(total_average_value_hour['value__avg'])
+        # total_average_value_hour = float(total_average_value_hour['value__avg'])
+        total_average_value_hour = 0
     except:
         total_average_value_hour = -9999
 
@@ -196,8 +198,10 @@ def station_parameters(request, url_id, abbr):
         lastupdate=lastupdate,
         twentyfourth=twentyfourth,
         zone_list=zone_list,
-        average_value=average_value['value__avg'],
-        total_average_value=total_average_value['value__avg'],
+        # average_value=average_value['value__avg'],
+        # total_average_value=total_average_value['value__avg'],
+        average_value=average_value,
+        total_average_value=total_average_value,
         average_by_hour=average_value_hour,
         total_average_by_hour=total_average_value_hour,
         standardHourly=standardHourly,
