@@ -238,7 +238,7 @@ def station_json(request, url_id):
     records = []
     values = []
     params = []
-    for r in s.record_set.all().order_by('-id')[:100]:
+    for r in s.record_set.all().order_by('-id')[:50]:
         if not r.parameter.abbr in \
                 [record['name'] for record in records]:
             records.append(dict(name=r.parameter.abbr,
@@ -263,46 +263,37 @@ def station_json(request, url_id):
 
 def station_parameters_json(request, url_id, abbr):
     s = get_object_or_404(Station, url_id=url_id)
-    allrecords_length = s.record_set.all().filter(parameter__abbr=abbr).order_by('-id').count()
-    if allrecords_length > 24:
-        number_of_records = 24
-    else:
-        number_of_records = allrecords_length - 1
     records = []
     point = [s.lon, s.lat]
     number_of_values = 0
     sum_values = 0
-    last_24_records = s.record_set.all().filter(parameter__abbr=abbr).order_by('-id')[:number_of_records]
-    for r in last_24_records:
-        if (r.parameter.abbr == abbr):
-            number_of_values += 1
-            sum_values += r.value
-            records.append(
-                dict(
-                    record_id=number_of_values,
-                    value=r.value,
-                    timestamp=r.timestamp.isoformat(),
-                    day=r.timestamp.day,
-                    month=r.timestamp.month,
-                    year=r.timestamp.year,
-                    hour=r.timestamp.hour,
-                    minutes=r.timestamp.minute
-                )
+    last_records = s.record_set.filter(parameter__abbr=abbr).order_by('-id')[:24]
+    for r in last_records:
+        number_of_values += 1
+        sum_values += r.value
+        records.append(
+            dict(
+                record_id=number_of_values,
+                value=r.value,
+                timestamp=r.timestamp.isoformat(),
+                day=r.timestamp.day,
+                month=r.timestamp.month,
+                year=r.timestamp.year,
+                hour=r.timestamp.hour,
+                minutes=r.timestamp.minute
             )
-            if number_of_values == number_of_records:
-                break
+        )
 
     if number_of_values > 0:
         average_value = sum_values / number_of_values
     else:
         average_value = 'No measurements for ' + abbr
-    number_of_values = 0
     data = dict(
         point=point,
         records=records,
         average_value=average_value
     )
-    return HttpResponse(json.dumps(data))
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 
 def dailyparam_json(request, url_id, abbr):
